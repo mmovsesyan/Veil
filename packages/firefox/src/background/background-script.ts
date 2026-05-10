@@ -23,12 +23,24 @@ let isEnabled = true;
 async function initializeExtension(): Promise<void> {
   try {
     // Load settings
-    const stored = await browser.storage.local.get(["enabled", "whitelist"]);
+    const stored = await browser.storage.local.get(["enabled", "whitelist", "autoLearnedRules"]);
     isEnabled = stored["enabled"] !== false;
 
     if (stored["whitelist"] && Array.isArray(stored["whitelist"])) {
       for (const domain of stored["whitelist"] as string[]) {
         whitelist.add(domain);
+      }
+    }
+
+    // Restore auto-learned rules
+    if (stored["autoLearnedRules"] && Array.isArray(stored["autoLearnedRules"])) {
+      for (const raw of stored["autoLearnedRules"] as string[]) {
+        autoRules.confirmRule(raw);
+        const rule = parser.parse(raw);
+        if (rule) {
+          rule.source = "auto-learned";
+          engine.addRules([rule]);
+        }
       }
     }
 
@@ -119,6 +131,8 @@ browser.webRequest.onBeforeRequest.addListener(
         if (rule) {
           rule.source = "auto-learned";
           engine.addRules([rule]);
+          // Persist auto-learned rules
+          browser.storage.local.set({ autoLearnedRules: autoRules.getConfirmedRules() });
           console.log(`[Veil Auto-Learn] New rule: ${confirmed.suggestedRule}`);
         }
       }

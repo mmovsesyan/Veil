@@ -69,6 +69,7 @@ async function initialize(): Promise<void> {
       "whitelist",
       "customRules",
       "cachedRules",
+      "autoLearnedRules",
     ]);
 
     isEnabled = stored["enabled"] !== false;
@@ -100,7 +101,20 @@ async function initialize(): Promise<void> {
       }
     }
 
-    // 5. Schedule background filter list update (non-blocking)
+    // 5. Restore auto-learned rules
+    const autoLearned = stored["autoLearnedRules"] as string[] | undefined;
+    if (autoLearned && autoLearned.length > 0) {
+      for (const raw of autoLearned) {
+        autoRules.confirmRule(raw);
+        const rule = parser.parse(raw);
+        if (rule) {
+          rule.source = "auto-learned";
+          engine.addRules([rule]);
+        }
+      }
+    }
+
+    // 6. Schedule background filter list update (non-blocking)
     scheduleFilterUpdate();
 
     console.log("[Content Blocker] Initialized");
@@ -468,13 +482,34 @@ if (chrome.webRequest?.onCompleted) {
           false, // not blocked
         );
 
-        // If a new rule was auto-confirmed, add it to the engine
+        // If a new rule was auto-confirmed, add it to the engine AND DNR
         if (confirmed) {
           const rule = parser.parse(confirmed.suggestedRule);
           if (rule) {
             rule.source = "auto-learned";
             engine.addRules([rule]);
-            console.log(`[Veil Auto-Learn] New rule confirmed: ${confirmed.suggestedRule}`);
+
+            // Add to DNR for actual blocking (fire-and-forget)
+            chrome.declarativeNetRequest.getDynamicRules().then((existingRules) => {
+              const maxId = existingRules.reduce((max, r) => Math.max(max, r.id), 0);
+              chrome.declarativeNetRequest.updateDynamicRules({
+                addRules: [{
+                  id: maxId + 1,
+                  priority: 1,
+                  action: { type: "block" as chrome.declarativeNetRequest.RuleActionType },
+                  condition: {
+                    urlFilter: rule.pattern,
+                    resourceTypes: mapResourceTypes(rule.modifiers.resourceTypes),
+                  },
+                }],
+                removeRuleIds: [],
+              }).catch(() => {});
+            }).catch(() => {});
+
+            // Persist auto-learned rules
+            chrome.storage.local.set({ autoLearnedRules: autoRules.getConfirmedRules() });
+
+            console.log(`[Veil Auto-Learn] New rule confirmed and applied: ${confirmed.suggestedRule}`);
           }
         }
       } catch {
