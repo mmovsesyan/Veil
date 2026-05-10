@@ -333,11 +333,15 @@ function mapResourceTypes(types?: string[]): chrome.declarativeNetRequest.Resour
     font: "font" as chrome.declarativeNetRequest.ResourceType,
     iframe: "sub_frame" as chrome.declarativeNetRequest.ResourceType,
     popup: "main_frame" as chrome.declarativeNetRequest.ResourceType,
+    other: "other" as chrome.declarativeNetRequest.ResourceType,
   };
 
-  return types
+  const mapped = types
     .map((t) => mapping[t])
     .filter((t): t is chrome.declarativeNetRequest.ResourceType => t !== undefined);
+
+  // Chrome DNR rejects empty resourceTypes arrays — return undefined instead
+  return mapped.length > 0 ? mapped : undefined;
 }
 
 // ─── Navigation & Badge ───────────────────────────────────────────────────────
