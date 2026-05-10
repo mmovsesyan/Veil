@@ -64,6 +64,14 @@
       "url": "https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/privacy.txt",
       "enabled": true,
       "description": "Privacy-focused filters from uBlock Origin"
+    },
+    {
+      "id": "veil-rutube",
+      "name": "Veil — Rutube",
+      "category": "regional",
+      "url": "https://raw.githubusercontent.com/mmovsesyan/Veil/main/filter-lists/custom/rutube.txt",
+      "enabled": true,
+      "description": "Blocks video ads on Rutube"
     }
   ]
 }
