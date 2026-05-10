@@ -42,35 +42,18 @@ rutube.ru##.wf-player__ad-skip
 rutube.ru##.wf-player__preroll
 rutube.ru##.wf-player__midroll
 
-! ─── Promo banners on main page ───
-rutube.ru##[class*="banner"]
-rutube.ru##[class*="Banner"]
-rutube.ru##[class*="promo"]
-rutube.ru##[class*="Promo"]
-rutube.ru##[class*="carousel"][class*="ad"]
-rutube.ru##[class*="feed-banner"]
-rutube.ru##[class*="FeedBanner"]
-rutube.ru##[class*="MainBanner"]
-rutube.ru##[class*="main-banner"]
-rutube.ru##[class*="hero-banner"]
-rutube.ru##[class*="HeroBanner"]
-rutube.ru##[class*="TopBanner"]
-rutube.ru##[class*="PromoBanner"]
-rutube.ru##[class*="promoBlock"]
-rutube.ru##[class*="PromoBlock"]
-rutube.ru##[class*="promo-block"]
+! ─── Promo banners (only ads, not content) ───
+rutube.ru##[class*="advert"]
+rutube.ru##[class*="AdBanner"]
+rutube.ru##[class*="yandex_rtb"]
+rutube.ru##[id*="yandex_rtb"]
 rutube.ru##[class*="sponsor"]
 rutube.ru##[class*="Sponsor"]
-rutube.ru##[data-test-id*="banner"]
-rutube.ru##[data-test-id*="promo"]
 rutube.ru##[data-block-type="banner"]
-rutube.ru##[data-block-type="promo"]
-rutube.ru##a[href*="/promo"]
-rutube.ru##a[href*="/special"]
-rutube.ru##a[href*="utm_"]
-rutube.ru##div[class*="РЕКЛАМА" i]
-rutube.ru##div:has(> [class*="banner"])
-rutube.ru##section:has([class*="promo"])
+rutube.ru##a[href*="utm_source"]
+rutube.ru##a[href*="utm_medium"]
+rutube.ru##div:has(> span:contains("РЕКЛАМА"))
+rutube.ru##div:has(> span:contains("Реклама"))
 
 ! ─── Scriptlet rules (bypass ad player) ───
 rutube.ru#%#//scriptlet("set-constant", "Object.prototype.adConfig", "undefined")
