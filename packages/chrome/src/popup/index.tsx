@@ -11,6 +11,7 @@ function PopupApp() {
   const [domain, setDomain] = useState("");
   const [blocked, setBlocked] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [isWhitelisted, setIsWhitelisted] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -29,6 +30,16 @@ function PopupApp() {
         // Get status
         const status = await chrome.runtime.sendMessage({ type: "GET_STATUS" });
         setEnabled(status?.enabled ?? true);
+
+        // Get whitelist to check if current domain is whitelisted
+        const wlResp = await chrome.runtime.sendMessage({ type: "GET_WHITELIST" });
+        if (wlResp?.whitelist && tab?.url) {
+          try {
+            const hostname = new URL(tab.url).hostname;
+            const wl = wlResp.whitelist as string[];
+            setIsWhitelisted(wl.includes(hostname));
+          } catch { /* ignore */ }
+        }
 
         // Get tab stats
         if (tab?.id) {
@@ -52,15 +63,24 @@ function PopupApp() {
     setEnabled(response?.enabled ?? !enabled);
   };
 
-  const handleWhitelist = async () => {
+  const handleWhitelistToggle = async () => {
     if (!domain) return;
-    await chrome.runtime.sendMessage({ type: "ADD_TO_WHITELIST", payload: domain });
-    // Reload current tab
+
+    if (isWhitelisted) {
+      // Remove from whitelist
+      await chrome.runtime.sendMessage({ type: "REMOVE_FROM_WHITELIST", payload: domain });
+      setIsWhitelisted(false);
+    } else {
+      // Add to whitelist
+      await chrome.runtime.sendMessage({ type: "ADD_TO_WHITELIST", payload: domain });
+      setIsWhitelisted(true);
+    }
+
+    // Reload current tab to apply changes
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     if (tab?.id) {
       chrome.tabs.reload(tab.id);
     }
-    window.close();
   };
 
   if (loading) {
@@ -74,7 +94,7 @@ function PopupApp() {
   return (
     <div style={{ width: 320, padding: 16, fontFamily: "system-ui, sans-serif" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-        <h1 style={{ margin: 0, fontSize: 16, fontWeight: 600 }}>Content Blocker</h1>
+        <h1 style={{ margin: 0, fontSize: 16, fontWeight: 600 }}>Veil</h1>
         <button
           onClick={handleToggle}
           style={{
@@ -92,18 +112,23 @@ function PopupApp() {
       </div>
 
       <div style={{
-        background: "#f5f5f5",
+        background: isWhitelisted ? "#f0fdf4" : "#f5f5f5",
         borderRadius: 8,
         padding: 12,
         marginBottom: 12,
         textAlign: "center",
       }}>
-        <div style={{ fontSize: 28, fontWeight: 700, color: "#4A90D9" }}>
-          {blocked}
-        </div>
-        <div style={{ fontSize: 12, color: "#666" }}>
-          заблокировано на этой странице
-        </div>
+        {isWhitelisted ? (
+          <>
+            <div style={{ fontSize: 20, fontWeight: 700, color: "#22c55e" }}>✓</div>
+            <div style={{ fontSize: 12, color: "#666" }}>блокировка отключена для этого сайта</div>
+          </>
+        ) : (
+          <>
+            <div style={{ fontSize: 28, fontWeight: 700, color: "#4A90D9" }}>{blocked}</div>
+            <div style={{ fontSize: 12, color: "#666" }}>заблокировано на этой странице</div>
+          </>
+        )}
       </div>
 
       <div style={{ fontSize: 13, color: "#888", marginBottom: 12, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
@@ -111,20 +136,21 @@ function PopupApp() {
       </div>
 
       <button
-        onClick={handleWhitelist}
+        onClick={handleWhitelistToggle}
         disabled={!domain}
         style={{
           width: "100%",
           padding: "8px 16px",
           borderRadius: 8,
-          border: "1px solid #ddd",
-          background: "white",
+          border: isWhitelisted ? "1px solid #4A90D9" : "1px solid #ddd",
+          background: isWhitelisted ? "#EBF5FF" : "white",
+          color: isWhitelisted ? "#4A90D9" : "#333",
           fontSize: 13,
           cursor: domain ? "pointer" : "not-allowed",
           opacity: domain ? 1 : 0.5,
         }}
       >
-        Отключить для этого сайта
+        {isWhitelisted ? "Включить блокировку" : "Отключить для этого сайта"}
       </button>
 
       <button
