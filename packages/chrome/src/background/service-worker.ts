@@ -116,6 +116,7 @@ async function updateFiltersInBackground(): Promise<void> {
   const registry = await response.json();
 
   const allRulesText: string[] = [];
+  const listRuleCounts: Record<string, number> = {};
 
   for (const list of registry.lists as { id: string; url: string; enabled: boolean }[]) {
     if (!list.enabled) continue;
@@ -129,6 +130,9 @@ async function updateFiltersInBackground(): Promise<void> {
       if (resp.ok) {
         const text = await resp.text();
         allRulesText.push(text);
+        // Count rules per list
+        const listResult = parser.parseList(text);
+        listRuleCounts[list.id] = listResult.rules.length;
       }
     } catch {
       // Skip failed lists — keep going
@@ -143,7 +147,7 @@ async function updateFiltersInBackground(): Promise<void> {
     await engine.initialize(result.rules);
 
     // Cache for next startup
-    await chrome.storage.local.set({ cachedRules: combined });
+    await chrome.storage.local.set({ cachedRules: combined, listRuleCounts });
 
     // Update DNR rules
     await updateDNRRules(result.rules);
@@ -497,11 +501,21 @@ async function handleMessage(message: { type: string; payload?: unknown }): Prom
       return { whitelist: whitelist.getAll() };
 
     case "GET_FILTER_LISTS": {
-      // Return from registry
+      // Return registry enriched with actual loaded rule counts
       try {
         const resp = await fetch(chrome.runtime.getURL("filter-lists/registry.json"));
         const registry = await resp.json();
-        return { lists: registry.lists };
+        
+        // Get stored per-list rule counts
+        const stored = await chrome.storage.local.get("listRuleCounts");
+        const counts = (stored.listRuleCounts ?? {}) as Record<string, number>;
+
+        const enriched = (registry.lists as any[]).map((list: any) => ({
+          ...list,
+          rulesCount: counts[list.id] ?? 0,
+        }));
+
+        return { lists: enriched };
       } catch {
         return { lists: [] };
       }
