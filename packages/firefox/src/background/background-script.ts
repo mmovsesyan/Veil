@@ -4,8 +4,10 @@
  */
 
 import { BlockingEngine, RuleParser, StatisticsTracker, WhitelistManager, RuleManager } from "@veil/core";
-import { checkKnownCNAMECloak, isTrackerCNAMETarget, parseScriptletRule } from "@veil/core";
+import { checkKnownCNAMECloak, isTrackerCNAMETarget } from "@veil/core";
 import type { ResourceType } from "@veil/core";
+
+declare const browser: any; // Firefox WebExtension API (types handled by @types/webextension-polyfill)
 
 const engine = new BlockingEngine();
 const parser = new RuleParser();
@@ -57,7 +59,7 @@ async function initializeExtension(): Promise<void> {
 // ─── webRequest: Block Requests ───────────────────────────────────────────────
 
 browser.webRequest.onBeforeRequest.addListener(
-  (details: browser.webRequest.RequestDetails) => {
+  (details: any) => {
     if (!isEnabled) return {};
     if (details.tabId < 0) return {};
 
@@ -113,7 +115,7 @@ browser.webRequest.onBeforeRequest.addListener(
 // Firefox provides browser.dns API for resolving CNAME records
 if (typeof browser !== "undefined" && browser.dns) {
   browser.webRequest.onBeforeRequest.addListener(
-    async (details: browser.webRequest.RequestDetails) => {
+    async (details: any) => {
       if (!isEnabled || details.tabId < 0) return {};
 
       try {
@@ -149,7 +151,7 @@ if (typeof browser !== "undefined" && browser.dns) {
 // ─── HTML Filtering via filterResponseData (Firefox-specific) ─────────────────
 
 browser.webRequest.onBeforeRequest.addListener(
-  (details: browser.webRequest.RequestDetails) => {
+  (details: any) => {
     if (!isEnabled) return {};
     if (details.type !== "main_frame" && details.type !== "sub_frame") return {};
 
@@ -207,14 +209,14 @@ browser.webRequest.onBeforeRequest.addListener(
 
 // ─── Navigation: Reset Stats & Inject Cosmetic ───────────────────────────────
 
-browser.webNavigation.onCommitted.addListener((details: browser.webNavigation.NavigationDetails) => {
+browser.webNavigation.onCommitted.addListener((details: any) => {
   if (details.frameId === 0) {
     stats.resetTab(details.tabId);
     updateBadge(details.tabId);
   }
 });
 
-browser.webNavigation.onCompleted.addListener((details: browser.webNavigation.NavigationDetails) => {
+browser.webNavigation.onCompleted.addListener((details: any) => {
   if (details.frameId !== 0) return;
 
   const url = new URL(details.url);
