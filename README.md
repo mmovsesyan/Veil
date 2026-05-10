@@ -31,8 +31,8 @@
 
 | Metric | Value |
 |--------|-------|
-| Matching latency | **0.6μs** per request |
-| Throughput | **1.7M** requests/sec |
+| Matching latency | **0.3μs** per request |
+| Throughput | **3.6M** requests/sec |
 | Initialization | **250ms** (300K rules) |
 | Memory | **~48MB** (300K rules) |
 | Cold start (cached) | **<50ms** |

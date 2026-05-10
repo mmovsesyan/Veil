@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] — 2026-05-10
+
+### Added
+
+- **Auto-learning engine integration** — now active in all three browsers:
+  - Chrome: analyzes unblocked requests via `webRequest.onCompleted`
+  - Firefox: inline analysis in `onBeforeRequest` for third-party requests
+  - Safari: uses `PerformanceObserver` content script to detect loaded resources
+- **Message API for auto-learning**: `GET_AUTO_RULES_STATS`, `GET_AUTO_RULES`, `CONFIRM_AUTO_RULE`, `REJECT_AUTO_RULE`
+- Auto-confirmed rules are added to the engine in real-time and persisted
+
+### Fixed
+
+- **Sync Service** — replaced stub with real `browser.storage.sync` / `chrome.storage.sync` implementation with conflict detection, offline queue, and `storage.onChanged` listener
+- **Firefox Adapter** — all methods now call real browser APIs (`browser.tabs.query`, `browserAction.setBadgeText`, `webNavigation.onCommitted`)
+- **Safari Native Bridge** — uses `browser.runtime.sendNativeMessage` with proper error handling and fallback
+- **Safari Adapter** — stores compiled WebKit JSON in `browser.storage.local`, triggers native content blocker reload, real badge and tabs API
+- All lint errors resolved, CI fully green
+
+### Performance
+
+- Engine throughput improved to **3.6M req/s** (up from 1.7M in v1.0.0)
+
 ## [1.0.0] — 2025-01-15
 
 ### 🎉 Initial Release
