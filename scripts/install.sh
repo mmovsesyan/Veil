@@ -74,7 +74,7 @@ install_chrome() {
   fi
 
   # Open Chrome extensions page and provide instructions
-  open "$CHROME_PATH" --args --new-window "chrome://extensions"
+  open -a "Google Chrome" "chrome://extensions"
 
   echo ""
   success "Chrome opened at extensions page"
@@ -117,7 +117,7 @@ install_firefox() {
   fi
 
   # Open Firefox debugging page
-  open "$FIREFOX_PATH" --args --new-tab "about:debugging#/runtime/this-firefox"
+  open -a "Firefox" "about:debugging#/runtime/this-firefox"
 
   echo ""
   success "Firefox opened at debugging page"
