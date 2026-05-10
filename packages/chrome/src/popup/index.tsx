@@ -168,6 +168,80 @@ function PopupApp() {
       </button>
 
       <button
+        onClick={async () => {
+          // Inject element picker into the active tab
+          const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+          if (tab?.id) {
+            chrome.scripting.executeScript({
+              target: { tabId: tab.id },
+              func: () => {
+                // Element picker overlay
+                const overlay = document.createElement("div");
+                overlay.id = "veil-picker-overlay";
+                overlay.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;z-index:2147483647;cursor:crosshair;";
+                
+                let highlighted: HTMLElement | null = null;
+                
+                overlay.addEventListener("mousemove", (e) => {
+                  overlay.style.pointerEvents = "none";
+                  const el = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement;
+                  overlay.style.pointerEvents = "auto";
+                  
+                  if (el && el !== highlighted && el !== overlay) {
+                    if (highlighted) highlighted.style.outline = "";
+                    highlighted = el;
+                    highlighted.style.outline = "2px solid red";
+                  }
+                });
+                
+                overlay.addEventListener("click", (e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  overlay.remove();
+                  if (highlighted) {
+                    highlighted.style.outline = "";
+                    // Generate selector
+                    let selector = "";
+                    if (highlighted.id) {
+                      selector = `#${highlighted.id}`;
+                    } else if (highlighted.className) {
+                      const cls = highlighted.className.split(" ").filter(Boolean)[0];
+                      if (cls) selector = `.${cls}`;
+                    }
+                    if (!selector) {
+                      selector = highlighted.tagName.toLowerCase();
+                    }
+                    // Hide element and save rule
+                    highlighted.style.display = "none";
+                    const domain = window.location.hostname;
+                    const rule = `${domain}##${selector}`;
+                    chrome.runtime.sendMessage({ type: "ADD_CUSTOM_RULE", payload: rule });
+                    alert(`Правило добавлено: ${rule}`);
+                  }
+                });
+                
+                document.body.appendChild(overlay);
+              },
+            });
+            window.close();
+          }
+        }}
+        style={{
+          width: "100%",
+          padding: "8px 16px",
+          marginTop: 8,
+          borderRadius: 8,
+          border: "1px dashed #ddd",
+          background: "white",
+          fontSize: 12,
+          color: "#666",
+          cursor: "pointer",
+        }}
+      >
+        🎯 Заблокировать элемент
+      </button>
+
+      <button
         onClick={() => chrome.runtime.openOptionsPage()}
         style={{
           width: "100%",
