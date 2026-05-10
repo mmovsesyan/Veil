@@ -13,178 +13,151 @@
 
 ## Features
 
-- **Network blocking** — token-bucket engine with O(1) hostname lookup and sub-microsecond matching
-- **Cosmetic filtering** — CSS element hiding, extended CSS selectors (`#?#`), MutationObserver for SPAs
-- **Anti-adblock bypass** — 116 scriptlets (abort-on-property-read, prevent-fetch, prevent-bab, json-prune, etc.)
-- **$redirect** — serve neutered resources (noop.js, 1x1.gif) instead of blocking
-- **$removeparam** — strip tracking parameters (utm_*, fbclid, gclid) from URLs
-- **$csp injection** — Content-Security-Policy header modification
-- **CNAME uncloaking** — detect trackers hiding behind first-party CNAME records
-- **HTML filtering** — remove elements from raw HTML before rendering (Firefox)
-- **Element picker** — visual rule creation by clicking page elements
-- **Social widget placeholders** — block Facebook/Twitter/Instagram/LinkedIn/VK with one-click load
-- **Cross-device sync** — settings synchronization with conflict resolution
-- **Auto-learning engine** — automatically discovers and blocks new ad patterns
-- **Statistics** — per-tab, daily, weekly blocking stats with charts
+- **Network blocking** — 3.6M req/s, sub-microsecond matching
+- **Cosmetic filtering** — CSS element hiding, extended CSS selectors
+- **Anti-adblock bypass** — 116 scriptlets (CSP-safe injection via world:MAIN)
+- **Auto-learning** — discovers new ad patterns automatically
+- **Element picker** — click any element to block it permanently
+- **$redirect / $removeparam / $csp** — advanced filtering
+- **CNAME uncloaking** — detect hidden trackers
+- **Cross-device sync** — via browser.storage.sync
 
-## Performance
+## Installation
 
-| Metric | Value |
-|--------|-------|
-| Matching latency | **0.3μs** per request |
-| Throughput | **3.6M** requests/sec |
-| Initialization | **250ms** (300K rules) |
-| Memory | **~48MB** (300K rules) |
-| Cold start (cached) | **<50ms** |
-
-## Supported Browsers
-
-| Browser | API | Version |
-|---------|-----|---------|
-| Chrome | declarativeNetRequest (Manifest V3) | 110+ |
-| Firefox | webRequest (MV2) | 109+ |
-| Safari | WebKit Content Blocker API | 16+ |
-| Android | Local VPN DNS blocking | 8+ |
-| iOS/macOS | Safari Content Blocker | 16+ |
-
-## Quick Start
-
-### Requirements
-
-- Node.js ≥ 20
-- pnpm ≥ 9 (auto-installed via `corepack enable`)
-
-### Install & Build
+### Chrome (Desktop)
 
 ```bash
+git clone https://github.com/mmovsesyan/Veil.git
+cd Veil
 pnpm install
 pnpm run build
 ```
 
-### Run Tests
+1. Open `chrome://extensions`
+2. Enable **Developer mode**
+3. Click **Load unpacked** → select `packages/chrome/`
+4. Done — Veil icon appears in toolbar
+
+### Firefox (Desktop)
 
 ```bash
-pnpm test
+pnpm run build
 ```
 
-### Load in Browser
+1. Open `about:debugging#/runtime/this-firefox`
+2. Click **Load Temporary Add-on**
+3. Select `packages/firefox/manifest.json`
 
-**Chrome:**
-1. Open `chrome://extensions` → Enable Developer mode
-2. Click "Load unpacked" → Select `packages/chrome/`
+### Safari (macOS)
 
-**Firefox:**
-1. Open `about:debugging` → "Load Temporary Add-on"
-2. Select `packages/firefox/manifest.json`
+```bash
+pnpm run build
+open apps/xcode/Veil/Veil.xcodeproj
+```
+
+1. In Xcode: select your Team in Signing
+2. Press **⌘R** (Run)
+3. Safari → Develop → **Allow Unsigned Extensions**
+4. Safari → Settings → Extensions → enable **Veil**
+
+### iPhone (Safari)
+
+```bash
+pnpm run build
+open apps/xcode-ios/Veil/Veil.xcodeproj
+```
+
+1. Connect iPhone via cable
+2. In Xcode: select your iPhone device
+3. Select your Team in Signing for both targets
+4. Press **⌘R** — app installs on iPhone
+5. iPhone: Settings → General → VPN & Device Management → trust developer
+6. iPhone: Settings → Safari → Extensions → enable **Veil**
+
+**For Content Blocker (blocks ads natively):**
+1. In Xcode: File → New → Target → **Content Blocker Extension**
+2. Name: `VeilBlocker`
+3. Replace `blockerList.json` with ours:
+```bash
+cp "apps/xcode-ios/Veil/Veil Content Blocker/blockerList.json" \
+   "apps/xcode-ios/Veil/VeilBlocker/blockerList.json"
+```
+4. Build and run
+5. iPhone: Settings → Safari → Content Blockers → **VeilBlocker** → ON
+
+### iPhone & Android (DNS — all apps)
+
+**iPhone:**
+- AirDrop file `apps/ios/Veil-AdBlock-DNS.mobileconfig` to iPhone
+- Settings → Profile Downloaded → Install
+- Blocks ads in all apps via encrypted DNS
+
+**Android:**
+- Settings → Network & Internet → Private DNS
+- Enter: `dns.adguard-dns.com`
+- Blocks ads in all apps
+
+### Auto-install script (Chrome + Firefox + Safari)
+
+```bash
+./scripts/install.sh all      # All browsers
+./scripts/install.sh chrome   # Chrome only
+./scripts/install.sh firefox  # Firefox only
+./scripts/install.sh safari   # Safari only
+```
+
+## How It Works
+
+```
+User browses → Request intercepted → Engine checks rules → Block/Allow
+                                          ↓
+                              Auto-learning observes
+                              unblocked ad patterns
+                                          ↓
+                              After 3 confirmations →
+                              New rule added automatically
+```
 
 ## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                        UI Layer                              │
-│   Popup │ Options Page │ Statistics │ Element Picker         │
-│                    (React + Tailwind)                        │
+│   Popup │ Options │ Statistics │ Element Picker              │
 └──────────────────────────┬──────────────────────────────────┘
                            │
 ┌──────────────────────────▼──────────────────────────────────┐
 │                      Core Engine                             │
-│                                                             │
-│  Rule Parser (ABP/uBO/AG)  │  Blocking Engine (Token-Bucket)│
-│  30+ Modifiers             │  $important Priority System    │
-│  116 Scriptlets            │  $badfilter Support            │
-│  Engine Serializer         │  CNAME Uncloaking              │
-│  Auto-Learning Engine      │  HTML Filtering                │
-│  $redirect / $removeparam  │  $csp / $permissions           │
-│                                                             │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │              WASM Engine (Rust, optional)            │   │
-│  │   Hostname HashSet + BMH Search + Token Buckets     │   │
-│  └─────────────────────────────────────────────────────┘   │
+│  Rule Parser │ Blocking Engine │ 116 Scriptlets              │
+│  Auto-Learning │ Serializer │ CNAME Uncloaking              │
 └──────────────────────────┬──────────────────────────────────┘
                            │
 ┌──────────────────────────▼──────────────────────────────────┐
 │                   Platform Adapters                          │
-│  Chrome (MV3/DNR)  │  Firefox (webRequest)  │  Safari (JSON)│
+│  Chrome (DNR) │ Firefox (webRequest) │ Safari (WebKit JSON) │
 └─────────────────────────────────────────────────────────────┘
-```
-
-## Filter Syntax
-
-Full compatibility with Adblock Plus, uBlock Origin, and AdGuard:
-
-```adblock
-! Network blocking
-||ads.example.com^
-||tracker.com^$third-party,script,important
-
-! Exception rules
-@@||cdn.example.com^
-
-! Cosmetic filtering
-##.ad-banner
-#?#div:has(> .ad-label)
-
-! Scriptlet injection
-example.com#%#//scriptlet("abort-on-property-read", "adblock")
-
-! Advanced modifiers
-||tracker.com^$removeparam=utm_source
-||ads.com^$redirect=noop.js,script
-||unsafe.com^$csp=script-src 'self'
-```
-
-### Supported Modifiers (30+)
-
-| Category | Modifiers |
-|----------|-----------|
-| Basic | `$third-party`, `$match-case` |
-| Resource types | `$script`, `$image`, `$stylesheet`, `$xhr`, `$media`, `$font`, `$iframe`, `$popup` |
-| Priority | `$important`, `$badfilter` |
-| Actions | `$redirect`, `$removeparam`, `$csp`, `$permissions` |
-| Scope | `$domain`, `$denyallow`, `$to`, `$method` |
-| Page-level | `$document`, `$elemhide`, `$generichide` |
-
-## Project Structure
-
-```
-veil/
-├── packages/
-│   ├── core/          # Shared engine (TypeScript + optional Rust WASM)
-│   ├── chrome/        # Chrome Extension (Manifest V3)
-│   ├── firefox/       # Firefox Extension (MV2)
-│   ├── safari/        # Safari Content Blocker
-│   └── ui/            # React UI components
-├── apps/
-│   ├── android/       # Android app (VPN-based)
-│   └── ios/           # iOS/macOS app (Safari extension)
-├── filter-lists/      # Filter list registry
-├── e2e/               # Playwright E2E tests
-└── scripts/           # Build & utility scripts
 ```
 
 ## Development
 
 ```bash
-pnpm test              # 229 tests, <2s
-pnpm run typecheck     # TypeScript checking
-pnpm run lint          # ESLint
+pnpm test              # 229 tests
 pnpm run build         # Build all packages
-pnpm run package       # Package extensions (zip/xpi)
+pnpm run lint          # ESLint
+pnpm run typecheck     # TypeScript
+./scripts/build-ios-rules.sh  # Generate Safari Content Blocker JSON
 ```
 
-## Tech Stack
+## Performance
 
-- **TypeScript 5.7** — strict typing
-- **Rust + wasm-bindgen** — optional WASM acceleration
-- **Vite 6** — builds
-- **React 18** — UI
-- **Tailwind CSS** — styling
-- **Vitest + fast-check** — testing (unit + property-based)
-- **pnpm workspaces** — monorepo
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+| Metric | Value |
+|--------|-------|
+| Throughput | 3.6M req/s |
+| Latency | 0.3μs/request |
+| Init (300K rules) | 250ms |
+| Memory | ~48MB |
+| Scriptlets | 116 |
+| Filter modifiers | 30+ |
 
 ## License
 
