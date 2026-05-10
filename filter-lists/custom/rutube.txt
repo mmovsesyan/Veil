@@ -3,6 +3,9 @@
 ! Last modified: 2026-05-10
 ! Homepage: https://github.com/mmovsesyan/Veil
 
+! ─── Disable generic cosmetic rules that break Rutube content ───
+@@||rutube.ru^$generichide
+
 ! ─── Network rules ───
 ||rutube.ru/api/advert/*
 ||rutube.ru/api/video/*/advert*
