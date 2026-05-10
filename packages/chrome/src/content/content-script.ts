@@ -225,23 +225,26 @@ function replaceSocialWidget(iframe: HTMLIFrameElement, networkName: string, ori
     font-family: system-ui, sans-serif;
   `;
 
-  placeholder.innerHTML = `
-    <span style="font-size: 14px; color: #6b7280;">
-      Виджет <strong>${networkName}</strong> заблокирован
-    </span>
-    <button style="
-      padding: 6px 16px;
-      font-size: 13px;
-      border: 1px solid #d1d5db;
-      border-radius: 6px;
-      background: white;
-      cursor: pointer;
-      font-family: inherit;
-    ">Загрузить</button>
-  `;
+  const label = document.createElement("span");
+  label.style.cssText = "font-size: 14px; color: #6b7280;";
+  label.textContent = `Виджет ${networkName} заблокирован`;
 
-  const button = placeholder.querySelector("button");
-  button?.addEventListener("click", () => {
+  const button = document.createElement("button");
+  button.style.cssText = `
+    padding: 6px 16px;
+    font-size: 13px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    font-family: inherit;
+  `;
+  button.textContent = "Загрузить";
+
+  placeholder.appendChild(label);
+  placeholder.appendChild(button);
+
+  button.addEventListener("click", () => {
     const restored = document.createElement("iframe");
     restored.src = originalSrc;
     restored.style.width = iframe.width ? `${iframe.width}px` : "100%";

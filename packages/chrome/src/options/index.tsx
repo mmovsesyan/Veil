@@ -65,11 +65,16 @@ function OptionsApp() {
   async function saveCustomRules() {
     const lines = customRules.split("\n").filter((l) => l.trim());
     let added = 0;
-    for (const line of lines) {
-      const resp = await chrome.runtime.sendMessage({ type: "ADD_CUSTOM_RULE", payload: line });
-      if (resp?.success) added++;
+    try {
+      for (const line of lines) {
+        const resp = await chrome.runtime.sendMessage({ type: "ADD_CUSTOM_RULE", payload: line });
+        if (resp?.success) added++;
+      }
+      setSaveStatus(`Добавлено ${added} правил`);
+    } catch (e) {
+      console.error("Failed to save custom rules:", e);
+      setSaveStatus(`Ошибка: добавлено ${added} из ${lines.length}`);
     }
-    setSaveStatus(`Добавлено ${added} правил`);
     setTimeout(() => setSaveStatus(""), 3000);
   }
 

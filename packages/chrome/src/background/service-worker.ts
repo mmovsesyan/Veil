@@ -22,6 +22,7 @@ const autoRules = new AutoRulesEngine();
 
 let isEnabled = true;
 const cosmeticRulesCache = new Map<string, CosmeticRule[]>();
+const COSMETIC_CACHE_MAX_SIZE = 500;
 
 // ─── Stable whitelist rule ID generation ──────────────────────────────────────
 
@@ -61,7 +62,20 @@ chrome.runtime.onStartup.addListener(async () => {
 // Also initialize immediately (service worker can restart at any time)
 initialize().catch(console.error);
 
+let initPromise: Promise<void> | null = null;
+
 async function initialize(): Promise<void> {
+  // Prevent concurrent initialization
+  if (initPromise) return initPromise;
+  initPromise = doInitialize();
+  try {
+    await initPromise;
+  } finally {
+    initPromise = null;
+  }
+}
+
+async function doInitialize(): Promise<void> {
   try {
     // 1. Load settings from storage (instant, no network)
     const stored = await chrome.storage.local.get([
@@ -402,6 +416,11 @@ chrome.webNavigation.onCompleted.addListener((details) => {
     let cosmetic = cosmeticRulesCache.get(domain);
     if (!cosmetic) {
       cosmetic = engine.getCosmeticRules(domain);
+      // Evict oldest entries if cache is full
+      if (cosmeticRulesCache.size >= COSMETIC_CACHE_MAX_SIZE) {
+        const firstKey = cosmeticRulesCache.keys().next().value;
+        if (firstKey !== undefined) cosmeticRulesCache.delete(firstKey);
+      }
       cosmeticRulesCache.set(domain, cosmetic);
     }
 

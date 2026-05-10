@@ -57,7 +57,7 @@ export class BlockingEngine implements IBlockingEngine {
   // ─── Cosmetic Indexes ─────────────────────────────────────────────────────
   private globalCosmeticIds: number[] = [];
   private domainCosmeticIds = new Map<string, number[]>();
-  private domainCosmeticExclusions: Map<string, Set<number>> = new Set() as unknown as Map<string, Set<number>>;
+  private domainCosmeticExclusions = new Map<string, Set<number>>();
 
   // ─── Resource Type Bitmap ─────────────────────────────────────────────────
   private static readonly TYPE_BIT: Record<string, number> = {
@@ -66,7 +66,7 @@ export class BlockingEngine implements IBlockingEngine {
   };
 
   constructor() {
-    this.domainCosmeticExclusions = new Map();
+    // All fields initialized at declaration
   }
 
   // ─── Public API ───────────────────────────────────────────────────────────
@@ -331,6 +331,16 @@ export class BlockingEngine implements IBlockingEngine {
     // Hostname-only rules go into hash set
     if (isHostnameOnlyRule(rule) && !rule.modifiers.resourceTypes?.length && rule.modifiers.thirdParty === undefined) {
       const hostname = extractRuleHostname(rule.pattern);
+      // Keep the highest-priority rule per hostname
+      const existingId = this.hostnameBlockRules.get(hostname);
+      if (existingId !== undefined) {
+        const existing = this.rules.get(existingId);
+        if (existing && existing.priority >= rule.priority) {
+          // Existing rule has higher or equal priority, put new one in token bucket
+          this.genericBlockRules.push(id);
+          return;
+        }
+      }
       this.hostnameBlockSet.add(hostname);
       this.hostnameBlockRules.set(hostname, id);
       return;
@@ -390,12 +400,16 @@ export class BlockingEngine implements IBlockingEngine {
   // ─── Private: Matching ────────────────────────────────────────────────────
 
   private findAllowRule(url: string, hostname: string, request: NetworkRequest): Rule | null {
+    let bestRule: Rule | null = null;
+
     // Hostname allow
     if (this.hostnameAllowSet.has(hostname)) {
       const id = this.hostnameAllowRules.get(hostname);
       if (id !== undefined) {
         const rule = this.rules.get(id);
-        if (rule) return rule;
+        if (rule) {
+          bestRule = rule;
+        }
       }
     }
 
@@ -406,17 +420,26 @@ export class BlockingEngine implements IBlockingEngine {
       if (!bucket) continue;
       for (const id of bucket) {
         const rule = this.rules.get(id);
-        if (rule && this.matchesRule(rule, url, request)) return rule;
+        if (rule && this.matchesRule(rule, url, request)) {
+          if (!bestRule || rule.priority > bestRule.priority) {
+            bestRule = rule;
+          }
+          if (bestRule.priority >= 200) return bestRule;
+        }
       }
     }
 
     // Generic allow
     for (const id of this.genericAllowRules) {
       const rule = this.rules.get(id);
-      if (rule && this.matchesRule(rule, url, request)) return rule;
+      if (rule && this.matchesRule(rule, url, request)) {
+        if (!bestRule || rule.priority > bestRule.priority) {
+          bestRule = rule;
+        }
+      }
     }
 
-    return null;
+    return bestRule;
   }
 
   private matchesRule(rule: Rule, url: string, request: NetworkRequest): boolean {
@@ -525,7 +548,10 @@ export class BlockingEngine implements IBlockingEngine {
 
   private rebuildFromRules(): void {
     const allRules = Array.from(this.rules.values());
+    // Preserve nextId to avoid ID collisions
+    const savedNextId = this.nextId;
     this.clear();
+    this.nextId = savedNextId;
     for (const rule of allRules) {
       this.addRule(rule);
     }

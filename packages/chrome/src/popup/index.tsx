@@ -59,33 +59,41 @@ function PopupApp() {
   }, []);
 
   const handleToggle = async () => {
-    const response = await chrome.runtime.sendMessage({ type: "TOGGLE_ENABLED" });
-    setEnabled(response?.enabled ?? !enabled);
+    try {
+      const response = await chrome.runtime.sendMessage({ type: "TOGGLE_ENABLED" });
+      setEnabled(response?.enabled ?? !enabled);
 
-    // Reload current tab to apply the change immediately
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    if (tab?.id) {
-      chrome.tabs.reload(tab.id);
+      // Reload current tab to apply the change immediately
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (tab?.id) {
+        chrome.tabs.reload(tab.id);
+      }
+    } catch (e) {
+      console.error("Toggle error:", e);
     }
   };
 
   const handleWhitelistToggle = async () => {
     if (!domain) return;
 
-    if (isWhitelisted) {
-      // Remove from whitelist
-      await chrome.runtime.sendMessage({ type: "REMOVE_FROM_WHITELIST", payload: domain });
-      setIsWhitelisted(false);
-    } else {
-      // Add to whitelist
-      await chrome.runtime.sendMessage({ type: "ADD_TO_WHITELIST", payload: domain });
-      setIsWhitelisted(true);
-    }
+    try {
+      if (isWhitelisted) {
+        // Remove from whitelist
+        await chrome.runtime.sendMessage({ type: "REMOVE_FROM_WHITELIST", payload: domain });
+        setIsWhitelisted(false);
+      } else {
+        // Add to whitelist
+        await chrome.runtime.sendMessage({ type: "ADD_TO_WHITELIST", payload: domain });
+        setIsWhitelisted(true);
+      }
 
-    // Reload current tab to apply changes
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    if (tab?.id) {
-      chrome.tabs.reload(tab.id);
+      // Reload current tab to apply changes
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (tab?.id) {
+        chrome.tabs.reload(tab.id);
+      }
+    } catch (e) {
+      console.error("Whitelist toggle error:", e);
     }
   };
 

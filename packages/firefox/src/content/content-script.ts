@@ -50,12 +50,16 @@ function startObserver(): void {
         if (!(node instanceof HTMLElement)) continue;
 
         for (const selector of cosmeticSelectors) {
-          if (node.matches(selector)) {
-            node.style.display = "none";
+          try {
+            if (node.matches(selector)) {
+              node.style.display = "none";
+            }
+            node.querySelectorAll(selector).forEach((el) => {
+              (el as HTMLElement).style.display = "none";
+            });
+          } catch {
+            // Invalid selector — skip
           }
-          node.querySelectorAll(selector).forEach((el) => {
-            (el as HTMLElement).style.display = "none";
-          });
         }
 
         // Social widget iframes
@@ -81,13 +85,22 @@ function handleSocialIframe(iframe: HTMLIFrameElement): void {
     for (const [domain, network] of Object.entries(SOCIAL_DOMAINS)) {
       if (hostname === domain || hostname.endsWith(`.${domain}`)) {
         const placeholder = document.createElement("div");
-        placeholder.innerHTML = `
-          <div style="border:1px solid #e5e7eb;border-radius:8px;padding:16px;text-align:center;background:#f9fafb;">
-            <p style="margin:0 0 8px;font-size:14px;color:#6b7280;">Виджет <b>${network}</b> заблокирован</p>
-            <button style="padding:6px 16px;border:1px solid #d1d5db;border-radius:6px;background:white;cursor:pointer;">Загрузить</button>
-          </div>
-        `;
-        placeholder.querySelector("button")?.addEventListener("click", () => {
+        const wrapper = document.createElement("div");
+        wrapper.style.cssText = "border:1px solid #e5e7eb;border-radius:8px;padding:16px;text-align:center;background:#f9fafb;";
+        
+        const text = document.createElement("p");
+        text.style.cssText = "margin:0 0 8px;font-size:14px;color:#6b7280;";
+        text.textContent = `Виджет ${network} заблокирован`;
+        
+        const button = document.createElement("button");
+        button.style.cssText = "padding:6px 16px;border:1px solid #d1d5db;border-radius:6px;background:white;cursor:pointer;";
+        button.textContent = "Загрузить";
+        
+        wrapper.appendChild(text);
+        wrapper.appendChild(button);
+        placeholder.appendChild(wrapper);
+
+        button.addEventListener("click", () => {
           const restored = document.createElement("iframe");
           restored.src = src;
           restored.style.width = iframe.width || "100%";

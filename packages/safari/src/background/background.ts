@@ -29,6 +29,7 @@ const stats = new StatisticsTracker();
 const whitelist = new WhitelistManager();
 
 const allRules: Rule[] = [];
+const MAX_RULES = 50000;
 let isEnabled = true;
 
 // ─── Initialization ───────────────────────────────────────────────────────────
@@ -114,6 +115,10 @@ function processResourceReport(report: {
     const rule = parser.parse(confirmed.suggestedRule);
     if (rule) {
       rule.source = "auto-learned";
+      // Prevent unbounded growth
+      if (allRules.length >= MAX_RULES) {
+        allRules.splice(0, 100); // Remove oldest 100 rules
+      }
       allRules.push(rule);
 
       // Persist auto-learned rules

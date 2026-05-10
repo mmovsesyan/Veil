@@ -255,23 +255,27 @@ browser.webNavigation.onCompleted.addListener((details: any) => {
   if (details.frameId !== 0) return;
   if (!isEnabled) return;
 
-  const url = new URL(details.url);
-  const domain = url.hostname;
+  try {
+    const url = new URL(details.url);
+    const domain = url.hostname;
 
-  if (whitelist.isWhitelisted(domain)) return;
+    if (whitelist.isWhitelisted(domain)) return;
 
-  const cosmeticRules = engine.getCosmeticRules(domain);
-  if (cosmeticRules.length > 0) {
-    const css = cosmeticRules
-      .map((r) => `${r.selector} { display: none !important; }`)
-      .join("\n");
+    const cosmeticRules = engine.getCosmeticRules(domain);
+    if (cosmeticRules.length > 0) {
+      const css = cosmeticRules
+        .map((r) => `${r.selector} { display: none !important; }`)
+        .join("\n");
 
-    browser.tabs.insertCSS(details.tabId, {
-      code: css,
-      runAt: "document_start",
-    }).catch(() => {
-      // Restricted page
-    });
+      browser.tabs.insertCSS(details.tabId, {
+        code: css,
+        runAt: "document_start",
+      }).catch(() => {
+        // Restricted page
+      });
+    }
+  } catch {
+    // Invalid URL (e.g., about:blank, chrome://)
   }
 });
 
