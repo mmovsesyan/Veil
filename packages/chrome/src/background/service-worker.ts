@@ -59,9 +59,6 @@ chrome.runtime.onStartup.addListener(async () => {
   await initialize();
 });
 
-// Also initialize immediately (service worker can restart at any time)
-initialize().catch(console.error);
-
 let initPromise: Promise<void> | null = null;
 
 async function initialize(): Promise<void> {
@@ -74,6 +71,9 @@ async function initialize(): Promise<void> {
     initPromise = null;
   }
 }
+
+// Also initialize immediately (service worker can restart at any time)
+initialize().catch(console.error);
 
 async function doInitialize(): Promise<void> {
   try {
