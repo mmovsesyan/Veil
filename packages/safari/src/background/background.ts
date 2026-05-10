@@ -152,6 +152,17 @@ if (typeof browser !== "undefined" && browser.runtime?.onMessage) {
         if (typeof browser !== "undefined" && browser.storage) {
           browser.storage.local.set({ enabled: isEnabled });
         }
+        // Recompile content blocker: empty rules when disabled, full rules when enabled
+        if (!isEnabled) {
+          // Store empty rules to effectively disable blocking
+          if (typeof browser !== "undefined" && browser.storage?.local) {
+            browser.storage.local.set({ veil_webkit_rules: "[]" });
+          }
+          reloadContentBlocker("com.veil.contentblocker").catch(() => {});
+        } else {
+          // Recompile with full rules
+          compileAndReload().catch(() => {});
+        }
         return Promise.resolve({ enabled: isEnabled });
 
       case "GET_AUTO_RULES_STATS":

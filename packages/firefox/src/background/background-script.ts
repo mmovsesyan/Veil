@@ -239,6 +239,7 @@ browser.webNavigation.onCommitted.addListener((details: any) => {
 
 browser.webNavigation.onCompleted.addListener((details: any) => {
   if (details.frameId !== 0) return;
+  if (!isEnabled) return;
 
   const url = new URL(details.url);
   const domain = url.hostname;
@@ -309,6 +310,14 @@ browser.runtime.onMessage.addListener((message: { type: string; payload?: unknow
     case "ADD_CUSTOM_RULE": {
       const result = ruleManager.addCustomRule(message.payload as string);
       return Promise.resolve(result);
+    }
+
+    case "GET_COSMETIC_RULES": {
+      const domain = message.payload as string;
+      if (!isEnabled) return Promise.resolve({ selectors: [] });
+      if (whitelist.isWhitelisted(domain)) return Promise.resolve({ selectors: [] });
+      const cosmeticRules = engine.getCosmeticRules(domain);
+      return Promise.resolve({ selectors: cosmeticRules.map((r) => r.selector) });
     }
 
     case "GET_AUTO_RULES_STATS":
