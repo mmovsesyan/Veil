@@ -65,10 +65,6 @@ export class BlockingEngine implements IBlockingEngine {
     media: 0x010, font: 0x020, iframe: 0x040, popup: 0x080, other: 0x100,
   };
 
-  constructor() {
-    // All fields initialized at declaration
-  }
-
   // ─── Public API ───────────────────────────────────────────────────────────
 
   async initialize(rules: Rule[]): Promise<void> {

@@ -65,6 +65,8 @@ export default tseslint.config(
       ".eslintrc.cjs",
       "e2e/**",
       "coverage/**",
+      "apps/xcode/**",
+      "apps/xcode-ios/**",
     ],
   },
 );
