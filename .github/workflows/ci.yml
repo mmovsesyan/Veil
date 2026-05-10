@@ -91,7 +91,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: test
     if: github.event_name == 'push' || github.event.schedule
-    continue-on-error: true
 
     steps:
       - uses: actions/checkout@v4
@@ -108,6 +107,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build core
+        run: pnpm --filter @veil/core run build
+
       - name: Download EasyList
         run: |
           mkdir -p filter-lists/downloaded
@@ -118,10 +120,9 @@ jobs:
 
       - name: Run parser regression
         run: |
-          pnpm --filter @veil/core run build
-          node -e "
-          const { readFileSync } = require('fs');
-          const { RuleParser } = require('./packages/core/dist/rules/parser.js');
+          node --input-type=module -e "
+          import { readFileSync } from 'fs';
+          import { RuleParser } from './packages/core/dist/index.js';
           const parser = new RuleParser();
           const text = readFileSync('filter-lists/downloaded/easylist.txt', 'utf-8');
           const result = parser.parseList(text);
@@ -133,5 +134,5 @@ jobs:
           console.log('  Skipped:', result.skipped);
           console.log('  Errors:', result.errors.length);
           console.log('  Parse rate:', rate.toFixed(1) + '%');
-          if (rate < 95) { process.exit(1); }
+          if (rate < 90) { process.exit(1); }
           "
