@@ -96,11 +96,42 @@ async function doInitialize(): Promise<void> {
       }
     }
 
-    // 3. Load rules — prefer cached, fallback to empty
+    // 3. Load rules — prefer cached, fallback to bundled rules
     const cachedRules = stored["cachedRules"] as string | undefined;
     if (cachedRules) {
       const result = parser.parseList(cachedRules);
       await engine.initialize(result.rules);
+    } else {
+      // No cache — load bundled rules (works offline, first install)
+      try {
+        const bundledFiles = [
+          "bundled-rules/easylist-mini.txt",
+          "bundled-rules/easyprivacy-mini.txt",
+          "bundled-rules/rutube.txt",
+        ];
+        const allText: string[] = [];
+        for (const file of bundledFiles) {
+          try {
+            const resp = await fetch(chrome.runtime.getURL(file));
+            if (resp.ok) allText.push(await resp.text());
+          } catch { /* skip missing files */ }
+        }
+        if (allText.length > 0) {
+          const combined = allText.join("\n");
+          const result = parser.parseList(combined);
+          await engine.initialize(result.rules);
+          // Cache for next startup
+          await chrome.storage.local.set({
+            cachedRules: combined,
+            listRuleCounts: { "bundled": result.rules.length },
+          });
+          // Update DNR
+          await updateDNRRules(result.rules);
+          console.log(`[Content Blocker] Loaded ${result.rules.length} bundled rules`);
+        }
+      } catch (e) {
+        console.warn("[Content Blocker] Failed to load bundled rules:", e);
+      }
     }
 
     // 4. Load custom rules

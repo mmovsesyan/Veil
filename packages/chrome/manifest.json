@@ -56,7 +56,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["filter-lists/registry.json"],
+      "resources": ["filter-lists/registry.json", "bundled-rules/*"],
       "matches": ["<all_urls>"]
     }
   ]
