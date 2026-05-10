@@ -483,6 +483,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = RJT2R3N326;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Veil Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Veil Extension";
@@ -498,7 +499,7 @@
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.veil.ios.Extension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mmovsesyan.veil.Extension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -515,6 +516,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = RJT2R3N326;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Veil Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Veil Extension";
@@ -530,7 +532,7 @@
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.veil.ios.Extension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mmovsesyan.veil.Extension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -549,6 +551,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = RJT2R3N326;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Veil/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Veil;
@@ -569,7 +572,7 @@
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.veil.Veil;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mmovsesyan.veil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -588,6 +591,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = RJT2R3N326;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Veil/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Veil;
@@ -608,7 +612,7 @@
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.veil.Veil;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mmovsesyan.veil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
