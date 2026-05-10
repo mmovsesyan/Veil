@@ -1,6 +1,6 @@
 /**
  * Native bridge interface for communicating with Swift/Obj-C code.
- * In a real Safari Web Extension, this communicates with the native app
+ * In a Safari Web Extension, this communicates with the native app
  * via browser.runtime.sendNativeMessage.
  */
 export interface NativeBridgeMessage {

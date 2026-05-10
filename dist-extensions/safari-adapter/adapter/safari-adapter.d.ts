@@ -22,6 +22,7 @@ export interface WebKitRule {
  */
 export declare class SafariAdapter implements IPlatformAdapter {
     private static readonly RULE_LIMIT;
+    private navigationCallbacks;
     initialize(): Promise<void>;
     applyRules(rules: Rule[]): Promise<void>;
     updateRules(added: Rule[], removed: string[]): Promise<void>;
