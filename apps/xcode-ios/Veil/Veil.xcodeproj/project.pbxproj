@@ -7,50 +7,51 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		87BB685E2FB0912B0053710A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87BB685D2FB0912B0053710A /* AppDelegate.swift */; };
-		87BB68622FB0912B0053710A /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 87BB68602FB0912B0053710A /* Main.html */; };
-		87BB68642FB0912B0053710A /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 87BB68632FB0912B0053710A /* Icon.png */; };
-		87BB68662FB0912B0053710A /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = 87BB68652FB0912B0053710A /* Style.css */; };
-		87BB68682FB0912B0053710A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87BB68672FB0912B0053710A /* SceneDelegate.swift */; };
-		87BB686A2FB0912B0053710A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87BB68692FB0912B0053710A /* ViewController.swift */; };
-		87BB686D2FB0912B0053710A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 87BB686B2FB0912B0053710A /* LaunchScreen.storyboard */; };
-		87BB68702FB0912B0053710A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 87BB686E2FB0912B0053710A /* Main.storyboard */; };
-		87BB68782FB0912B0053710A /* Veil Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 87BB68772FB0912B0053710A /* Veil Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		87BB687D2FB0912B0053710A /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87BB687C2FB0912B0053710A /* SafariWebExtensionHandler.swift */; };
-		87BB687F2FB0912B0053710A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 87BB68712FB0912B0053710A /* Assets.xcassets */; };
-		87BB68982FB0912C0053710A /* dist in Resources */ = {isa = PBXBuildFile; fileRef = 87BB688A2FB0912C0053710A /* dist */; };
-		87BB68992FB0912C0053710A /* popup.html in Resources */ = {isa = PBXBuildFile; fileRef = 87BB688B2FB0912C0053710A /* popup.html */; };
-		87BB689A2FB0912C0053710A /* tsconfig.tsbuildinfo in Resources */ = {isa = PBXBuildFile; fileRef = 87BB688C2FB0912C0053710A /* tsconfig.tsbuildinfo */; };
-		87BB689B2FB0912C0053710A /* node_modules in Resources */ = {isa = PBXBuildFile; fileRef = 87BB688D2FB0912C0053710A /* node_modules */; };
-		87BB689C2FB0912C0053710A /* _metadata in Resources */ = {isa = PBXBuildFile; fileRef = 87BB688E2FB0912C0053710A /* _metadata */; };
-		87BB689D2FB0912C0053710A /* package.json in Resources */ = {isa = PBXBuildFile; fileRef = 87BB688F2FB0912C0053710A /* package.json */; };
-		87BB689E2FB0912C0053710A /* icons in Resources */ = {isa = PBXBuildFile; fileRef = 87BB68902FB0912C0053710A /* icons */; };
-		87BB689F2FB0912C0053710A /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 87BB68912FB0912C0053710A /* manifest.json */; };
-		87BB68A02FB0912C0053710A /* rules in Resources */ = {isa = PBXBuildFile; fileRef = 87BB68922FB0912C0053710A /* rules */; };
-		87BB68A12FB0912C0053710A /* tsconfig.json in Resources */ = {isa = PBXBuildFile; fileRef = 87BB68932FB0912C0053710A /* tsconfig.json */; };
-		87BB68A22FB0912C0053710A /* options.html in Resources */ = {isa = PBXBuildFile; fileRef = 87BB68942FB0912C0053710A /* options.html */; };
-		87BB68A32FB0912C0053710A /* filter-lists in Resources */ = {isa = PBXBuildFile; fileRef = 87BB68962FB0912C0053710A /* filter-lists */; };
-		87BB68A42FB0912C0053710A /* src in Resources */ = {isa = PBXBuildFile; fileRef = 87BB68972FB0912C0053710A /* src */; };
+		8704897C2FB0A6F2002AAB5F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8704897B2FB0A6F2002AAB5F /* AppDelegate.swift */; };
+		870489802FB0A6F2002AAB5F /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 8704897E2FB0A6F2002AAB5F /* Main.html */; };
+		870489822FB0A6F2002AAB5F /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 870489812FB0A6F2002AAB5F /* Icon.png */; };
+		870489842FB0A6F2002AAB5F /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = 870489832FB0A6F2002AAB5F /* Style.css */; };
+		870489862FB0A6F2002AAB5F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 870489852FB0A6F2002AAB5F /* SceneDelegate.swift */; };
+		870489882FB0A6F2002AAB5F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 870489872FB0A6F2002AAB5F /* ViewController.swift */; };
+		8704898B2FB0A6F2002AAB5F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 870489892FB0A6F2002AAB5F /* LaunchScreen.storyboard */; };
+		8704898E2FB0A6F2002AAB5F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8704898C2FB0A6F2002AAB5F /* Main.storyboard */; };
+		870489962FB0A6F3002AAB5F /* Veil Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 870489952FB0A6F3002AAB5F /* Veil Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		8704899B2FB0A6F3002AAB5F /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8704899A2FB0A6F3002AAB5F /* SafariWebExtensionHandler.swift */; };
+		8704899D2FB0A6F3002AAB5F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8704898F2FB0A6F3002AAB5F /* Assets.xcassets */; };
+		870489B72FB0A6F3002AAB5F /* dist in Resources */ = {isa = PBXBuildFile; fileRef = 870489A82FB0A6F3002AAB5F /* dist */; };
+		870489B82FB0A6F3002AAB5F /* popup.html in Resources */ = {isa = PBXBuildFile; fileRef = 870489A92FB0A6F3002AAB5F /* popup.html */; };
+		870489B92FB0A6F3002AAB5F /* tsconfig.tsbuildinfo in Resources */ = {isa = PBXBuildFile; fileRef = 870489AA2FB0A6F3002AAB5F /* tsconfig.tsbuildinfo */; };
+		870489BA2FB0A6F3002AAB5F /* node_modules in Resources */ = {isa = PBXBuildFile; fileRef = 870489AB2FB0A6F3002AAB5F /* node_modules */; };
+		870489BB2FB0A6F3002AAB5F /* _metadata in Resources */ = {isa = PBXBuildFile; fileRef = 870489AC2FB0A6F3002AAB5F /* _metadata */; };
+		870489BC2FB0A6F3002AAB5F /* package.json in Resources */ = {isa = PBXBuildFile; fileRef = 870489AD2FB0A6F3002AAB5F /* package.json */; };
+		870489BD2FB0A6F3002AAB5F /* icons in Resources */ = {isa = PBXBuildFile; fileRef = 870489AE2FB0A6F3002AAB5F /* icons */; };
+		870489BE2FB0A6F3002AAB5F /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 870489AF2FB0A6F3002AAB5F /* manifest.json */; };
+		870489BF2FB0A6F3002AAB5F /* rules in Resources */ = {isa = PBXBuildFile; fileRef = 870489B02FB0A6F3002AAB5F /* rules */; };
+		870489C02FB0A6F3002AAB5F /* tsconfig.json in Resources */ = {isa = PBXBuildFile; fileRef = 870489B12FB0A6F3002AAB5F /* tsconfig.json */; };
+		870489C12FB0A6F3002AAB5F /* options.html in Resources */ = {isa = PBXBuildFile; fileRef = 870489B22FB0A6F3002AAB5F /* options.html */; };
+		870489C22FB0A6F3002AAB5F /* bundled-rules in Resources */ = {isa = PBXBuildFile; fileRef = 870489B32FB0A6F3002AAB5F /* bundled-rules */; };
+		870489C32FB0A6F3002AAB5F /* filter-lists in Resources */ = {isa = PBXBuildFile; fileRef = 870489B52FB0A6F3002AAB5F /* filter-lists */; };
+		870489C42FB0A6F3002AAB5F /* src in Resources */ = {isa = PBXBuildFile; fileRef = 870489B62FB0A6F3002AAB5F /* src */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		87BB68792FB0912B0053710A /* PBXContainerItemProxy */ = {
+		870489972FB0A6F3002AAB5F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 87BB68522FB0912B0053710A /* Project object */;
+			containerPortal = 870489702FB0A6F2002AAB5F /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 87BB68762FB0912B0053710A;
+			remoteGlobalIDString = 870489942FB0A6F3002AAB5F;
 			remoteInfo = "Veil Extension";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		87BB68852FB0912B0053710A /* Embed Foundation Extensions */ = {
+		870489A32FB0A6F3002AAB5F /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				87BB68782FB0912B0053710A /* Veil Extension.appex in Embed Foundation Extensions */,
+				870489962FB0A6F3002AAB5F /* Veil Extension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -58,45 +59,46 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		87BB685A2FB0912B0053710A /* Veil.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Veil.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		87BB685D2FB0912B0053710A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		87BB68612FB0912B0053710A /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Main.html; sourceTree = "<group>"; };
-		87BB68632FB0912B0053710A /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
-		87BB68652FB0912B0053710A /* Style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = Style.css; sourceTree = "<group>"; };
-		87BB68672FB0912B0053710A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		87BB68692FB0912B0053710A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		87BB686C2FB0912B0053710A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		87BB686F2FB0912B0053710A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		87BB68712FB0912B0053710A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		87BB68722FB0912B0053710A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		87BB68772FB0912B0053710A /* Veil Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Veil Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
-		87BB687C2FB0912B0053710A /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
-		87BB687E2FB0912B0053710A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		87BB688A2FB0912C0053710A /* dist */ = {isa = PBXFileReference; lastKnownFileType = folder; name = dist; path = ../../../../packages/chrome/dist; sourceTree = "<group>"; };
-		87BB688B2FB0912C0053710A /* popup.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = popup.html; path = ../../../../packages/chrome/popup.html; sourceTree = "<group>"; };
-		87BB688C2FB0912C0053710A /* tsconfig.tsbuildinfo */ = {isa = PBXFileReference; lastKnownFileType = text; name = tsconfig.tsbuildinfo; path = ../../../../packages/chrome/tsconfig.tsbuildinfo; sourceTree = "<group>"; };
-		87BB688D2FB0912C0053710A /* node_modules */ = {isa = PBXFileReference; lastKnownFileType = folder; name = node_modules; path = ../../../../packages/chrome/node_modules; sourceTree = "<group>"; };
-		87BB688E2FB0912C0053710A /* _metadata */ = {isa = PBXFileReference; lastKnownFileType = folder; name = _metadata; path = ../../../../packages/chrome/_metadata; sourceTree = "<group>"; };
-		87BB688F2FB0912C0053710A /* package.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = package.json; path = ../../../../packages/chrome/package.json; sourceTree = "<group>"; };
-		87BB68902FB0912C0053710A /* icons */ = {isa = PBXFileReference; lastKnownFileType = folder; name = icons; path = ../../../../packages/chrome/icons; sourceTree = "<group>"; };
-		87BB68912FB0912C0053710A /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.json; path = ../../../../packages/chrome/manifest.json; sourceTree = "<group>"; };
-		87BB68922FB0912C0053710A /* rules */ = {isa = PBXFileReference; lastKnownFileType = folder; name = rules; path = ../../../../packages/chrome/rules; sourceTree = "<group>"; };
-		87BB68932FB0912C0053710A /* tsconfig.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = tsconfig.json; path = ../../../../packages/chrome/tsconfig.json; sourceTree = "<group>"; };
-		87BB68942FB0912C0053710A /* options.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = options.html; path = ../../../../packages/chrome/options.html; sourceTree = "<group>"; };
-		87BB68952FB0912C0053710A /* vite.config.ts */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.typescript; name = vite.config.ts; path = ../../../../packages/chrome/vite.config.ts; sourceTree = "<group>"; };
-		87BB68962FB0912C0053710A /* filter-lists */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "filter-lists"; path = "../../../../packages/chrome/filter-lists"; sourceTree = "<group>"; };
-		87BB68972FB0912C0053710A /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; name = src; path = ../../../../packages/chrome/src; sourceTree = "<group>"; };
+		870489782FB0A6F2002AAB5F /* Veil.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Veil.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8704897B2FB0A6F2002AAB5F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		8704897F2FB0A6F2002AAB5F /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Main.html; sourceTree = "<group>"; };
+		870489812FB0A6F2002AAB5F /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		870489832FB0A6F2002AAB5F /* Style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = Style.css; sourceTree = "<group>"; };
+		870489852FB0A6F2002AAB5F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		870489872FB0A6F2002AAB5F /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		8704898A2FB0A6F2002AAB5F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		8704898D2FB0A6F2002AAB5F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		8704898F2FB0A6F3002AAB5F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		870489902FB0A6F3002AAB5F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		870489952FB0A6F3002AAB5F /* Veil Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Veil Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8704899A2FB0A6F3002AAB5F /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
+		8704899C2FB0A6F3002AAB5F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		870489A82FB0A6F3002AAB5F /* dist */ = {isa = PBXFileReference; lastKnownFileType = folder; name = dist; path = ../../../../packages/chrome/dist; sourceTree = "<group>"; };
+		870489A92FB0A6F3002AAB5F /* popup.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = popup.html; path = ../../../../packages/chrome/popup.html; sourceTree = "<group>"; };
+		870489AA2FB0A6F3002AAB5F /* tsconfig.tsbuildinfo */ = {isa = PBXFileReference; lastKnownFileType = text; name = tsconfig.tsbuildinfo; path = ../../../../packages/chrome/tsconfig.tsbuildinfo; sourceTree = "<group>"; };
+		870489AB2FB0A6F3002AAB5F /* node_modules */ = {isa = PBXFileReference; lastKnownFileType = folder; name = node_modules; path = ../../../../packages/chrome/node_modules; sourceTree = "<group>"; };
+		870489AC2FB0A6F3002AAB5F /* _metadata */ = {isa = PBXFileReference; lastKnownFileType = folder; name = _metadata; path = ../../../../packages/chrome/_metadata; sourceTree = "<group>"; };
+		870489AD2FB0A6F3002AAB5F /* package.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = package.json; path = ../../../../packages/chrome/package.json; sourceTree = "<group>"; };
+		870489AE2FB0A6F3002AAB5F /* icons */ = {isa = PBXFileReference; lastKnownFileType = folder; name = icons; path = ../../../../packages/chrome/icons; sourceTree = "<group>"; };
+		870489AF2FB0A6F3002AAB5F /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.json; path = ../../../../packages/chrome/manifest.json; sourceTree = "<group>"; };
+		870489B02FB0A6F3002AAB5F /* rules */ = {isa = PBXFileReference; lastKnownFileType = folder; name = rules; path = ../../../../packages/chrome/rules; sourceTree = "<group>"; };
+		870489B12FB0A6F3002AAB5F /* tsconfig.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = tsconfig.json; path = ../../../../packages/chrome/tsconfig.json; sourceTree = "<group>"; };
+		870489B22FB0A6F3002AAB5F /* options.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = options.html; path = ../../../../packages/chrome/options.html; sourceTree = "<group>"; };
+		870489B32FB0A6F3002AAB5F /* bundled-rules */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "bundled-rules"; path = "../../../../packages/chrome/bundled-rules"; sourceTree = "<group>"; };
+		870489B42FB0A6F3002AAB5F /* vite.config.ts */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.typescript; name = vite.config.ts; path = ../../../../packages/chrome/vite.config.ts; sourceTree = "<group>"; };
+		870489B52FB0A6F3002AAB5F /* filter-lists */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "filter-lists"; path = "../../../../packages/chrome/filter-lists"; sourceTree = "<group>"; };
+		870489B62FB0A6F3002AAB5F /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; name = src; path = ../../../../packages/chrome/src; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		87BB68572FB0912B0053710A /* Frameworks */ = {
+		870489752FB0A6F2002AAB5F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		87BB68742FB0912B0053710A /* Frameworks */ = {
+		870489922FB0A6F3002AAB5F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -106,76 +108,77 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		87BB68512FB0912B0053710A = {
+		8704896F2FB0A6F2002AAB5F = {
 			isa = PBXGroup;
 			children = (
-				87BB685C2FB0912B0053710A /* Veil */,
-				87BB687B2FB0912B0053710A /* Veil Extension */,
-				87BB685B2FB0912B0053710A /* Products */,
+				8704897A2FB0A6F2002AAB5F /* Veil */,
+				870489992FB0A6F3002AAB5F /* Veil Extension */,
+				870489792FB0A6F2002AAB5F /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		87BB685B2FB0912B0053710A /* Products */ = {
+		870489792FB0A6F2002AAB5F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				87BB685A2FB0912B0053710A /* Veil.app */,
-				87BB68772FB0912B0053710A /* Veil Extension.appex */,
+				870489782FB0A6F2002AAB5F /* Veil.app */,
+				870489952FB0A6F3002AAB5F /* Veil Extension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		87BB685C2FB0912B0053710A /* Veil */ = {
+		8704897A2FB0A6F2002AAB5F /* Veil */ = {
 			isa = PBXGroup;
 			children = (
-				87BB685D2FB0912B0053710A /* AppDelegate.swift */,
-				87BB68672FB0912B0053710A /* SceneDelegate.swift */,
-				87BB68692FB0912B0053710A /* ViewController.swift */,
-				87BB686B2FB0912B0053710A /* LaunchScreen.storyboard */,
-				87BB686E2FB0912B0053710A /* Main.storyboard */,
-				87BB68712FB0912B0053710A /* Assets.xcassets */,
-				87BB68722FB0912B0053710A /* Info.plist */,
-				87BB685F2FB0912B0053710A /* Resources */,
+				8704897B2FB0A6F2002AAB5F /* AppDelegate.swift */,
+				870489852FB0A6F2002AAB5F /* SceneDelegate.swift */,
+				870489872FB0A6F2002AAB5F /* ViewController.swift */,
+				870489892FB0A6F2002AAB5F /* LaunchScreen.storyboard */,
+				8704898C2FB0A6F2002AAB5F /* Main.storyboard */,
+				8704898F2FB0A6F3002AAB5F /* Assets.xcassets */,
+				870489902FB0A6F3002AAB5F /* Info.plist */,
+				8704897D2FB0A6F2002AAB5F /* Resources */,
 			);
 			path = Veil;
 			sourceTree = "<group>";
 		};
-		87BB685F2FB0912B0053710A /* Resources */ = {
+		8704897D2FB0A6F2002AAB5F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				87BB68602FB0912B0053710A /* Main.html */,
-				87BB68632FB0912B0053710A /* Icon.png */,
-				87BB68652FB0912B0053710A /* Style.css */,
+				8704897E2FB0A6F2002AAB5F /* Main.html */,
+				870489812FB0A6F2002AAB5F /* Icon.png */,
+				870489832FB0A6F2002AAB5F /* Style.css */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		87BB687B2FB0912B0053710A /* Veil Extension */ = {
+		870489992FB0A6F3002AAB5F /* Veil Extension */ = {
 			isa = PBXGroup;
 			children = (
-				87BB68892FB0912C0053710A /* Resources */,
-				87BB687C2FB0912B0053710A /* SafariWebExtensionHandler.swift */,
-				87BB687E2FB0912B0053710A /* Info.plist */,
+				870489A72FB0A6F3002AAB5F /* Resources */,
+				8704899A2FB0A6F3002AAB5F /* SafariWebExtensionHandler.swift */,
+				8704899C2FB0A6F3002AAB5F /* Info.plist */,
 			);
 			path = "Veil Extension";
 			sourceTree = "<group>";
 		};
-		87BB68892FB0912C0053710A /* Resources */ = {
+		870489A72FB0A6F3002AAB5F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				87BB688A2FB0912C0053710A /* dist */,
-				87BB688B2FB0912C0053710A /* popup.html */,
-				87BB688C2FB0912C0053710A /* tsconfig.tsbuildinfo */,
-				87BB688D2FB0912C0053710A /* node_modules */,
-				87BB688E2FB0912C0053710A /* _metadata */,
-				87BB688F2FB0912C0053710A /* package.json */,
-				87BB68902FB0912C0053710A /* icons */,
-				87BB68912FB0912C0053710A /* manifest.json */,
-				87BB68922FB0912C0053710A /* rules */,
-				87BB68932FB0912C0053710A /* tsconfig.json */,
-				87BB68942FB0912C0053710A /* options.html */,
-				87BB68952FB0912C0053710A /* vite.config.ts */,
-				87BB68962FB0912C0053710A /* filter-lists */,
-				87BB68972FB0912C0053710A /* src */,
+				870489A82FB0A6F3002AAB5F /* dist */,
+				870489A92FB0A6F3002AAB5F /* popup.html */,
+				870489AA2FB0A6F3002AAB5F /* tsconfig.tsbuildinfo */,
+				870489AB2FB0A6F3002AAB5F /* node_modules */,
+				870489AC2FB0A6F3002AAB5F /* _metadata */,
+				870489AD2FB0A6F3002AAB5F /* package.json */,
+				870489AE2FB0A6F3002AAB5F /* icons */,
+				870489AF2FB0A6F3002AAB5F /* manifest.json */,
+				870489B02FB0A6F3002AAB5F /* rules */,
+				870489B12FB0A6F3002AAB5F /* tsconfig.json */,
+				870489B22FB0A6F3002AAB5F /* options.html */,
+				870489B32FB0A6F3002AAB5F /* bundled-rules */,
+				870489B42FB0A6F3002AAB5F /* vite.config.ts */,
+				870489B52FB0A6F3002AAB5F /* filter-lists */,
+				870489B62FB0A6F3002AAB5F /* src */,
 			);
 			name = Resources;
 			path = "Veil Extension";
@@ -184,34 +187,34 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		87BB68592FB0912B0053710A /* Veil */ = {
+		870489772FB0A6F2002AAB5F /* Veil */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 87BB68862FB0912B0053710A /* Build configuration list for PBXNativeTarget "Veil" */;
+			buildConfigurationList = 870489A42FB0A6F3002AAB5F /* Build configuration list for PBXNativeTarget "Veil" */;
 			buildPhases = (
-				87BB68562FB0912B0053710A /* Sources */,
-				87BB68572FB0912B0053710A /* Frameworks */,
-				87BB68582FB0912B0053710A /* Resources */,
-				87BB68852FB0912B0053710A /* Embed Foundation Extensions */,
+				870489742FB0A6F2002AAB5F /* Sources */,
+				870489752FB0A6F2002AAB5F /* Frameworks */,
+				870489762FB0A6F2002AAB5F /* Resources */,
+				870489A32FB0A6F3002AAB5F /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				87BB687A2FB0912B0053710A /* PBXTargetDependency */,
+				870489982FB0A6F3002AAB5F /* PBXTargetDependency */,
 			);
 			name = Veil;
 			packageProductDependencies = (
 			);
 			productName = Veil;
-			productReference = 87BB685A2FB0912B0053710A /* Veil.app */;
+			productReference = 870489782FB0A6F2002AAB5F /* Veil.app */;
 			productType = "com.apple.product-type.application";
 		};
-		87BB68762FB0912B0053710A /* Veil Extension */ = {
+		870489942FB0A6F3002AAB5F /* Veil Extension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 87BB68822FB0912B0053710A /* Build configuration list for PBXNativeTarget "Veil Extension" */;
+			buildConfigurationList = 870489A02FB0A6F3002AAB5F /* Build configuration list for PBXNativeTarget "Veil Extension" */;
 			buildPhases = (
-				87BB68732FB0912B0053710A /* Sources */,
-				87BB68742FB0912B0053710A /* Frameworks */,
-				87BB68752FB0912B0053710A /* Resources */,
+				870489912FB0A6F3002AAB5F /* Sources */,
+				870489922FB0A6F3002AAB5F /* Frameworks */,
+				870489932FB0A6F3002AAB5F /* Resources */,
 			);
 			buildRules = (
 			);
@@ -221,133 +224,134 @@
 			packageProductDependencies = (
 			);
 			productName = "Veil Extension";
-			productReference = 87BB68772FB0912B0053710A /* Veil Extension.appex */;
+			productReference = 870489952FB0A6F3002AAB5F /* Veil Extension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		87BB68522FB0912B0053710A /* Project object */ = {
+		870489702FB0A6F2002AAB5F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2640;
 				LastUpgradeCheck = 2640;
 				TargetAttributes = {
-					87BB68592FB0912B0053710A = {
+					870489772FB0A6F2002AAB5F = {
 						CreatedOnToolsVersion = 26.4.1;
 					};
-					87BB68762FB0912B0053710A = {
+					870489942FB0A6F3002AAB5F = {
 						CreatedOnToolsVersion = 26.4.1;
 					};
 				};
 			};
-			buildConfigurationList = 87BB68552FB0912B0053710A /* Build configuration list for PBXProject "Veil" */;
+			buildConfigurationList = 870489732FB0A6F2002AAB5F /* Build configuration list for PBXProject "Veil" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = 87BB68512FB0912B0053710A;
+			mainGroup = 8704896F2FB0A6F2002AAB5F;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 87BB685B2FB0912B0053710A /* Products */;
+			productRefGroup = 870489792FB0A6F2002AAB5F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				87BB68592FB0912B0053710A /* Veil */,
-				87BB68762FB0912B0053710A /* Veil Extension */,
+				870489772FB0A6F2002AAB5F /* Veil */,
+				870489942FB0A6F3002AAB5F /* Veil Extension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		87BB68582FB0912B0053710A /* Resources */ = {
+		870489762FB0A6F2002AAB5F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				87BB68642FB0912B0053710A /* Icon.png in Resources */,
-				87BB68702FB0912B0053710A /* Main.storyboard in Resources */,
-				87BB686D2FB0912B0053710A /* LaunchScreen.storyboard in Resources */,
-				87BB68622FB0912B0053710A /* Main.html in Resources */,
-				87BB687F2FB0912B0053710A /* Assets.xcassets in Resources */,
-				87BB68662FB0912B0053710A /* Style.css in Resources */,
+				870489822FB0A6F2002AAB5F /* Icon.png in Resources */,
+				8704898E2FB0A6F2002AAB5F /* Main.storyboard in Resources */,
+				8704898B2FB0A6F2002AAB5F /* LaunchScreen.storyboard in Resources */,
+				870489802FB0A6F2002AAB5F /* Main.html in Resources */,
+				8704899D2FB0A6F3002AAB5F /* Assets.xcassets in Resources */,
+				870489842FB0A6F2002AAB5F /* Style.css in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		87BB68752FB0912B0053710A /* Resources */ = {
+		870489932FB0A6F3002AAB5F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				87BB68A12FB0912C0053710A /* tsconfig.json in Resources */,
-				87BB68982FB0912C0053710A /* dist in Resources */,
-				87BB68A32FB0912C0053710A /* filter-lists in Resources */,
-				87BB68A42FB0912C0053710A /* src in Resources */,
-				87BB689A2FB0912C0053710A /* tsconfig.tsbuildinfo in Resources */,
-				87BB689D2FB0912C0053710A /* package.json in Resources */,
-				87BB68A22FB0912C0053710A /* options.html in Resources */,
-				87BB68A02FB0912C0053710A /* rules in Resources */,
-				87BB689B2FB0912C0053710A /* node_modules in Resources */,
-				87BB689F2FB0912C0053710A /* manifest.json in Resources */,
-				87BB689C2FB0912C0053710A /* _metadata in Resources */,
-				87BB689E2FB0912C0053710A /* icons in Resources */,
-				87BB68992FB0912C0053710A /* popup.html in Resources */,
+				870489C02FB0A6F3002AAB5F /* tsconfig.json in Resources */,
+				870489B72FB0A6F3002AAB5F /* dist in Resources */,
+				870489B92FB0A6F3002AAB5F /* tsconfig.tsbuildinfo in Resources */,
+				870489BC2FB0A6F3002AAB5F /* package.json in Resources */,
+				870489C12FB0A6F3002AAB5F /* options.html in Resources */,
+				870489C42FB0A6F3002AAB5F /* src in Resources */,
+				870489BF2FB0A6F3002AAB5F /* rules in Resources */,
+				870489BA2FB0A6F3002AAB5F /* node_modules in Resources */,
+				870489BE2FB0A6F3002AAB5F /* manifest.json in Resources */,
+				870489BB2FB0A6F3002AAB5F /* _metadata in Resources */,
+				870489BD2FB0A6F3002AAB5F /* icons in Resources */,
+				870489B82FB0A6F3002AAB5F /* popup.html in Resources */,
+				870489C32FB0A6F3002AAB5F /* filter-lists in Resources */,
+				870489C22FB0A6F3002AAB5F /* bundled-rules in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		87BB68562FB0912B0053710A /* Sources */ = {
+		870489742FB0A6F2002AAB5F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				87BB686A2FB0912B0053710A /* ViewController.swift in Sources */,
-				87BB685E2FB0912B0053710A /* AppDelegate.swift in Sources */,
-				87BB68682FB0912B0053710A /* SceneDelegate.swift in Sources */,
+				870489882FB0A6F2002AAB5F /* ViewController.swift in Sources */,
+				8704897C2FB0A6F2002AAB5F /* AppDelegate.swift in Sources */,
+				870489862FB0A6F2002AAB5F /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		87BB68732FB0912B0053710A /* Sources */ = {
+		870489912FB0A6F3002AAB5F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				87BB687D2FB0912B0053710A /* SafariWebExtensionHandler.swift in Sources */,
+				8704899B2FB0A6F3002AAB5F /* SafariWebExtensionHandler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		87BB687A2FB0912B0053710A /* PBXTargetDependency */ = {
+		870489982FB0A6F3002AAB5F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 87BB68762FB0912B0053710A /* Veil Extension */;
-			targetProxy = 87BB68792FB0912B0053710A /* PBXContainerItemProxy */;
+			target = 870489942FB0A6F3002AAB5F /* Veil Extension */;
+			targetProxy = 870489972FB0A6F3002AAB5F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		87BB68602FB0912B0053710A /* Main.html */ = {
+		8704897E2FB0A6F2002AAB5F /* Main.html */ = {
 			isa = PBXVariantGroup;
 			children = (
-				87BB68612FB0912B0053710A /* Base */,
+				8704897F2FB0A6F2002AAB5F /* Base */,
 			);
 			name = Main.html;
 			sourceTree = "<group>";
 		};
-		87BB686B2FB0912B0053710A /* LaunchScreen.storyboard */ = {
+		870489892FB0A6F2002AAB5F /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				87BB686C2FB0912B0053710A /* Base */,
+				8704898A2FB0A6F2002AAB5F /* Base */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
-		87BB686E2FB0912B0053710A /* Main.storyboard */ = {
+		8704898C2FB0A6F2002AAB5F /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				87BB686F2FB0912B0053710A /* Base */,
+				8704898D2FB0A6F2002AAB5F /* Base */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -355,7 +359,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		87BB68802FB0912B0053710A /* Debug */ = {
+		8704899E2FB0A6F3002AAB5F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -418,7 +422,7 @@
 			};
 			name = Debug;
 		};
-		87BB68812FB0912B0053710A /* Release */ = {
+		8704899F2FB0A6F3002AAB5F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -474,12 +478,11 @@
 			};
 			name = Release;
 		};
-		87BB68832FB0912B0053710A /* Debug */ = {
+		870489A12FB0A6F3002AAB5F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = RJT2R3N326;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Veil Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Veil Extension";
@@ -495,7 +498,7 @@
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.veil.app.Veil.Extension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.veil.ios.Extension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -507,12 +510,11 @@
 			};
 			name = Debug;
 		};
-		87BB68842FB0912B0053710A /* Release */ = {
+		870489A22FB0A6F3002AAB5F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = RJT2R3N326;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Veil Extension/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Veil Extension";
@@ -528,7 +530,7 @@
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.veil.app.Veil.Extension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.veil.ios.Extension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -540,14 +542,13 @@
 			};
 			name = Release;
 		};
-		87BB68872FB0912B0053710A /* Debug */ = {
+		870489A52FB0A6F3002AAB5F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = RJT2R3N326;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Veil/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Veil;
@@ -568,7 +569,7 @@
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.veil.app.Veil;
+				PRODUCT_BUNDLE_IDENTIFIER = com.veil.Veil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -580,14 +581,13 @@
 			};
 			name = Debug;
 		};
-		87BB68882FB0912B0053710A /* Release */ = {
+		870489A62FB0A6F3002AAB5F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = RJT2R3N326;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Veil/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Veil;
@@ -608,7 +608,7 @@
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.veil.app.Veil;
+				PRODUCT_BUNDLE_IDENTIFIER = com.veil.Veil;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -623,34 +623,34 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		87BB68552FB0912B0053710A /* Build configuration list for PBXProject "Veil" */ = {
+		870489732FB0A6F2002AAB5F /* Build configuration list for PBXProject "Veil" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				87BB68802FB0912B0053710A /* Debug */,
-				87BB68812FB0912B0053710A /* Release */,
+				8704899E2FB0A6F3002AAB5F /* Debug */,
+				8704899F2FB0A6F3002AAB5F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		87BB68822FB0912B0053710A /* Build configuration list for PBXNativeTarget "Veil Extension" */ = {
+		870489A02FB0A6F3002AAB5F /* Build configuration list for PBXNativeTarget "Veil Extension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				87BB68832FB0912B0053710A /* Debug */,
-				87BB68842FB0912B0053710A /* Release */,
+				870489A12FB0A6F3002AAB5F /* Debug */,
+				870489A22FB0A6F3002AAB5F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		87BB68862FB0912B0053710A /* Build configuration list for PBXNativeTarget "Veil" */ = {
+		870489A42FB0A6F3002AAB5F /* Build configuration list for PBXNativeTarget "Veil" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				87BB68872FB0912B0053710A /* Debug */,
-				87BB68882FB0912B0053710A /* Release */,
+				870489A52FB0A6F3002AAB5F /* Debug */,
+				870489A62FB0A6F3002AAB5F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 87BB68522FB0912B0053710A /* Project object */;
+	rootObject = 870489702FB0A6F2002AAB5F /* Project object */;
 }
