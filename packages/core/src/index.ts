@@ -47,6 +47,7 @@ export type { RemoveParamRule } from "./engine/index.js";
 export { checkKnownCNAMECloak, resolveCNAME, isTrackerCNAMETarget } from "./engine/index.js";
 export { parseHTMLFilterRule, applyHTMLFilters } from "./engine/index.js";
 export { serializeToString, deserializeFromString, serializeRules, deserializeRules } from "./engine/index.js";
+export { AutoRulesEngine, analyzeRequest } from "./engine/index.js";
 export { RuleParser } from "./rules/index.js";
 export { RuleManager } from "./rules/rule-manager.js";
 export { WhitelistManager } from "./whitelist/index.js";

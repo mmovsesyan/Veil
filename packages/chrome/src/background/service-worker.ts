@@ -8,7 +8,7 @@
  * 4. All state persisted to chrome.storage.local
  */
 
-import { BlockingEngine, RuleParser, StatisticsTracker, WhitelistManager } from "@veil/core";
+import { BlockingEngine, RuleParser, StatisticsTracker, WhitelistManager, AutoRulesEngine } from "@veil/core";
 import { getRedirectResource, getDefaultRedirect, parseScriptletRule } from "@veil/core";
 import type { Rule, CosmeticRule } from "@veil/core";
 
@@ -18,6 +18,7 @@ const engine = new BlockingEngine();
 const parser = new RuleParser();
 const stats = new StatisticsTracker();
 const whitelist = new WhitelistManager();
+const autoRules = new AutoRulesEngine();
 
 let isEnabled = true;
 const cosmeticRulesCache = new Map<string, CosmeticRule[]>();
@@ -393,6 +394,53 @@ if (chrome.declarativeNetRequest.onRuleMatchedDebug) {
   });
 }
 
+// ─── Auto-Learning: Analyze unblocked requests for new patterns ───────────────
+
+// Process completed (unblocked) requests through auto-learning engine
+if (chrome.webRequest?.onCompleted) {
+  chrome.webRequest.onCompleted.addListener(
+    (details) => {
+      if (!isEnabled || details.tabId < 0) return;
+      if (details.type === "main_frame") return; // Skip page navigations
+
+      try {
+        const url = new URL(details.url);
+        const targetDomain = url.hostname;
+
+        // Skip first-party and whitelisted
+        if (whitelist.isWhitelisted(targetDomain)) return;
+
+        let initiatorDomain = "";
+        if (details.initiator) {
+          try { initiatorDomain = new URL(details.initiator).hostname; } catch {}
+        }
+
+        // Feed to auto-learning engine
+        const confirmed = autoRules.processRequest(
+          details.url,
+          details.type,
+          initiatorDomain,
+          targetDomain,
+          false, // not blocked
+        );
+
+        // If a new rule was auto-confirmed, add it to the engine
+        if (confirmed) {
+          const rule = parser.parse(confirmed.suggestedRule);
+          if (rule) {
+            rule.source = "auto-learned";
+            engine.addRules([rule]);
+            console.log(`[Veil Auto-Learn] New rule confirmed: ${confirmed.suggestedRule}`);
+          }
+        }
+      } catch {
+        // Ignore errors in auto-learning
+      }
+    },
+    { urls: ["<all_urls>"] }
+  );
+}
+
 function updateBadge(tabId: number): void {
   const tabStats = stats.getTabStats(tabId);
   const count = tabStats.blocked;
@@ -519,9 +567,31 @@ async function handleMessage(message: { type: string; payload?: unknown }): Prom
       return stats.getDailyStats(date);
     }
 
+    case "GET_AUTO_RULES_STATS":
+      return autoRules.getStats();
+
+    case "GET_AUTO_RULES":
+      return { rules: autoRules.getConfirmedRules() };
+
+    case "CONFIRM_AUTO_RULE": {
+      const rule = message.payload as string;
+      autoRules.confirmRule(rule);
+      const parsed = parser.parse(rule);
+      if (parsed) {
+        parsed.source = "auto-learned";
+        engine.addRules([parsed]);
+      }
+      return { success: true };
+    }
+
+    case "REJECT_AUTO_RULE": {
+      autoRules.rejectRule(message.payload as string);
+      return { success: true };
+    }
+
     default:
       return { error: "Unknown message type" };
   }
 }
 
-export { initialize, engine, stats, whitelist };
+export { initialize, engine, stats, whitelist, autoRules };

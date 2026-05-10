@@ -4,16 +4,17 @@
  */
 
 import { BlockingEngine, RuleParser, StatisticsTracker, WhitelistManager, RuleManager } from "@veil/core";
-import { checkKnownCNAMECloak, isTrackerCNAMETarget } from "@veil/core";
+import { checkKnownCNAMECloak, isTrackerCNAMETarget, AutoRulesEngine } from "@veil/core";
 import type { ResourceType } from "@veil/core";
 
-declare const browser: any; // Firefox WebExtension API (types handled by @types/webextension-polyfill)
+declare const browser: any; // Firefox WebExtension API
 
 const engine = new BlockingEngine();
 const parser = new RuleParser();
 const stats = new StatisticsTracker();
 const whitelist = new WhitelistManager();
 const ruleManager = new RuleManager(engine);
+const autoRules = new AutoRulesEngine();
 
 let isEnabled = true;
 
@@ -102,6 +103,25 @@ browser.webRequest.onBeforeRequest.addListener(
       stats.recordBlocked(details.tabId, targetDomain, "ads");
       updateBadge(details.tabId);
       return { cancel: true };
+    }
+
+    // Auto-learning: analyze unblocked third-party requests
+    if (initiatorDomain && initiatorDomain !== targetDomain) {
+      const confirmed = autoRules.processRequest(
+        details.url,
+        resourceType,
+        initiatorDomain,
+        targetDomain,
+        false,
+      );
+      if (confirmed) {
+        const rule = parser.parse(confirmed.suggestedRule);
+        if (rule) {
+          rule.source = "auto-learned";
+          engine.addRules([rule]);
+          console.log(`[Veil Auto-Learn] New rule: ${confirmed.suggestedRule}`);
+        }
+      }
     }
 
     return {};
@@ -289,6 +309,28 @@ browser.runtime.onMessage.addListener((message: { type: string; payload?: unknow
     case "ADD_CUSTOM_RULE": {
       const result = ruleManager.addCustomRule(message.payload as string);
       return Promise.resolve(result);
+    }
+
+    case "GET_AUTO_RULES_STATS":
+      return Promise.resolve(autoRules.getStats());
+
+    case "GET_AUTO_RULES":
+      return Promise.resolve({ rules: autoRules.getConfirmedRules() });
+
+    case "CONFIRM_AUTO_RULE": {
+      const rule = message.payload as string;
+      autoRules.confirmRule(rule);
+      const parsed = parser.parse(rule);
+      if (parsed) {
+        parsed.source = "auto-learned";
+        engine.addRules([parsed]);
+      }
+      return Promise.resolve({ success: true });
+    }
+
+    case "REJECT_AUTO_RULE": {
+      autoRules.rejectRule(message.payload as string);
+      return Promise.resolve({ success: true });
     }
 
     default:
