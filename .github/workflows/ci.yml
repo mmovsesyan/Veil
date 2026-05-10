@@ -118,9 +118,10 @@ jobs:
 
       - name: Run parser regression
         run: |
-          npx tsx -e "
-          import { readFileSync } from 'fs';
-          import { RuleParser } from './packages/core/src/rules/parser.js';
+          pnpm --filter @veil/core run build
+          node -e "
+          const { readFileSync } = require('fs');
+          const { RuleParser } = require('./packages/core/dist/rules/parser.js');
           const parser = new RuleParser();
           const text = readFileSync('filter-lists/downloaded/easylist.txt', 'utf-8');
           const result = parser.parseList(text);
