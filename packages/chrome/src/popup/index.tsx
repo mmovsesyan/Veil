@@ -61,6 +61,12 @@ function PopupApp() {
   const handleToggle = async () => {
     const response = await chrome.runtime.sendMessage({ type: "TOGGLE_ENABLED" });
     setEnabled(response?.enabled ?? !enabled);
+
+    // Reload current tab to apply the change immediately
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (tab?.id) {
+      chrome.tabs.reload(tab.id);
+    }
   };
 
   const handleWhitelistToggle = async () => {

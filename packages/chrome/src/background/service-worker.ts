@@ -503,8 +503,24 @@ async function handleMessage(message: { type: string; payload?: unknown }): Prom
             await engine.initialize(result.rules);
             await updateDNRRules(result.rules);
           }
-          // Re-enable static rulesets
-          await chrome.declarativeNetRequest.updateEnabledRulesets({ enableRulesetIds: ["default_rules"] });
+
+          // Restore whitelist DNR allow rules
+          const wlDomains = whitelist.getAll();
+          if (wlDomains.length > 0) {
+            const wlRules = wlDomains.map((d, i) => ({
+              id: 900000 + i,
+              priority: 10,
+              action: { type: "allowAllRequests" as chrome.declarativeNetRequest.RuleActionType },
+              condition: {
+                requestDomains: [d],
+                resourceTypes: ["main_frame", "sub_frame"] as chrome.declarativeNetRequest.ResourceType[],
+              },
+            }));
+            await chrome.declarativeNetRequest.updateDynamicRules({
+              addRules: wlRules,
+              removeRuleIds: [],
+            });
+          }
         } catch { /* ignore errors */ }
       }
 
