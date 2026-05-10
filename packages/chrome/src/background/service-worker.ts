@@ -764,6 +764,11 @@ async function handleMessage(message: { type: string; payload?: unknown }): Prom
       existing.push(raw);
       await chrome.storage.local.set({ customRules: existing });
 
+      // Feed to auto-learning: manual block = confirmed pattern
+      // This teaches the engine that similar elements on other sites should be blocked too
+      autoRules.confirmRule(raw);
+      chrome.storage.local.set({ autoLearnedRules: autoRules.getConfirmedRules() });
+
       return { success: true };
     }
 
