@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PayloadContent</key>
+	<array>
+		<dict>
+			<key>DNSSettings</key>
+			<dict>
+				<key>DNSProtocol</key>
+				<string>HTTPS</string>
+				<key>ServerURL</key>
+				<string>https://dns.adguard-dns.com/dns-query</string>
+				<key>ServerAddresses</key>
+				<array>
+					<string>94.140.14.14</string>
+					<string>94.140.15.15</string>
+					<string>2a10:50c0::ad1:ff</string>
+					<string>2a10:50c0::ad2:ff</string>
+				</array>
+			</dict>
+			<key>OnDemandRules</key>
+			<array>
+				<dict>
+					<key>Action</key>
+					<string>EvaluateConnection</string>
+					<key>ActionParameters</key>
+					<array>
+						<dict>
+							<key>DomainAction</key>
+							<string>NeverConnect</string>
+							<key>Domains</key>
+							<array>
+								<string>doubleclick.net</string>
+								<string>googlesyndication.com</string>
+								<string>googleadservices.com</string>
+								<string>facebook.net</string>
+								<string>analytics.google.com</string>
+							</array>
+						</dict>
+					</array>
+				</dict>
+				<dict>
+					<key>Action</key>
+					<string>Connect</string>
+				</dict>
+			</array>
+			<key>PayloadDescription</key>
+			<string>Veil DNS Ad Blocker — blocks ads and trackers system-wide via encrypted DNS</string>
+			<key>PayloadDisplayName</key>
+			<string>Veil DNS</string>
+			<key>PayloadIdentifier</key>
+			<string>com.veil.dns</string>
+			<key>PayloadType</key>
+			<string>com.apple.dnsSettings.managed</string>
+			<key>PayloadUUID</key>
+			<string>A1B2C3D4-E5F6-7890-ABCD-EF1234567890</string>
+			<key>PayloadVersion</key>
+			<integer>1</integer>
+			<key>ProhibitDisablement</key>
+			<false/>
+		</dict>
+	</array>
+	<key>PayloadDescription</key>
+	<string>Veil — блокировка рекламы и трекеров через зашифрованный DNS (DoH). Работает во всех приложениях и браузерах.</string>
+	<key>PayloadDisplayName</key>
+	<string>Veil Ad Blocker</string>
+	<key>PayloadIdentifier</key>
+	<string>com.veil.adblock.profile</string>
+	<key>PayloadOrganization</key>
+	<string>Veil</string>
+	<key>PayloadRemovalDisallowed</key>
+	<false/>
+	<key>PayloadType</key>
+	<string>Configuration</string>
+	<key>PayloadUUID</key>
+	<string>F1E2D3C4-B5A6-7890-1234-567890ABCDEF</string>
+	<key>PayloadVersion</key>
+	<integer>1</integer>
+	<key>ConsentText</key>
+	<dict>
+		<key>default</key>
+		<string>This profile configures encrypted DNS (DNS-over-HTTPS) to block ads, trackers, and malware domains system-wide. All DNS queries are sent to AdGuard DNS which filters advertising and tracking domains. Your browsing data is not collected. You can remove this profile at any time in Settings → General → VPN &amp; Device Management.</string>
+	</dict>
+</dict>
+</plist>

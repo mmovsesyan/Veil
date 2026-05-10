@@ -1,0 +1,647 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8742C5892FB0911E00FD5DE3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8742C5882FB0911E00FD5DE3 /* AppDelegate.swift */; };
+		8742C58D2FB0911E00FD5DE3 /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 8742C58B2FB0911E00FD5DE3 /* Main.html */; };
+		8742C58F2FB0911E00FD5DE3 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8742C58E2FB0911E00FD5DE3 /* Icon.png */; };
+		8742C5912FB0911E00FD5DE3 /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = 8742C5902FB0911E00FD5DE3 /* Style.css */; };
+		8742C5932FB0911E00FD5DE3 /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = 8742C5922FB0911E00FD5DE3 /* Script.js */; };
+		8742C5952FB0911E00FD5DE3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8742C5942FB0911E00FD5DE3 /* ViewController.swift */; };
+		8742C5982FB0911E00FD5DE3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8742C5962FB0911E00FD5DE3 /* Main.storyboard */; };
+		8742C59A2FB0911F00FD5DE3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8742C5992FB0911F00FD5DE3 /* Assets.xcassets */; };
+		8742C5A12FB0911F00FD5DE3 /* Veil Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8742C5A02FB0911F00FD5DE3 /* Veil Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		8742C5A62FB0911F00FD5DE3 /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8742C5A52FB0911F00FD5DE3 /* SafariWebExtensionHandler.swift */; };
+		8742C5C02FB0911F00FD5DE3 /* dist in Resources */ = {isa = PBXBuildFile; fileRef = 8742C5B22FB0911F00FD5DE3 /* dist */; };
+		8742C5C12FB0911F00FD5DE3 /* popup.html in Resources */ = {isa = PBXBuildFile; fileRef = 8742C5B32FB0911F00FD5DE3 /* popup.html */; };
+		8742C5C22FB0911F00FD5DE3 /* tsconfig.tsbuildinfo in Resources */ = {isa = PBXBuildFile; fileRef = 8742C5B42FB0911F00FD5DE3 /* tsconfig.tsbuildinfo */; };
+		8742C5C32FB0911F00FD5DE3 /* node_modules in Resources */ = {isa = PBXBuildFile; fileRef = 8742C5B52FB0911F00FD5DE3 /* node_modules */; };
+		8742C5C42FB0911F00FD5DE3 /* _metadata in Resources */ = {isa = PBXBuildFile; fileRef = 8742C5B62FB0911F00FD5DE3 /* _metadata */; };
+		8742C5C52FB0911F00FD5DE3 /* package.json in Resources */ = {isa = PBXBuildFile; fileRef = 8742C5B72FB0911F00FD5DE3 /* package.json */; };
+		8742C5C62FB0911F00FD5DE3 /* icons in Resources */ = {isa = PBXBuildFile; fileRef = 8742C5B82FB0911F00FD5DE3 /* icons */; };
+		8742C5C72FB0911F00FD5DE3 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 8742C5B92FB0911F00FD5DE3 /* manifest.json */; };
+		8742C5C82FB0911F00FD5DE3 /* rules in Resources */ = {isa = PBXBuildFile; fileRef = 8742C5BA2FB0911F00FD5DE3 /* rules */; };
+		8742C5C92FB0911F00FD5DE3 /* tsconfig.json in Resources */ = {isa = PBXBuildFile; fileRef = 8742C5BB2FB0911F00FD5DE3 /* tsconfig.json */; };
+		8742C5CA2FB0911F00FD5DE3 /* options.html in Resources */ = {isa = PBXBuildFile; fileRef = 8742C5BC2FB0911F00FD5DE3 /* options.html */; };
+		8742C5CB2FB0911F00FD5DE3 /* filter-lists in Resources */ = {isa = PBXBuildFile; fileRef = 8742C5BE2FB0911F00FD5DE3 /* filter-lists */; };
+		8742C5CC2FB0911F00FD5DE3 /* src in Resources */ = {isa = PBXBuildFile; fileRef = 8742C5BF2FB0911F00FD5DE3 /* src */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		8742C5A22FB0911F00FD5DE3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8742C57D2FB0911E00FD5DE3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8742C59F2FB0911F00FD5DE3;
+			remoteInfo = "Veil Extension";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8742C5AD2FB0911F00FD5DE3 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				8742C5A12FB0911F00FD5DE3 /* Veil Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		8742C5852FB0911E00FD5DE3 /* Veil.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Veil.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8742C5882FB0911E00FD5DE3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		8742C58C2FB0911E00FD5DE3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Main.html; sourceTree = "<group>"; };
+		8742C58E2FB0911E00FD5DE3 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		8742C5902FB0911E00FD5DE3 /* Style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = Style.css; sourceTree = "<group>"; };
+		8742C5922FB0911E00FD5DE3 /* Script.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Script.js; sourceTree = "<group>"; };
+		8742C5942FB0911E00FD5DE3 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		8742C5972FB0911E00FD5DE3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		8742C5992FB0911F00FD5DE3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		8742C59B2FB0911F00FD5DE3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8742C5A02FB0911F00FD5DE3 /* Veil Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Veil Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8742C5A52FB0911F00FD5DE3 /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
+		8742C5A72FB0911F00FD5DE3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8742C5B22FB0911F00FD5DE3 /* dist */ = {isa = PBXFileReference; lastKnownFileType = folder; name = dist; path = ../../../../packages/chrome/dist; sourceTree = "<group>"; };
+		8742C5B32FB0911F00FD5DE3 /* popup.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = popup.html; path = ../../../../packages/chrome/popup.html; sourceTree = "<group>"; };
+		8742C5B42FB0911F00FD5DE3 /* tsconfig.tsbuildinfo */ = {isa = PBXFileReference; lastKnownFileType = text; name = tsconfig.tsbuildinfo; path = ../../../../packages/chrome/tsconfig.tsbuildinfo; sourceTree = "<group>"; };
+		8742C5B52FB0911F00FD5DE3 /* node_modules */ = {isa = PBXFileReference; lastKnownFileType = folder; name = node_modules; path = ../../../../packages/chrome/node_modules; sourceTree = "<group>"; };
+		8742C5B62FB0911F00FD5DE3 /* _metadata */ = {isa = PBXFileReference; lastKnownFileType = folder; name = _metadata; path = ../../../../packages/chrome/_metadata; sourceTree = "<group>"; };
+		8742C5B72FB0911F00FD5DE3 /* package.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = package.json; path = ../../../../packages/chrome/package.json; sourceTree = "<group>"; };
+		8742C5B82FB0911F00FD5DE3 /* icons */ = {isa = PBXFileReference; lastKnownFileType = folder; name = icons; path = ../../../../packages/chrome/icons; sourceTree = "<group>"; };
+		8742C5B92FB0911F00FD5DE3 /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.json; path = ../../../../packages/chrome/manifest.json; sourceTree = "<group>"; };
+		8742C5BA2FB0911F00FD5DE3 /* rules */ = {isa = PBXFileReference; lastKnownFileType = folder; name = rules; path = ../../../../packages/chrome/rules; sourceTree = "<group>"; };
+		8742C5BB2FB0911F00FD5DE3 /* tsconfig.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = tsconfig.json; path = ../../../../packages/chrome/tsconfig.json; sourceTree = "<group>"; };
+		8742C5BC2FB0911F00FD5DE3 /* options.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = options.html; path = ../../../../packages/chrome/options.html; sourceTree = "<group>"; };
+		8742C5BD2FB0911F00FD5DE3 /* vite.config.ts */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.typescript; name = vite.config.ts; path = ../../../../packages/chrome/vite.config.ts; sourceTree = "<group>"; };
+		8742C5BE2FB0911F00FD5DE3 /* filter-lists */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "filter-lists"; path = "../../../../packages/chrome/filter-lists"; sourceTree = "<group>"; };
+		8742C5BF2FB0911F00FD5DE3 /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; name = src; path = ../../../../packages/chrome/src; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8742C5822FB0911E00FD5DE3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8742C59D2FB0911F00FD5DE3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		8742C57C2FB0911E00FD5DE3 = {
+			isa = PBXGroup;
+			children = (
+				8742C5872FB0911E00FD5DE3 /* Veil */,
+				8742C5A42FB0911F00FD5DE3 /* Veil Extension */,
+				8742C5862FB0911E00FD5DE3 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		8742C5862FB0911E00FD5DE3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8742C5852FB0911E00FD5DE3 /* Veil.app */,
+				8742C5A02FB0911F00FD5DE3 /* Veil Extension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8742C5872FB0911E00FD5DE3 /* Veil */ = {
+			isa = PBXGroup;
+			children = (
+				8742C5882FB0911E00FD5DE3 /* AppDelegate.swift */,
+				8742C5942FB0911E00FD5DE3 /* ViewController.swift */,
+				8742C5962FB0911E00FD5DE3 /* Main.storyboard */,
+				8742C5992FB0911F00FD5DE3 /* Assets.xcassets */,
+				8742C59B2FB0911F00FD5DE3 /* Info.plist */,
+				8742C58A2FB0911E00FD5DE3 /* Resources */,
+			);
+			path = Veil;
+			sourceTree = "<group>";
+		};
+		8742C58A2FB0911E00FD5DE3 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8742C58B2FB0911E00FD5DE3 /* Main.html */,
+				8742C58E2FB0911E00FD5DE3 /* Icon.png */,
+				8742C5902FB0911E00FD5DE3 /* Style.css */,
+				8742C5922FB0911E00FD5DE3 /* Script.js */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		8742C5A42FB0911F00FD5DE3 /* Veil Extension */ = {
+			isa = PBXGroup;
+			children = (
+				8742C5B12FB0911F00FD5DE3 /* Resources */,
+				8742C5A52FB0911F00FD5DE3 /* SafariWebExtensionHandler.swift */,
+				8742C5A72FB0911F00FD5DE3 /* Info.plist */,
+			);
+			path = "Veil Extension";
+			sourceTree = "<group>";
+		};
+		8742C5B12FB0911F00FD5DE3 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8742C5B22FB0911F00FD5DE3 /* dist */,
+				8742C5B32FB0911F00FD5DE3 /* popup.html */,
+				8742C5B42FB0911F00FD5DE3 /* tsconfig.tsbuildinfo */,
+				8742C5B52FB0911F00FD5DE3 /* node_modules */,
+				8742C5B62FB0911F00FD5DE3 /* _metadata */,
+				8742C5B72FB0911F00FD5DE3 /* package.json */,
+				8742C5B82FB0911F00FD5DE3 /* icons */,
+				8742C5B92FB0911F00FD5DE3 /* manifest.json */,
+				8742C5BA2FB0911F00FD5DE3 /* rules */,
+				8742C5BB2FB0911F00FD5DE3 /* tsconfig.json */,
+				8742C5BC2FB0911F00FD5DE3 /* options.html */,
+				8742C5BD2FB0911F00FD5DE3 /* vite.config.ts */,
+				8742C5BE2FB0911F00FD5DE3 /* filter-lists */,
+				8742C5BF2FB0911F00FD5DE3 /* src */,
+			);
+			name = Resources;
+			path = "Veil Extension";
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8742C5842FB0911E00FD5DE3 /* Veil */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8742C5AE2FB0911F00FD5DE3 /* Build configuration list for PBXNativeTarget "Veil" */;
+			buildPhases = (
+				8742C5812FB0911E00FD5DE3 /* Sources */,
+				8742C5822FB0911E00FD5DE3 /* Frameworks */,
+				8742C5832FB0911E00FD5DE3 /* Resources */,
+				8742C5AD2FB0911F00FD5DE3 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8742C5A32FB0911F00FD5DE3 /* PBXTargetDependency */,
+			);
+			name = Veil;
+			packageProductDependencies = (
+			);
+			productName = Veil;
+			productReference = 8742C5852FB0911E00FD5DE3 /* Veil.app */;
+			productType = "com.apple.product-type.application";
+		};
+		8742C59F2FB0911F00FD5DE3 /* Veil Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8742C5AA2FB0911F00FD5DE3 /* Build configuration list for PBXNativeTarget "Veil Extension" */;
+			buildPhases = (
+				8742C59C2FB0911F00FD5DE3 /* Sources */,
+				8742C59D2FB0911F00FD5DE3 /* Frameworks */,
+				8742C59E2FB0911F00FD5DE3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Veil Extension";
+			packageProductDependencies = (
+			);
+			productName = "Veil Extension";
+			productReference = 8742C5A02FB0911F00FD5DE3 /* Veil Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8742C57D2FB0911E00FD5DE3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2640;
+				LastUpgradeCheck = 2640;
+				TargetAttributes = {
+					8742C5842FB0911E00FD5DE3 = {
+						CreatedOnToolsVersion = 26.4.1;
+					};
+					8742C59F2FB0911F00FD5DE3 = {
+						CreatedOnToolsVersion = 26.4.1;
+					};
+				};
+			};
+			buildConfigurationList = 8742C5802FB0911E00FD5DE3 /* Build configuration list for PBXProject "Veil" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 8742C57C2FB0911E00FD5DE3;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 8742C5862FB0911E00FD5DE3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8742C5842FB0911E00FD5DE3 /* Veil */,
+				8742C59F2FB0911F00FD5DE3 /* Veil Extension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8742C5832FB0911E00FD5DE3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8742C58F2FB0911E00FD5DE3 /* Icon.png in Resources */,
+				8742C5982FB0911E00FD5DE3 /* Main.storyboard in Resources */,
+				8742C5932FB0911E00FD5DE3 /* Script.js in Resources */,
+				8742C58D2FB0911E00FD5DE3 /* Main.html in Resources */,
+				8742C59A2FB0911F00FD5DE3 /* Assets.xcassets in Resources */,
+				8742C5912FB0911E00FD5DE3 /* Style.css in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8742C59E2FB0911F00FD5DE3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8742C5C92FB0911F00FD5DE3 /* tsconfig.json in Resources */,
+				8742C5C02FB0911F00FD5DE3 /* dist in Resources */,
+				8742C5CB2FB0911F00FD5DE3 /* filter-lists in Resources */,
+				8742C5CC2FB0911F00FD5DE3 /* src in Resources */,
+				8742C5C22FB0911F00FD5DE3 /* tsconfig.tsbuildinfo in Resources */,
+				8742C5C52FB0911F00FD5DE3 /* package.json in Resources */,
+				8742C5CA2FB0911F00FD5DE3 /* options.html in Resources */,
+				8742C5C82FB0911F00FD5DE3 /* rules in Resources */,
+				8742C5C32FB0911F00FD5DE3 /* node_modules in Resources */,
+				8742C5C72FB0911F00FD5DE3 /* manifest.json in Resources */,
+				8742C5C42FB0911F00FD5DE3 /* _metadata in Resources */,
+				8742C5C62FB0911F00FD5DE3 /* icons in Resources */,
+				8742C5C12FB0911F00FD5DE3 /* popup.html in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8742C5812FB0911E00FD5DE3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8742C5952FB0911E00FD5DE3 /* ViewController.swift in Sources */,
+				8742C5892FB0911E00FD5DE3 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8742C59C2FB0911F00FD5DE3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8742C5A62FB0911F00FD5DE3 /* SafariWebExtensionHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		8742C5A32FB0911F00FD5DE3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8742C59F2FB0911F00FD5DE3 /* Veil Extension */;
+			targetProxy = 8742C5A22FB0911F00FD5DE3 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		8742C58B2FB0911E00FD5DE3 /* Main.html */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8742C58C2FB0911E00FD5DE3 /* Base */,
+			);
+			name = Main.html;
+			sourceTree = "<group>";
+		};
+		8742C5962FB0911E00FD5DE3 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8742C5972FB0911E00FD5DE3 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		8742C5A82FB0911F00FD5DE3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.4;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		8742C5A92FB0911F00FD5DE3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		8742C5AB2FB0911F00FD5DE3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Veil Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Veil Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.veil.Veil.Extension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		8742C5AC2FB0911F00FD5DE3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Veil Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Veil Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.veil.Veil.Extension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		8742C5AF2FB0911F00FD5DE3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Veil/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Veil;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.veil.Veil;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		8742C5B02FB0911F00FD5DE3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Veil/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Veil;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.veil.Veil;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8742C5802FB0911E00FD5DE3 /* Build configuration list for PBXProject "Veil" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8742C5A82FB0911F00FD5DE3 /* Debug */,
+				8742C5A92FB0911F00FD5DE3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8742C5AA2FB0911F00FD5DE3 /* Build configuration list for PBXNativeTarget "Veil Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8742C5AB2FB0911F00FD5DE3 /* Debug */,
+				8742C5AC2FB0911F00FD5DE3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8742C5AE2FB0911F00FD5DE3 /* Build configuration list for PBXNativeTarget "Veil" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8742C5AF2FB0911F00FD5DE3 /* Debug */,
+				8742C5B02FB0911F00FD5DE3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 8742C57D2FB0911E00FD5DE3 /* Project object */;
+}

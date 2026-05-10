@@ -219,6 +219,7 @@ const autoRules = new AutoRulesEngine();
 const stats = new StatisticsTracker();
 const whitelist = new WhitelistManager();
 const allRules = [];
+const MAX_RULES = 5e4;
 let isEnabled = true;
 async function initialize() {
   try {
@@ -271,6 +272,9 @@ function processResourceReport(report) {
     const rule = parser.parse(confirmed.suggestedRule);
     if (rule) {
       rule.source = "auto-learned";
+      if (allRules.length >= MAX_RULES) {
+        allRules.splice(0, 100);
+      }
       allRules.push(rule);
       persistAutoLearnedRules();
       compileAndReload().catch(console.warn);
@@ -287,6 +291,7 @@ async function persistAutoLearnedRules() {
 }
 if (typeof browser !== "undefined" && ((_a = browser.runtime) == null ? void 0 : _a.onMessage)) {
   browser.runtime.onMessage.addListener((message) => {
+    var _a2;
     switch (message.type) {
       case "RESOURCE_REPORT":
         processResourceReport(message.payload);
@@ -297,6 +302,16 @@ if (typeof browser !== "undefined" && ((_a = browser.runtime) == null ? void 0 :
         isEnabled = !isEnabled;
         if (typeof browser !== "undefined" && browser.storage) {
           browser.storage.local.set({ enabled: isEnabled });
+        }
+        if (!isEnabled) {
+          if (typeof browser !== "undefined" && ((_a2 = browser.storage) == null ? void 0 : _a2.local)) {
+            browser.storage.local.set({ veil_webkit_rules: "[]" });
+          }
+          reloadContentBlocker("com.veil.contentblocker").catch(() => {
+          });
+        } else {
+          compileAndReload().catch(() => {
+          });
         }
         return Promise.resolve({ enabled: isEnabled });
       case "GET_AUTO_RULES_STATS":

@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] — 2026-05-10
+
+### Added
+
+- **Safari Web Extension for iOS** — full Xcode project, installs on iPhone via cable
+- **Safari Web Extension for macOS** — native Safari integration
+- **DNS Ad Blocker profile** for iPhone — blocks ads system-wide via AdGuard DoH
+- **Automatic install script** (`./scripts/install.sh`) for Chrome, Firefox, Safari
+
+### Fixed
+
+- Chrome: `ReferenceError: Cannot access 'E' before initialization` — fixed variable hoisting
+- Chrome: empty `resourceTypes` array rejected by DNR — returns undefined instead
+- Chrome: badge counter now works in production via `webRequest.onErrorOccurred`
+- Chrome: ON/OFF properly removes/restores all DNR rules + reloads tab
+- Chrome: whitelist uses stable hash-based rule IDs (no more collisions)
+- Chrome: options page `toLocaleString` crash on undefined `rulesCount`
+- Chrome: popup whitelist button toggles state and shows correct label
+- Firefox: cosmetic injection checks `isEnabled`
+- Firefox: added `GET_COSMETIC_RULES` message handler
+- Safari: TOGGLE_ENABLED recompiles content blocker
+- All platforms: auto-learned rules persisted and restored on startup
+- All platforms: XSS in social widget placeholders (innerHTML → DOM API)
+- Core: `findAllowRule` returns highest-priority match
+- Core: `rebuildFromRules` preserves nextId
+- Core: cosmetic cache bounded (FIFO eviction at 500)
+- Core: concurrent initialization mutex
+
 ## [1.1.0] — 2026-05-10
 
 ### Added
