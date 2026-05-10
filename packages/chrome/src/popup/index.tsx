@@ -182,12 +182,15 @@ function PopupApp() {
                 
                 let highlighted: HTMLElement | null = null;
                 
+                // Blocked tags — never hide these
+                const BLOCKED_TAGS = new Set(["HTML", "BODY", "HEAD", "MAIN", "ARTICLE", "SECTION", "NAV", "HEADER", "FOOTER"]);
+                
                 overlay.addEventListener("mousemove", (e) => {
                   overlay.style.pointerEvents = "none";
                   const el = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement;
                   overlay.style.pointerEvents = "auto";
                   
-                  if (el && el !== highlighted && el !== overlay) {
+                  if (el && el !== highlighted && el !== overlay && !BLOCKED_TAGS.has(el.tagName)) {
                     if (highlighted) highlighted.style.outline = "";
                     highlighted = el;
                     highlighted.style.outline = "2px solid red";
@@ -200,25 +203,55 @@ function PopupApp() {
                   overlay.remove();
                   if (highlighted) {
                     highlighted.style.outline = "";
-                    // Generate selector
+                    
+                    // Safety: don't block root elements
+                    if (BLOCKED_TAGS.has(highlighted.tagName)) {
+                      alert("Нельзя заблокировать корневой элемент");
+                      return;
+                    }
+                    
+                    // Generate specific selector
                     let selector = "";
-                    if (highlighted.id) {
+                    if (highlighted.id && highlighted.id.length > 2) {
                       selector = `#${highlighted.id}`;
-                    } else if (highlighted.className) {
-                      const cls = highlighted.className.split(" ").filter(Boolean)[0];
-                      if (cls) selector = `.${cls}`;
+                    } else if (highlighted.className && typeof highlighted.className === "string") {
+                      // Use the most specific class (longest, not generic)
+                      const classes = highlighted.className.split(" ").filter(Boolean);
+                      const specific = classes.find(c => c.length > 3 && !["container", "wrapper", "content", "main", "page", "app", "root"].includes(c.toLowerCase()));
+                      if (specific) selector = `.${specific}`;
                     }
+                    
+                    // Fallback: use tag + nth-child for precision
                     if (!selector) {
-                      selector = highlighted.tagName.toLowerCase();
+                      const parent = highlighted.parentElement;
+                      if (parent) {
+                        const siblings = Array.from(parent.children);
+                        const index = siblings.indexOf(highlighted) + 1;
+                        const tag = highlighted.tagName.toLowerCase();
+                        selector = `${tag}:nth-child(${index})`;
+                      } else {
+                        alert("Не удалось определить селектор");
+                        return;
+                      }
                     }
-                    // Hide element and save rule
-                    highlighted.style.display = "none";
+                    
+                    // Confirm before applying
                     const domain = window.location.hostname;
                     const rule = `${domain}##${selector}`;
-                    chrome.runtime.sendMessage({ type: "ADD_CUSTOM_RULE", payload: rule });
-                    alert(`Правило добавлено: ${rule}`);
+                    if (confirm(`Заблокировать элемент?\n\nПравило: ${rule}`)) {
+                      highlighted.style.display = "none";
+                      chrome.runtime.sendMessage({ type: "ADD_CUSTOM_RULE", payload: rule });
+                    }
                   }
                 });
+                
+                // ESC to cancel
+                document.addEventListener("keydown", (e) => {
+                  if (e.key === "Escape") {
+                    if (highlighted) highlighted.style.outline = "";
+                    overlay.remove();
+                  }
+                }, { once: true });
                 
                 document.body.appendChild(overlay);
               },
