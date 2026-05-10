@@ -419,6 +419,25 @@ if (chrome.declarativeNetRequest.onRuleMatchedDebug) {
   });
 }
 
+// Production badge counter: use JS engine to detect what DNR blocked
+// webRequest.onCompleted fires for allowed requests; onErrorOccurred fires for blocked ones
+if (chrome.webRequest?.onErrorOccurred) {
+  chrome.webRequest.onErrorOccurred.addListener(
+    (details) => {
+      if (!isEnabled || details.tabId < 0) return;
+      // net::ERR_BLOCKED_BY_CLIENT means DNR blocked it
+      if (details.error === "net::ERR_BLOCKED_BY_CLIENT") {
+        try {
+          const url = new URL(details.url);
+          stats.recordBlocked(details.tabId, url.hostname, "ads");
+          updateBadge(details.tabId);
+        } catch { /* ignore */ }
+      }
+    },
+    { urls: ["<all_urls>"] }
+  );
+}
+
 // ─── Auto-Learning: Analyze unblocked requests for new patterns ───────────────
 
 // Process completed (unblocked) requests through auto-learning engine
