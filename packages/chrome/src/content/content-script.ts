@@ -121,12 +121,31 @@ function applyCosmeticRules(): void {
 function injectScriptlets(): void {
   if (scriptlets.length === 0) return;
 
-  const script = document.createElement("script");
-  script.textContent = scriptlets.join("\n");
+  // Try method 1: inline script (works on sites without strict CSP)
+  try {
+    const script = document.createElement("script");
+    script.textContent = scriptlets.join("\n");
+    (document.head ?? document.documentElement).appendChild(script);
+    script.remove();
+  } catch {
+    // Method 1 failed (CSP blocked)
+  }
 
-  // Inject into page context (not content script context)
-  (document.head ?? document.documentElement).appendChild(script);
-  script.remove(); // Clean up DOM but code already executed
+  // Method 2: Use blob URL (bypasses most CSP restrictions)
+  try {
+    const blob = new Blob([scriptlets.join("\n")], { type: "application/javascript" });
+    const url = URL.createObjectURL(blob);
+    const script = document.createElement("script");
+    script.src = url;
+    (document.head ?? document.documentElement).appendChild(script);
+    script.addEventListener("load", () => {
+      script.remove();
+      URL.revokeObjectURL(url);
+    });
+  } catch {
+    // Method 2 also failed — CSP is very strict
+    // Scriptlets won't work on this site, but network blocking still does
+  }
 }
 
 // ─── MutationObserver ─────────────────────────────────────────────────────────
