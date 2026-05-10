@@ -208,8 +208,8 @@ export class AutoRulesEngine {
   private maxPatterns = 1000;
   private confirmThreshold = 5; // Need 5 detections to auto-confirm (was 3 — too aggressive)
 
-  // Minimum confidence for auto-confirmation (raised from 0.5 to 0.7)
-  private confirmConfidence = 0.7;
+  // Minimum confidence for auto-confirmation
+  private confirmConfidence = 0.6;
 
   // Maximum auto-learned rules to prevent unbounded growth
   private maxConfirmedRules = 200;
