@@ -24,7 +24,13 @@ function OptionsApp() {
   async function loadData() {
     try {
       const listsResp = await chrome.runtime.sendMessage({ type: "GET_FILTER_LISTS" });
-      if (listsResp?.lists) setFilterLists(listsResp.lists);
+      if (listsResp?.lists) {
+        setFilterLists(listsResp.lists.map((l: any) => ({
+          ...l,
+          rulesCount: l.rulesCount ?? 0,
+          enabled: l.enabled ?? false,
+        })));
+      }
 
       const wlResp = await chrome.runtime.sendMessage({ type: "GET_WHITELIST" });
       if (wlResp?.whitelist) setWhitelist(wlResp.whitelist);
@@ -108,7 +114,7 @@ function OptionsApp() {
               <div>
                 <div style={{ fontWeight: 500, fontSize: 14 }}>{list.name}</div>
                 <div style={{ fontSize: 12, color: "#888" }}>
-                  {list.category} · {list.rulesCount.toLocaleString()} правил
+                  {list.category} · {(list.rulesCount ?? 0).toLocaleString()} правил
                 </div>
               </div>
               <button
