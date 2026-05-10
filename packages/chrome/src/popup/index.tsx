@@ -187,8 +187,21 @@ function PopupApp() {
                 
                 overlay.addEventListener("mousemove", (e) => {
                   overlay.style.pointerEvents = "none";
-                  const el = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement;
+                  let el = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement;
                   overlay.style.pointerEvents = "auto";
+                  
+                  // Skip large containers — find the smallest visible child
+                  if (el && el.children.length > 3 && el.offsetHeight > 300) {
+                    // Try to find a smaller child at this point
+                    for (const child of el.children) {
+                      const rect = child.getBoundingClientRect();
+                      if (e.clientX >= rect.left && e.clientX <= rect.right &&
+                          e.clientY >= rect.top && e.clientY <= rect.bottom) {
+                        el = child as HTMLElement;
+                        break;
+                      }
+                    }
+                  }
                   
                   if (el && el !== highlighted && el !== overlay && !BLOCKED_TAGS.has(el.tagName)) {
                     if (highlighted) highlighted.style.outline = "";
@@ -207,6 +220,13 @@ function PopupApp() {
                     // Safety: don't block root elements
                     if (BLOCKED_TAGS.has(highlighted.tagName)) {
                       alert("Нельзя заблокировать корневой элемент");
+                      return;
+                    }
+                    
+                    // Safety: don't block elements larger than 80% of viewport
+                    const rect = highlighted.getBoundingClientRect();
+                    if (rect.width > window.innerWidth * 0.8 && rect.height > window.innerHeight * 0.8) {
+                      alert("Элемент слишком большой — выберите конкретный баннер внутри");
                       return;
                     }
                     
