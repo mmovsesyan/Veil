@@ -1,0 +1,6 @@
+name = "veil-dns"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+[vars]
+UPSTREAM_DNS = "https://dns.cloudflare.com/dns-query"
