@@ -478,6 +478,36 @@ async function handleMessage(message: { type: string; payload?: unknown }): Prom
     case "TOGGLE_ENABLED": {
       isEnabled = !isEnabled;
       await chrome.storage.local.set({ enabled: isEnabled });
+
+      // Enable/disable DNR rules at the system level
+      if (!isEnabled) {
+        // Remove all dynamic rules when disabled
+        try {
+          const existing = await chrome.declarativeNetRequest.getDynamicRules();
+          const removeIds = existing.map((r) => r.id);
+          if (removeIds.length > 0) {
+            await chrome.declarativeNetRequest.updateDynamicRules({ removeRuleIds: removeIds, addRules: [] });
+          }
+          // Also disable static rulesets
+          const staticSets = await chrome.declarativeNetRequest.getEnabledRulesets();
+          if (staticSets.length > 0) {
+            await chrome.declarativeNetRequest.updateEnabledRulesets({ disableRulesetIds: staticSets });
+          }
+        } catch { /* ignore errors */ }
+      } else {
+        // Re-enable: reload rules from cache
+        try {
+          const stored = await chrome.storage.local.get("cachedRules");
+          if (stored.cachedRules) {
+            const result = parser.parseList(stored.cachedRules as string);
+            await engine.initialize(result.rules);
+            await updateDNRRules(result.rules);
+          }
+          // Re-enable static rulesets
+          await chrome.declarativeNetRequest.updateEnabledRulesets({ enableRulesetIds: ["default_rules"] });
+        } catch { /* ignore errors */ }
+      }
+
       return { enabled: isEnabled };
     }
 
@@ -486,14 +516,43 @@ async function handleMessage(message: { type: string; payload?: unknown }): Prom
       whitelist.add(domain);
       const all = whitelist.getAll();
       await chrome.storage.local.set({ whitelist: all });
+
+      // Add DNR allowAllRequests rule for this domain
+      try {
+        const whitelistRuleId = 900000 + all.indexOf(domain);
+        await chrome.declarativeNetRequest.updateDynamicRules({
+          addRules: [{
+            id: whitelistRuleId,
+            priority: 10,
+            action: { type: "allowAllRequests" as chrome.declarativeNetRequest.RuleActionType },
+            condition: {
+              requestDomains: [domain],
+              resourceTypes: ["main_frame", "sub_frame"] as chrome.declarativeNetRequest.ResourceType[],
+            },
+          }],
+          removeRuleIds: [],
+        });
+      } catch { /* DNR update may fail for invalid domains */ }
+
       return { success: true };
     }
 
     case "REMOVE_FROM_WHITELIST": {
       const domain = message.payload as string;
+      const allBefore = whitelist.getAll();
+      const ruleIdToRemove = 900000 + allBefore.indexOf(domain);
       whitelist.remove(domain);
       const all = whitelist.getAll();
       await chrome.storage.local.set({ whitelist: all });
+
+      // Remove DNR allow rule for this domain
+      try {
+        await chrome.declarativeNetRequest.updateDynamicRules({
+          removeRuleIds: [ruleIdToRemove],
+          addRules: [],
+        });
+      } catch { /* ignore */ }
+
       return { success: true };
     }
 
