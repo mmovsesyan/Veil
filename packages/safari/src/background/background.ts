@@ -28,7 +28,7 @@ const autoRules = new AutoRulesEngine();
 const stats = new StatisticsTracker();
 const whitelist = new WhitelistManager();
 
-let allRules: Rule[] = [];
+const allRules: Rule[] = [];
 let isEnabled = true;
 
 // ─── Initialization ───────────────────────────────────────────────────────────

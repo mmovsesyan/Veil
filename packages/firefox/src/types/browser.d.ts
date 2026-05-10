@@ -3,7 +3,7 @@
  * In production, use @anthropic-ai/sdk or webextension-polyfill types.
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 declare namespace browser {
   namespace runtime {
     function getURL(path: string): string;

@@ -412,7 +412,7 @@ if (chrome.webRequest?.onCompleted) {
 
         let initiatorDomain = "";
         if (details.initiator) {
-          try { initiatorDomain = new URL(details.initiator).hostname; } catch {}
+          try { initiatorDomain = new URL(details.initiator).hostname; } catch { /* invalid URL */ }
         }
 
         // Feed to auto-learning engine
