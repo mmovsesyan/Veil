@@ -184,8 +184,9 @@ browser.webRequest.onBeforeRequest.addListener(
           const selector = rule.selector.slice(2); // Remove $$ prefix
           // Simple tag removal by content
           const tagMatch = selector.match(/^(\w+)\[tag-content="([^"]+)"\]$/);
-          if (tagMatch) {
-            const [, tag, content] = tagMatch;
+          if (tagMatch && tagMatch[1] && tagMatch[2]) {
+            const tag = tagMatch[1];
+            const content = tagMatch[2];
             const regex = new RegExp(
               `<${tag}[^>]*>[\\s\\S]*?${content.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}[\\s\\S]*?</${tag}>`,
               "gi"
