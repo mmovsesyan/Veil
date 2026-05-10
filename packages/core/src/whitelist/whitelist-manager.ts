@@ -5,7 +5,7 @@ import type { IWhitelistManager } from "../types/interfaces.js";
  * Supports exact domain matching and wildcard patterns (*.example.com).
  */
 export class WhitelistManager implements IWhitelistManager {
-  private entries: Set<string> = new Set();
+  private entries = new Set<string>();
 
   add(pattern: string): void {
     const normalized = this.normalize(pattern);

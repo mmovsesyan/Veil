@@ -203,7 +203,7 @@ function generateRule(url: string, targetDomain: string, isThirdParty: boolean):
 
 export class AutoRulesEngine {
   private detectedPatterns: DetectedPattern[] = [];
-  private confirmedRules: Set<string> = new Set();
+  private confirmedRules = new Set<string>();
   private maxPatterns = 1000;
   private confirmThreshold = 3; // Need 3 detections to auto-confirm
 
@@ -302,7 +302,7 @@ export class AutoRulesEngine {
     totalDetections: number;
     confirmedRules: number;
     pendingDetections: number;
-    topDomains: Array<{ domain: string; count: number }>;
+    topDomains: { domain: string; count: number }[];
   } {
     const domainCounts: Record<string, number> = {};
     for (const p of this.detectedPatterns) {

@@ -25,7 +25,7 @@ export class NetworkLogger {
   private maxEntries: number;
   private nextId = 1;
   private enabled = false;
-  private listeners: Array<(entry: LogEntry) => void> = [];
+  private listeners: ((entry: LogEntry) => void)[] = [];
 
   constructor(maxEntries = 5000) {
     this.maxEntries = maxEntries;
@@ -113,7 +113,7 @@ export class NetworkLogger {
     blocked: number;
     allowed: number;
     byType: Record<string, { blocked: number; allowed: number }>;
-    topBlockedDomains: Array<{ domain: string; count: number }>;
+    topBlockedDomains: { domain: string; count: number }[];
   } {
     const byType: Record<string, { blocked: number; allowed: number }> = {};
     const domainCounts: Record<string, number> = {};

@@ -16,8 +16,8 @@ interface DailyStatsData {
  * Stores up to 90 days of daily statistics.
  */
 export class StatisticsTracker implements IStatisticsTracker {
-  private tabStats: Map<number, TabStatsData> = new Map();
-  private dailyStats: Map<string, DailyStatsData> = new Map();
+  private tabStats = new Map<number, TabStatsData>();
+  private dailyStats = new Map<string, DailyStatsData>();
   private readonly maxDays = 90;
 
   recordBlocked(tabId: number, domain: string, category: string): void {

@@ -20,7 +20,7 @@ const stats = new StatisticsTracker();
 const whitelist = new WhitelistManager();
 
 let isEnabled = true;
-let cosmeticRulesCache: Map<string, CosmeticRule[]> = new Map();
+const cosmeticRulesCache = new Map<string, CosmeticRule[]>();
 
 // ─── Lifecycle ────────────────────────────────────────────────────────────────
 
@@ -116,7 +116,7 @@ async function updateFiltersInBackground(): Promise<void> {
 
   const allRulesText: string[] = [];
 
-  for (const list of registry.lists as Array<{ id: string; url: string; enabled: boolean }>) {
+  for (const list of registry.lists as { id: string; url: string; enabled: boolean }[]) {
     if (!list.enabled) continue;
 
     try {

@@ -44,12 +44,12 @@ export function parsePermissionsModifier(rulePattern: string, value: string): Pe
 /**
  * Compile CSP rules into Chrome declarativeNetRequest modifyHeaders format.
  */
-export function compileCSPToDNR(rules: CSPRule[]): Array<{
+export function compileCSPToDNR(rules: CSPRule[]): {
   id: number;
   priority: number;
-  action: { type: "modifyHeaders"; responseHeaders: Array<{ header: string; operation: string; value: string }> };
+  action: { type: "modifyHeaders"; responseHeaders: { header: string; operation: string; value: string }[] };
   condition: { urlFilter: string; resourceTypes: string[] };
-}> {
+}[] {
   return rules.map((rule, i) => ({
     id: 900000 + i,
     priority: 1,
@@ -73,12 +73,12 @@ export function compileCSPToDNR(rules: CSPRule[]): Array<{
 /**
  * Compile Permissions-Policy rules into DNR format.
  */
-export function compilePermissionsToDNR(rules: PermissionsPolicyRule[]): Array<{
+export function compilePermissionsToDNR(rules: PermissionsPolicyRule[]): {
   id: number;
   priority: number;
-  action: { type: "modifyHeaders"; responseHeaders: Array<{ header: string; operation: string; value: string }> };
+  action: { type: "modifyHeaders"; responseHeaders: { header: string; operation: string; value: string }[] };
   condition: { urlFilter: string; resourceTypes: string[] };
-}> {
+}[] {
   return rules.map((rule, i) => ({
     id: 950000 + i,
     priority: 1,
@@ -122,8 +122,8 @@ export const DEFAULT_PERMISSIONS_RULES: PermissionsPolicyRule[] = [
 export function generateFirefoxCSPHeaders(
   rules: CSPRule[],
   url: string,
-): Array<{ name: string; value: string }> {
-  const headers: Array<{ name: string; value: string }> = [];
+): { name: string; value: string }[] {
+  const headers: { name: string; value: string }[] = [];
 
   for (const rule of rules) {
     if (matchesUrlPattern(rule.urlPattern, url)) {

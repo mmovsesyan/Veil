@@ -110,7 +110,7 @@ export interface DailyStats {
   date: string;
   totalBlocked: number;
   byCategory: Record<FilterCategory, number>;
-  topDomains: Array<{ domain: string; count: number }>;
+  topDomains: { domain: string; count: number }[];
 }
 
 // ─── Engine Types ─────────────────────────────────────────────────────────────

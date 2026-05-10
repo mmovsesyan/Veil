@@ -105,7 +105,7 @@ export class ChromeAdapter implements IPlatformAdapter {
    */
   compileToDeclarativeNetRequest(
     rules: Rule[],
-  ): Array<{ id: number; priority: number; action: { type: string }; condition: Record<string, unknown> }> {
+  ): { id: number; priority: number; action: { type: string }; condition: Record<string, unknown> }[] {
     return rules
       .filter((r) => r.type === "network-block" || r.type === "network-allow")
       .map((rule, index) => ({

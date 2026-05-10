@@ -58,7 +58,7 @@ export class RuleParser implements IRuleParser {
   parseList(rawText: string): ParseResult {
     const lines = rawText.split("\n");
     const rules: Rule[] = [];
-    const errors: Array<{ line: number; content: string; reason: string }> = [];
+    const errors: { line: number; content: string; reason: string }[] = [];
     let skipped = 0;
 
     for (let i = 0; i < lines.length; i++) {

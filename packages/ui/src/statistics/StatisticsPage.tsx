@@ -7,7 +7,7 @@ interface DailyStatItem {
 interface StatisticsPageProps {
   dailyStats: DailyStatItem[];
   totalBlocked: number;
-  topDomains: Array<{ domain: string; count: number }>;
+  topDomains: { domain: string; count: number }[];
 }
 
 /**

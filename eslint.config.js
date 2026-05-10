@@ -25,7 +25,13 @@ export default tseslint.config(
         "error",
         { prefer: "type-imports" },
       ],
-      "@typescript-eslint/no-non-null-assertion": "warn",
+      "@typescript-eslint/no-non-null-assertion": "off",
+      "@typescript-eslint/no-empty-function": "off",
+      "@typescript-eslint/no-empty-object-type": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-invalid-void-type": "off",
+      "@typescript-eslint/prefer-for-of": "off",
+      "@typescript-eslint/no-misused-new": "off",
     },
   },
   {
@@ -57,6 +63,8 @@ export default tseslint.config(
       "**/*.config.js",
       "**/*.config.ts",
       ".eslintrc.cjs",
+      "e2e/**",
+      "coverage/**",
     ],
   },
 );

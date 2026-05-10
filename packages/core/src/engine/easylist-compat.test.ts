@@ -141,7 +141,7 @@ news.com,blog.com##.article-ad
 
 // ─── Real-world URLs for testing ──────────────────────────────────────────────
 
-const TEST_URLS: Array<{ url: string; type: string; shouldBlock: boolean; reason: string }> = [
+const TEST_URLS: { url: string; type: string; shouldBlock: boolean; reason: string }[] = [
   { url: "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js", type: "script", shouldBlock: true, reason: "googlesyndication domain" },
   { url: "https://www.googleadservices.com/pagead/conversion/", type: "script", shouldBlock: true, reason: "googleadservices domain" },
   { url: "https://ad.doubleclick.net/ddm/trackclk/", type: "image", shouldBlock: true, reason: "doubleclick domain" },

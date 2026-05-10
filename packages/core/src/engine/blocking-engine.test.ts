@@ -2,8 +2,8 @@ import { describe, it, expect, beforeEach } from "vitest";
 import fc from "fast-check";
 import { BlockingEngine } from "./blocking-engine.js";
 import { RuleParser } from "../rules/parser.js";
-import { RuleType, RuleAction } from "../types/index.js";
-import type { NetworkRequest, Rule } from "../types/index.js";
+import { RuleAction } from "../types/index.js";
+import type { NetworkRequest } from "../types/index.js";
 
 const parser = new RuleParser();
 

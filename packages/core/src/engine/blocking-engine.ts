@@ -29,34 +29,34 @@ import {
  */
 export class BlockingEngine implements IBlockingEngine {
   // ─── Rule Storage ─────────────────────────────────────────────────────────
-  private rules: Map<number, Rule> = new Map();
+  private rules = new Map<number, Rule>();
   private nextId = 1;
 
   // ─── $badfilter Index ─────────────────────────────────────────────────────
   // Stores pattern signatures of $badfilter rules to disable matching rules
-  private badfilterPatterns: Set<string> = new Set();
+  private badfilterPatterns = new Set<string>();
 
   // ─── Network Block Indexes ────────────────────────────────────────────────
   
   // Hostname-only rules: O(1) lookup
-  private hostnameBlockSet: Set<string> = new Set();
-  private hostnameBlockRules: Map<string, number> = new Map(); // hostname → ruleId
+  private hostnameBlockSet = new Set<string>();
+  private hostnameBlockRules = new Map<string, number>(); // hostname → ruleId
 
   // Token-bucket index: rules grouped by their best token
-  private tokenBuckets: Map<string, number[]> = new Map();
+  private tokenBuckets = new Map<string, number[]>();
 
   // Generic rules (no good token): checked for every URL
   private genericBlockRules: number[] = [];
 
   // ─── Network Allow Indexes ────────────────────────────────────────────────
-  private hostnameAllowSet: Set<string> = new Set();
-  private hostnameAllowRules: Map<string, number> = new Map();
-  private tokenAllowBuckets: Map<string, number[]> = new Map();
+  private hostnameAllowSet = new Set<string>();
+  private hostnameAllowRules = new Map<string, number>();
+  private tokenAllowBuckets = new Map<string, number[]>();
   private genericAllowRules: number[] = [];
 
   // ─── Cosmetic Indexes ─────────────────────────────────────────────────────
   private globalCosmeticIds: number[] = [];
-  private domainCosmeticIds: Map<string, number[]> = new Map();
+  private domainCosmeticIds = new Map<string, number[]>();
   private domainCosmeticExclusions: Map<string, Set<number>> = new Set() as unknown as Map<string, Set<number>>;
 
   // ─── Resource Type Bitmap ─────────────────────────────────────────────────

@@ -6,7 +6,7 @@ import { describe, it, expect } from "vitest";
 import { serializeRules, deserializeRules, serializeToString, deserializeFromString, estimateSize } from "./serializer.js";
 import { RuleParser } from "../rules/parser.js";
 import { BlockingEngine } from "./blocking-engine.js";
-import type { NetworkRequest } from "../types/index.js";
+
 
 const parser = new RuleParser();
 

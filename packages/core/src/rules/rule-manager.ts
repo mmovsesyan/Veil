@@ -1,5 +1,5 @@
 import type { FilterList, Rule } from "../types/index.js";
-import { FilterCategory } from "../types/index.js";
+import type { FilterCategory } from "../types/index.js";
 import type { IBlockingEngine } from "../types/interfaces.js";
 import { RuleParser } from "./parser.js";
 
@@ -18,8 +18,8 @@ interface FilterListRegistry {
  */
 export class RuleManager {
   private parser = new RuleParser();
-  private filterLists: Map<string, FilterList> = new Map();
-  private rulesByList: Map<string, Rule[]> = new Map();
+  private filterLists = new Map<string, FilterList>();
+  private rulesByList = new Map<string, Rule[]>();
   private customRules: Rule[] = [];
   private engine: IBlockingEngine;
   private updateIntervalMs = 24 * 60 * 60 * 1000; // 24 hours
