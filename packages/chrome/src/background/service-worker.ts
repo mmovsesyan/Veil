@@ -9,9 +9,8 @@
  */
 
 import { BlockingEngine, RuleParser, StatisticsTracker, WhitelistManager } from "@veil/core";
-import { getRedirectResource, getDefaultRedirect, removeParams, removeTrackingParams, parseScriptletRule } from "@veil/core";
-import type { Rule, CosmeticRule, RemoveParamRule } from "@veil/core";
-import type { ExtendedModifiers } from "@veil/core/dist/rules/modifiers.js";
+import { getRedirectResource, getDefaultRedirect, parseScriptletRule } from "@veil/core";
+import type { Rule, CosmeticRule } from "@veil/core";
 
 // ─── Core instances ───────────────────────────────────────────────────────────
 
