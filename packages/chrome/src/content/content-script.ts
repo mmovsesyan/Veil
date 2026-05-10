@@ -33,6 +33,13 @@ async function initialize(): Promise<void> {
   const domain = window.location.hostname;
 
   try {
+    // First check if extension is enabled
+    const statusResponse = await chrome.runtime.sendMessage({ type: "GET_STATUS" });
+    if (statusResponse && !statusResponse.enabled) {
+      // Extension is disabled — do not apply any cosmetic rules
+      return;
+    }
+
     // Try to get rules from service worker
     const response = await chrome.runtime.sendMessage({
       type: "GET_COSMETIC_RULES",
@@ -48,6 +55,12 @@ async function initialize(): Promise<void> {
   } catch {
     // Service worker is dead — fallback to storage.session
     try {
+      // Check enabled state from local storage
+      const settings = await chrome.storage.local.get("enabled");
+      if (settings["enabled"] === false) {
+        return; // Extension is disabled
+      }
+
       const cached = await chrome.storage.session.get([`cosmetic_${domain}`]);
       const data = cached[`cosmetic_${domain}`];
       if (data) {

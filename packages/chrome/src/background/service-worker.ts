@@ -23,6 +23,23 @@ const autoRules = new AutoRulesEngine();
 let isEnabled = true;
 const cosmeticRulesCache = new Map<string, CosmeticRule[]>();
 
+// ─── Stable whitelist rule ID generation ──────────────────────────────────────
+
+/**
+ * Generate a stable, deterministic rule ID for a whitelisted domain.
+ * Uses a simple hash to avoid index-based ID collisions when domains are
+ * added/removed (since getAll() returns a sorted array whose indices shift).
+ */
+function getWhitelistRuleId(domain: string): number {
+  let hash = 0;
+  for (let i = 0; i < domain.length; i++) {
+    const char = domain.charCodeAt(i);
+    hash = ((hash << 5) - hash + char) | 0; // Convert to 32-bit integer
+  }
+  // Map to range 900000–929999 (30K IDs, well within limits)
+  return 900000 + (Math.abs(hash) % 30000);
+}
+
 // ─── Lifecycle ────────────────────────────────────────────────────────────────
 
 chrome.runtime.onInstalled.addListener(async (details) => {
@@ -488,27 +505,34 @@ async function handleMessage(message: { type: string; payload?: unknown }): Prom
           if (removeIds.length > 0) {
             await chrome.declarativeNetRequest.updateDynamicRules({ removeRuleIds: removeIds, addRules: [] });
           }
-          // Also disable static rulesets
+          // Save and disable static rulesets so they can be restored on re-enable
           const staticSets = await chrome.declarativeNetRequest.getEnabledRulesets();
           if (staticSets.length > 0) {
+            await chrome.storage.local.set({ enabledStaticRulesets: staticSets });
             await chrome.declarativeNetRequest.updateEnabledRulesets({ disableRulesetIds: staticSets });
           }
         } catch { /* ignore errors */ }
       } else {
         // Re-enable: reload rules from cache
         try {
-          const stored = await chrome.storage.local.get("cachedRules");
+          const stored = await chrome.storage.local.get(["cachedRules", "enabledStaticRulesets"]);
           if (stored.cachedRules) {
             const result = parser.parseList(stored.cachedRules as string);
             await engine.initialize(result.rules);
             await updateDNRRules(result.rules);
           }
 
-          // Restore whitelist DNR allow rules
+          // Re-enable static rulesets that were disabled
+          const savedRulesets = stored["enabledStaticRulesets"] as string[] | undefined;
+          if (savedRulesets && savedRulesets.length > 0) {
+            await chrome.declarativeNetRequest.updateEnabledRulesets({ enableRulesetIds: savedRulesets });
+          }
+
+          // Restore whitelist DNR allow rules using stable hash-based IDs
           const wlDomains = whitelist.getAll();
           if (wlDomains.length > 0) {
-            const wlRules = wlDomains.map((d, i) => ({
-              id: 900000 + i,
+            const wlRules = wlDomains.map((d) => ({
+              id: getWhitelistRuleId(d),
               priority: 10,
               action: { type: "allowAllRequests" as chrome.declarativeNetRequest.RuleActionType },
               condition: {
@@ -533,30 +557,31 @@ async function handleMessage(message: { type: string; payload?: unknown }): Prom
       const all = whitelist.getAll();
       await chrome.storage.local.set({ whitelist: all });
 
-      // Add DNR allowAllRequests rule for this domain
-      try {
-        const whitelistRuleId = 900000 + all.indexOf(domain);
-        await chrome.declarativeNetRequest.updateDynamicRules({
-          addRules: [{
-            id: whitelistRuleId,
-            priority: 10,
-            action: { type: "allowAllRequests" as chrome.declarativeNetRequest.RuleActionType },
-            condition: {
-              requestDomains: [domain],
-              resourceTypes: ["main_frame", "sub_frame"] as chrome.declarativeNetRequest.ResourceType[],
-            },
-          }],
-          removeRuleIds: [],
-        });
-      } catch { /* DNR update may fail for invalid domains */ }
+      // Add DNR allowAllRequests rule for this domain (only if enabled)
+      if (isEnabled) {
+        try {
+          const whitelistRuleId = getWhitelistRuleId(domain);
+          await chrome.declarativeNetRequest.updateDynamicRules({
+            addRules: [{
+              id: whitelistRuleId,
+              priority: 10,
+              action: { type: "allowAllRequests" as chrome.declarativeNetRequest.RuleActionType },
+              condition: {
+                requestDomains: [domain],
+                resourceTypes: ["main_frame", "sub_frame"] as chrome.declarativeNetRequest.ResourceType[],
+              },
+            }],
+            removeRuleIds: [whitelistRuleId], // Remove first in case of hash collision with stale rule
+          });
+        } catch { /* DNR update may fail for invalid domains */ }
+      }
 
       return { success: true };
     }
 
     case "REMOVE_FROM_WHITELIST": {
       const domain = message.payload as string;
-      const allBefore = whitelist.getAll();
-      const ruleIdToRemove = 900000 + allBefore.indexOf(domain);
+      const ruleIdToRemove = getWhitelistRuleId(domain);
       whitelist.remove(domain);
       const all = whitelist.getAll();
       await chrome.storage.local.set({ whitelist: all });
@@ -619,6 +644,7 @@ async function handleMessage(message: { type: string; payload?: unknown }): Prom
 
     case "GET_COSMETIC_RULES": {
       const domain = message.payload as string;
+      if (!isEnabled) return { selectors: [], scriptlets: [] };
       if (whitelist.isWhitelisted(domain)) return { selectors: [], scriptlets: [] };
       const rules = engine.getCosmeticRules(domain);
       
