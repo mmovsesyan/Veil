@@ -1,0 +1,47 @@
+{
+  "name": "veil",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Cross-browser content blocker with shared core and platform adapters",
+  "packageManager": "pnpm@9.15.4",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build": "pnpm -r run build",
+    "dev": "pnpm -r run dev",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "pnpm -r run typecheck",
+    "clean": "pnpm -r run clean && rm -rf node_modules",
+    "package": "bash scripts/package-extensions.sh",
+    "download-filters": "npx tsx scripts/download-filters.ts"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.17.0",
+    "@fast-check/vitest": "0.3.0",
+    "@types/chrome": "0.0.287",
+    "@types/node": "22.10.2",
+    "@types/react": "18.3.12",
+    "@types/react-dom": "18.3.1",
+    "@types/webextension-polyfill": "0.12.1",
+    "@vitejs/plugin-react": "4.3.4",
+    "@vitest/coverage-v8": "2.1.8",
+    "eslint": "9.17.0",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-plugin-react": "7.37.3",
+    "eslint-plugin-react-hooks": "5.1.0",
+    "fast-check": "3.23.2",
+    "prettier": "3.4.2",
+    "typescript": "5.7.2",
+    "typescript-eslint": "8.18.1",
+    "vite": "6.0.5",
+    "vite-plugin-dts": "4.3.0",
+    "vitest": "2.1.8"
+  }
+}

@@ -1,0 +1,139 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20, 22]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type check
+        run: pnpm run typecheck
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        run: pnpm run build
+
+  build-extensions:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build all packages
+        run: pnpm run build
+
+      - name: Package Chrome extension
+        run: |
+          cd packages/chrome
+          zip -r ../../chrome-extension.zip dist/ manifest.json icons/ popup.html options.html rules/ filter-lists/
+
+      - name: Package Firefox extension
+        run: |
+          cd packages/firefox
+          zip -r ../../firefox-extension.xpi dist/ manifest.json icons/ popup.html options.html
+
+      - name: Upload Chrome extension
+        uses: actions/upload-artifact@v4
+        with:
+          name: chrome-extension
+          path: chrome-extension.zip
+
+      - name: Upload Firefox extension
+        uses: actions/upload-artifact@v4
+        with:
+          name: firefox-extension
+          path: firefox-extension.xpi
+
+  filter-list-regression:
+    runs-on: ubuntu-latest
+    needs: test
+    # Run weekly to catch compatibility issues with updated filter lists
+    if: github.event_name == 'push' || github.event.schedule
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download EasyList
+        run: |
+          mkdir -p filter-lists/downloaded
+          curl -sL "https://easylist.to/easylist/easylist.txt" -o filter-lists/downloaded/easylist.txt
+          curl -sL "https://easylist.to/easylist/easyprivacy.txt" -o filter-lists/downloaded/easyprivacy.txt
+          echo "EasyList: $(wc -l < filter-lists/downloaded/easylist.txt) lines"
+          echo "EasyPrivacy: $(wc -l < filter-lists/downloaded/easyprivacy.txt) lines"
+
+      - name: Run parser regression
+        run: |
+          npx tsx -e "
+          import { readFileSync } from 'fs';
+          import { RuleParser } from './packages/core/src/rules/parser.js';
+          const parser = new RuleParser();
+          const text = readFileSync('filter-lists/downloaded/easylist.txt', 'utf-8');
+          const result = parser.parseList(text);
+          const total = text.split('\n').length;
+          const rate = (result.rules.length / (total - result.skipped)) * 100;
+          console.log('EasyList Results:');
+          console.log('  Total lines:', total);
+          console.log('  Parsed rules:', result.rules.length);
+          console.log('  Skipped:', result.skipped);
+          console.log('  Errors:', result.errors.length);
+          console.log('  Parse rate:', rate.toFixed(1) + '%');
+          if (rate < 95) { process.exit(1); }
+          "

@@ -1,0 +1,10 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/core" },
+    { "path": "./packages/chrome" },
+    { "path": "./packages/firefox" },
+    { "path": "./packages/safari" },
+    { "path": "./packages/ui" }
+  ]
+}
