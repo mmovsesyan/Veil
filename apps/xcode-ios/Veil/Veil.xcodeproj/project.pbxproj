@@ -32,6 +32,7 @@
 		870489C22FB0A6F3002AAB5F /* bundled-rules in Resources */ = {isa = PBXBuildFile; fileRef = 870489B32FB0A6F3002AAB5F /* bundled-rules */; };
 		870489C32FB0A6F3002AAB5F /* filter-lists in Resources */ = {isa = PBXBuildFile; fileRef = 870489B52FB0A6F3002AAB5F /* filter-lists */; };
 		870489C42FB0A6F3002AAB5F /* src in Resources */ = {isa = PBXBuildFile; fileRef = 870489B62FB0A6F3002AAB5F /* src */; };
+		8774FB312FB0AEE100155287 /* VeilBlocker.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8774FB282FB0AEE100155287 /* VeilBlocker.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,6 +42,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 870489942FB0A6F3002AAB5F;
 			remoteInfo = "Veil Extension";
+		};
+		8774FB2F2FB0AEE100155287 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 870489702FB0A6F2002AAB5F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8774FB272FB0AEE100155287;
+			remoteInfo = VeilBlocker;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -52,6 +60,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				870489962FB0A6F3002AAB5F /* Veil Extension.appex in Embed Foundation Extensions */,
+				8774FB312FB0AEE100155287 /* VeilBlocker.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -88,7 +97,29 @@
 		870489B42FB0A6F3002AAB5F /* vite.config.ts */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.typescript; name = vite.config.ts; path = ../../../../packages/chrome/vite.config.ts; sourceTree = "<group>"; };
 		870489B52FB0A6F3002AAB5F /* filter-lists */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "filter-lists"; path = "../../../../packages/chrome/filter-lists"; sourceTree = "<group>"; };
 		870489B62FB0A6F3002AAB5F /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; name = src; path = ../../../../packages/chrome/src; sourceTree = "<group>"; };
+		8774FB282FB0AEE100155287 /* VeilBlocker.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = VeilBlocker.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		8774FB342FB0AEE100155287 /* Exceptions for "VeilBlocker" folder in "VeilBlocker" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 8774FB272FB0AEE100155287 /* VeilBlocker */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		8774FB292FB0AEE100155287 /* VeilBlocker */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8774FB342FB0AEE100155287 /* Exceptions for "VeilBlocker" folder in "VeilBlocker" target */,
+			);
+			path = VeilBlocker;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		870489752FB0A6F2002AAB5F /* Frameworks */ = {
@@ -105,6 +136,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8774FB252FB0AEE100155287 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -113,6 +151,7 @@
 			children = (
 				8704897A2FB0A6F2002AAB5F /* Veil */,
 				870489992FB0A6F3002AAB5F /* Veil Extension */,
+				8774FB292FB0AEE100155287 /* VeilBlocker */,
 				870489792FB0A6F2002AAB5F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -122,6 +161,7 @@
 			children = (
 				870489782FB0A6F2002AAB5F /* Veil.app */,
 				870489952FB0A6F3002AAB5F /* Veil Extension.appex */,
+				8774FB282FB0AEE100155287 /* VeilBlocker.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -200,6 +240,7 @@
 			);
 			dependencies = (
 				870489982FB0A6F3002AAB5F /* PBXTargetDependency */,
+				8774FB302FB0AEE100155287 /* PBXTargetDependency */,
 			);
 			name = Veil;
 			packageProductDependencies = (
@@ -227,6 +268,28 @@
 			productReference = 870489952FB0A6F3002AAB5F /* Veil Extension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		8774FB272FB0AEE100155287 /* VeilBlocker */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8774FB352FB0AEE100155287 /* Build configuration list for PBXNativeTarget "VeilBlocker" */;
+			buildPhases = (
+				8774FB242FB0AEE100155287 /* Sources */,
+				8774FB252FB0AEE100155287 /* Frameworks */,
+				8774FB262FB0AEE100155287 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				8774FB292FB0AEE100155287 /* VeilBlocker */,
+			);
+			name = VeilBlocker;
+			packageProductDependencies = (
+			);
+			productName = VeilBlocker;
+			productReference = 8774FB282FB0AEE100155287 /* VeilBlocker.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -241,6 +304,9 @@
 						CreatedOnToolsVersion = 26.4.1;
 					};
 					870489942FB0A6F3002AAB5F = {
+						CreatedOnToolsVersion = 26.4.1;
+					};
+					8774FB272FB0AEE100155287 = {
 						CreatedOnToolsVersion = 26.4.1;
 					};
 				};
@@ -261,6 +327,7 @@
 			targets = (
 				870489772FB0A6F2002AAB5F /* Veil */,
 				870489942FB0A6F3002AAB5F /* Veil Extension */,
+				8774FB272FB0AEE100155287 /* VeilBlocker */,
 			);
 		};
 /* End PBXProject section */
@@ -300,6 +367,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8774FB262FB0AEE100155287 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -321,6 +395,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8774FB242FB0AEE100155287 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -328,6 +409,11 @@
 			isa = PBXTargetDependency;
 			target = 870489942FB0A6F3002AAB5F /* Veil Extension */;
 			targetProxy = 870489972FB0A6F3002AAB5F /* PBXContainerItemProxy */;
+		};
+		8774FB302FB0AEE100155287 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8774FB272FB0AEE100155287 /* VeilBlocker */;
+			targetProxy = 8774FB2F2FB0AEE100155287 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -624,6 +710,64 @@
 			};
 			name = Release;
 		};
+		8774FB322FB0AEE100155287 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = RJT2R3N326;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = VeilBlocker/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = VeilBlocker;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mmovsesyan.veil.VeilBlocker;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		8774FB332FB0AEE100155287 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = RJT2R3N326;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = VeilBlocker/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = VeilBlocker;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mmovsesyan.veil.VeilBlocker;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -650,6 +794,15 @@
 			buildConfigurations = (
 				870489A52FB0A6F3002AAB5F /* Debug */,
 				870489A62FB0A6F3002AAB5F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8774FB352FB0AEE100155287 /* Build configuration list for PBXNativeTarget "VeilBlocker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8774FB322FB0AEE100155287 /* Debug */,
+				8774FB332FB0AEE100155287 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

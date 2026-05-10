@@ -483,20 +483,41 @@ if (chrome.declarativeNetRequest.onRuleMatchedDebug) {
   });
 }
 
-// Production badge counter: use JS engine to detect what DNR blocked
-// webRequest.onCompleted fires for allowed requests; onErrorOccurred fires for blocked ones
-if (chrome.webRequest?.onErrorOccurred) {
-  chrome.webRequest.onErrorOccurred.addListener(
+// (onErrorOccurred removed — badge counting now done via onBeforeRequest + JS engine above)
+
+// ─── Badge Counter: Check every request against JS engine ─────────────────────
+
+// Like AdGuard MV3: use webRequest.onBeforeRequest to observe all requests
+// and check them against our JS engine for accurate counting
+if (chrome.webRequest?.onBeforeRequest) {
+  chrome.webRequest.onBeforeRequest.addListener(
     (details) => {
       if (!isEnabled || details.tabId < 0) return;
-      // net::ERR_BLOCKED_BY_CLIENT means DNR blocked it
-      if (details.error === "net::ERR_BLOCKED_BY_CLIENT") {
-        try {
-          const url = new URL(details.url);
-          stats.recordBlocked(details.tabId, url.hostname, "ads");
+      if (details.type === "main_frame") return;
+
+      try {
+        const url = new URL(details.url);
+        const targetDomain = url.hostname;
+
+        if (whitelist.isWhitelisted(targetDomain)) return;
+
+        let initiatorDomain = "";
+        if (details.initiator) {
+          try { initiatorDomain = new URL(details.initiator).hostname; } catch { /* ignore */ }
+        }
+
+        const decision = engine.shouldBlock({
+          url: details.url,
+          type: (details.type || "other") as any,
+          initiatorDomain,
+          targetDomain,
+        });
+
+        if (decision.blocked) {
+          stats.recordBlocked(details.tabId, targetDomain, "ads");
           updateBadge(details.tabId);
-        } catch { /* ignore */ }
-      }
+        }
+      } catch { /* ignore */ }
     },
     { urls: ["<all_urls>"] }
   );
