@@ -1,4 +1,4 @@
-import { IPlatformAdapter, NavigationCallback, Rule, TabInfo } from '@content-blocker/core';
+import { IPlatformAdapter, NavigationCallback, Rule, TabInfo } from '@veil/core';
 /**
  * WebKit Content Blocker JSON rule format.
  */
