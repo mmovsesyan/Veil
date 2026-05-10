@@ -121,30 +121,14 @@ function applyCosmeticRules(): void {
 function injectScriptlets(): void {
   if (scriptlets.length === 0) return;
 
-  // Try method 1: inline script (works on sites without strict CSP)
+  // Use chrome.scripting.executeScript via service worker (bypasses page CSP)
   try {
-    const script = document.createElement("script");
-    script.textContent = scriptlets.join("\n");
-    (document.head ?? document.documentElement).appendChild(script);
-    script.remove();
+    chrome.runtime.sendMessage({
+      type: "INJECT_SCRIPTLETS",
+      payload: scriptlets,
+    }).catch(() => {});
   } catch {
-    // Method 1 failed (CSP blocked)
-  }
-
-  // Method 2: Use blob URL (bypasses most CSP restrictions)
-  try {
-    const blob = new Blob([scriptlets.join("\n")], { type: "application/javascript" });
-    const url = URL.createObjectURL(blob);
-    const script = document.createElement("script");
-    script.src = url;
-    (document.head ?? document.documentElement).appendChild(script);
-    script.addEventListener("load", () => {
-      script.remove();
-      URL.revokeObjectURL(url);
-    });
-  } catch {
-    // Method 2 also failed — CSP is very strict
-    // Scriptlets won't work on this site, but network blocking still does
+    // Extension context invalidated
   }
 }
 

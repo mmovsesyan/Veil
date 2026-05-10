@@ -602,7 +602,20 @@ function updateBadge(tabId: number): void {
 
 // ─── Message Handling ─────────────────────────────────────────────────────────
 
-chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  // Handle INJECT_SCRIPTLETS separately (needs sender.tab.id)
+  if (message.type === "INJECT_SCRIPTLETS" && sender.tab?.id) {
+    const code = (message.payload as string[]).join("\n");
+    chrome.scripting.executeScript({
+      target: { tabId: sender.tab.id },
+      world: "MAIN", // Execute in page context (bypasses CSP)
+      func: (scriptCode: string) => { eval(scriptCode); },
+      args: [code],
+    }).catch(() => { /* scripting may fail on restricted pages */ });
+    sendResponse({ success: true });
+    return true;
+  }
+
   handleMessage(message).then(sendResponse).catch((e) => {
     sendResponse({ error: String(e) });
   });
