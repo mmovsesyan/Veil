@@ -3,9 +3,6 @@
 ! Last modified: 2026-05-10
 ! Homepage: https://github.com/mmovsesyan/Veil
 
-! ─── Disable generic cosmetic rules that break Rutube content ───
-@@||rutube.ru^$generichide
-
 ! ─── Network rules ───
 ||rutube.ru/api/advert/*
 ||rutube.ru/api/video/*/advert*
@@ -25,38 +22,11 @@
 ||adfox.yandex.ru/*$domain=rutube.ru
 ||ad.mail.ru/*$domain=rutube.ru
 
-! ─── Cosmetic rules (hide ad elements) ───
-rutube.ru##.video-ad-container
-rutube.ru##.video-ad-overlay
-rutube.ru##.ad-banner
-rutube.ru##.ad-container
-rutube.ru##[class*="advert"]
-rutube.ru##[class*="AdBanner"]
-rutube.ru##[class*="ad-block"]
-rutube.ru##[class*="promo-banner"]
+! ─── Cosmetic rules (only precise ad elements) ───
 rutube.ru##[class*="yandex_rtb"]
 rutube.ru##[id*="yandex_rtb"]
-rutube.ru##div[class*="commercial"]
-rutube.ru##div[class*="preroll"]
-rutube.ru##div[class*="midroll"]
-rutube.ru##div[class*="postroll"]
-rutube.ru##.wf-player__ad-overlay
-rutube.ru##.wf-player__ad-skip
-rutube.ru##.wf-player__preroll
-rutube.ru##.wf-player__midroll
-
-! ─── Promo banners (only ads, not content) ───
-rutube.ru##[class*="advert"]
-rutube.ru##[class*="AdBanner"]
-rutube.ru##[class*="yandex_rtb"]
-rutube.ru##[id*="yandex_rtb"]
-rutube.ru##[class*="sponsor"]
-rutube.ru##[class*="Sponsor"]
-rutube.ru##[data-block-type="banner"]
-rutube.ru##a[href*="utm_source"]
-rutube.ru##a[href*="utm_medium"]
-rutube.ru##div:has(> span:contains("РЕКЛАМА"))
-rutube.ru##div:has(> span:contains("Реклама"))
+rutube.ru##div[class*="adfox"]
+rutube.ru##div[id*="adfox"]
 
 ! ─── Scriptlet rules (bypass ad player) ───
 rutube.ru#%#//scriptlet("set-constant", "Object.prototype.adConfig", "undefined")
