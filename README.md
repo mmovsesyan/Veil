@@ -159,6 +159,28 @@ pnpm run typecheck     # TypeScript
 | Scriptlets | 116 |
 | Filter modifiers | 30+ |
 
+## Technical Notes
+
+### Chrome DNR 30K Rule Limit
+Chrome MV3 allows max 30,000 dynamic rules. With 300K filter rules loaded, we prioritize:
+1. Allow rules (highest priority — prevent breakage)
+2. Redirect rules ($redirect)
+3. $removeparam rules
+4. $csp rules
+5. Block rules (fill remaining slots)
+
+The JS engine still has all 300K rules for accurate badge counting and cosmetic filtering.
+
+### Safari 150K Rule Limit
+Safari Content Blocker allows 150,000 rules per extension. Our `splitIntoExtensions()` automatically chunks rules across multiple content blocker instances if needed.
+
+### Auto-Learning Safety
+- Requires **5 confirmations** (not 3) with confidence ≥0.7
+- Maximum 200 auto-learned rules
+- Rejected rules are permanently blacklisted
+- `rollbackRule()` available for undo
+- Manual blocks via element picker bypass threshold (instant confirm)
+
 ## License
 
 MIT

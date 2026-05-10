@@ -102,8 +102,8 @@ describe("Auto-Rules", () => {
     });
 
     it("confirms after threshold detections with high confidence", () => {
-      // Simulate 3 detections of the same pattern (googlesyndication has higher confidence)
-      for (let i = 0; i < 3; i++) {
+      // Simulate 5 detections of the same pattern (googlesyndication has higher confidence)
+      for (let i = 0; i < 5; i++) {
         engine.processRequest(
           "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",
           "script",

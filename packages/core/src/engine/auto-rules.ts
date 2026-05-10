@@ -204,11 +204,15 @@ function generateRule(url: string, targetDomain: string, isThirdParty: boolean):
 export class AutoRulesEngine {
   private detectedPatterns: DetectedPattern[] = [];
   private confirmedRules = new Set<string>();
+  private rejectedRules = new Set<string>();
   private maxPatterns = 1000;
-  private confirmThreshold = 3; // Need 3 detections to auto-confirm
+  private confirmThreshold = 5; // Need 5 detections to auto-confirm (was 3 — too aggressive)
 
-  // Minimum confidence for auto-confirmation
-  private confirmConfidence = 0.5;
+  // Minimum confidence for auto-confirmation (raised from 0.5 to 0.7)
+  private confirmConfidence = 0.7;
+
+  // Maximum auto-learned rules to prevent unbounded growth
+  private maxConfirmedRules = 200;
 
   /**
    * Process a request and potentially detect a new rule.
@@ -243,6 +247,14 @@ export class AutoRulesEngine {
     );
 
     if (sameRule.length >= this.confirmThreshold && detection.confidence >= this.confirmConfidence) {
+      // Safety: don't exceed max auto-learned rules
+      if (this.confirmedRules.size >= this.maxConfirmedRules) {
+        return null;
+      }
+      // Safety: don't confirm rules that were previously rejected
+      if (this.rejectedRules.has(detection.suggestedRule)) {
+        return null;
+      }
       this.confirmedRules.add(detection.suggestedRule);
       return detection;
     }
@@ -275,11 +287,22 @@ export class AutoRulesEngine {
 
   /**
    * Reject a detection (false positive).
+   * Permanently blacklists the rule so it won't be auto-confirmed again.
    */
   rejectRule(rule: string): void {
     this.detectedPatterns = this.detectedPatterns.filter(
       (p) => p.suggestedRule !== rule
     );
+    this.confirmedRules.delete(rule);
+    this.rejectedRules.add(rule);
+  }
+
+  /**
+   * Rollback: remove a confirmed rule (undo auto-learning).
+   */
+  rollbackRule(rule: string): void {
+    this.confirmedRules.delete(rule);
+    this.rejectedRules.add(rule);
   }
 
   /**
