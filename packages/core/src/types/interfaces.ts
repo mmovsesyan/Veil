@@ -34,11 +34,14 @@ export interface IBlockingEngine {
   /** Initialize the engine with a set of rules */
   initialize(rules: Rule[]): Promise<void>;
 
-  /** Add rules dynamically */
-  addRules(rules: Rule[]): void;
+  /** Add rules dynamically. Returns assigned engine rule IDs. */
+  addRules(rules: Rule[]): number[];
 
   /** Remove all rules from a specific source */
   removeRules(sourceId: string): void;
+
+  /** Remove a single rule by its engine ID */
+  removeRuleById(id: number): boolean;
 
   /** Determine whether a request should be blocked */
   shouldBlock(request: NetworkRequest): BlockDecision;

@@ -5,6 +5,7 @@
 
 import { BlockingEngine, RuleParser, StatisticsTracker, WhitelistManager, RuleManager } from "@veil/core";
 import { checkKnownCNAMECloak, isTrackerCNAMETarget, AutoRulesEngine } from "@veil/core";
+import { PrivacyBudgetTracker } from "@veil/core";
 import type { ResourceType } from "@veil/core";
 
 declare const browser: any; // Firefox WebExtension API
@@ -15,8 +16,53 @@ const stats = new StatisticsTracker();
 const whitelist = new WhitelistManager();
 const ruleManager = new RuleManager(engine);
 const autoRules = new AutoRulesEngine();
+const privacyTracker = new PrivacyBudgetTracker();
 
 let isEnabled = true;
+
+// ─── Recent picker rules (undo support) ───────────────────────────────────────
+
+interface RecentPickerRule {
+  engineId: number;
+  raw: string;
+  timestamp: number;
+}
+
+let recentPickerRules: RecentPickerRule[] = [];
+const PICKER_RULE_MAX_AGE_MS = 60_000;
+const PICKER_RULE_MAX_COUNT = 5;
+
+function pruneRecentPickerRules(): void {
+  const cutoff = Date.now() - PICKER_RULE_MAX_AGE_MS;
+  recentPickerRules = recentPickerRules.filter((r) => r.timestamp > cutoff);
+  if (recentPickerRules.length > PICKER_RULE_MAX_COUNT) {
+    recentPickerRules = recentPickerRules.slice(-PICKER_RULE_MAX_COUNT);
+  }
+}
+
+async function persistRecentPickerRules(): Promise<void> {
+  await browser.storage.local.set({ recentPickerRules });
+}
+
+// ─── Collaborative rules sync ───────────────────────────────────────────────────
+
+import { BroadcastSync } from "@veil/core";
+
+const broadcastSync = new BroadcastSync({
+  hmacKey: "veil-shared-key", // In production, user-configurable
+  minConfidence: 0.75,
+  minConfirmations: 1,
+  maxRules: 1000,
+  useStorageFallback: false,
+});
+
+broadcastSync.onRule((rule) => {
+  const parsed = parser.parse(rule.pattern);
+  if (parsed) {
+    parsed.source = "collaborative";
+    engine.addRules([parsed]);
+  }
+});
 
 // ─── Initialization ───────────────────────────────────────────────────────────
 
@@ -42,6 +88,13 @@ async function initializeExtension(): Promise<void> {
           engine.addRules([rule]);
         }
       }
+    }
+
+    // Restore recent picker rules (for undo)
+    const storedRecent = stored["recentPickerRules"] as RecentPickerRule[] | undefined;
+    if (storedRecent) {
+      recentPickerRules = storedRecent;
+      pruneRecentPickerRules();
     }
 
     // Load filter lists
@@ -326,8 +379,46 @@ browser.runtime.onMessage.addListener((message: { type: string; payload?: unknow
       return Promise.resolve({ lists: ruleManager.getFilterLists() });
 
     case "ADD_CUSTOM_RULE": {
-      const result = ruleManager.addCustomRule(message.payload as string);
-      return Promise.resolve(result);
+      const raw = message.payload as string;
+      const result = ruleManager.addCustomRule(raw);
+      if (result.success && result.engineIds && result.engineIds.length > 0) {
+        pruneRecentPickerRules();
+        recentPickerRules.push({
+          engineId: result.engineIds[0]!,
+          raw,
+          timestamp: Date.now(),
+        });
+        if (recentPickerRules.length > PICKER_RULE_MAX_COUNT) {
+          recentPickerRules = recentPickerRules.slice(-PICKER_RULE_MAX_COUNT);
+        }
+        void persistRecentPickerRules();
+      }
+      // Feed to auto-learning
+      autoRules.confirmRule(raw);
+      browser.storage.local.set({ autoLearnedRules: autoRules.getConfirmedRules() });
+      return Promise.resolve({ success: result.success, error: result.error });
+    }
+
+    case "UNDO_LAST_PICKER_RULE": {
+      pruneRecentPickerRules();
+      const last = recentPickerRules.pop();
+      if (!last) return Promise.resolve({ success: false, error: "Нет правил для отмены" });
+
+      const removed = engine.removeRuleById(last.engineId);
+
+      // Remove from custom rules storage (rebuild from RuleManager)
+      ruleManager.removeCustomRule(last.engineId.toString());
+
+      void persistRecentPickerRules();
+      return Promise.resolve({ success: removed, rule: last.raw });
+    }
+
+    case "GET_RECENT_PICKER_RULES": {
+      pruneRecentPickerRules();
+      const last = recentPickerRules[recentPickerRules.length - 1] ?? null;
+      return Promise.resolve({
+        last: last ? { raw: last.raw, timestamp: last.timestamp } : null,
+      });
     }
 
     case "GET_COSMETIC_RULES": {
@@ -358,6 +449,22 @@ browser.runtime.onMessage.addListener((message: { type: string; payload?: unknow
     case "REJECT_AUTO_RULE": {
       autoRules.rejectRule(message.payload as string);
       return Promise.resolve({ success: true });
+    }
+
+    case "PRIVACY_EVENT": {
+      const payload = message.payload as { method: string; timestamp: number; url: string; domain: string };
+      privacyTracker.recordEvent(payload.domain, {
+        api: payload.method.split(".")[0] ?? "unknown",
+        method: payload.method,
+        entropyBits: 1.0,
+      });
+      return Promise.resolve({ success: true });
+    }
+
+    case "GET_PRIVACY_SCORE": {
+      const domain = message.payload as string;
+      const score = privacyTracker.getScore(domain);
+      return Promise.resolve({ score: score ?? null });
     }
 
     default:

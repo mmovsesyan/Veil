@@ -8,6 +8,7 @@ declare namespace browser {
   namespace runtime {
     function getURL(path: string): string;
     function sendMessage(message: any): Promise<any>;
+    function openOptionsPage(): Promise<void>;
     const onMessage: {
       addListener(callback: (message: any, sender?: any) => Promise<any> | void): void;
     };
@@ -56,6 +57,8 @@ declare namespace browser {
   namespace tabs {
     function insertCSS(tabId: number, details: { code: string; runAt?: string }): Promise<void>;
     function query(queryInfo: any): Promise<any[]>;
+    function reload(tabId?: number): Promise<void>;
+    function executeScript(tabId: number, details: { code?: string; file?: string }): Promise<any[]>;
   }
 
   namespace browserAction {

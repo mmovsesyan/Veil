@@ -53,3 +53,19 @@ export { RuleManager } from "./rules/rule-manager.js";
 export { WhitelistManager } from "./whitelist/index.js";
 export { StatisticsTracker } from "./stats/index.js";
 export { SyncService } from "./sync/index.js";
+
+// Collaborative Rules (serverless)
+export { CollaborativeRulesEngine } from "./sync/collaborative-rules.js";
+export { BroadcastSync } from "./sync/broadcast-sync.js";
+export { QRRulesExporter } from "./sync/qr-share.js";
+export type { CollaborativeRule, RelayConfig } from "./sync/collaborative-rules.js";
+
+// Privacy Budget
+export { PrivacyBudgetTracker, generatePrivacyMonitorScript } from "./privacy-budget/tracker.js";
+export type { FingerprintingEvent, DomainPrivacyScore } from "./privacy-budget/tracker.js";
+
+// ML Smart DOM Classifier
+export { SmartDOMClassifier, shouldBlock, classifyHeuristic } from "./ml/classifier.js";
+export { extractFeatures } from "./ml/dom-features.js";
+export type { ClassificationResult, ClassificationLabel } from "./ml/classifier.js";
+export type { DOMFeatures } from "./ml/dom-features.js";

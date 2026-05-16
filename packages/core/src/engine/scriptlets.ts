@@ -24,10 +24,11 @@
 type ScriptletFn = (...args: string[]) => string;
 
 /**
- * Helper: safely escape a string for use inside generated JS.
+ * Helper: safely serialize a string for use inside generated JS.
+ * Uses JSON.stringify to prevent injection of backticks, ${}, newlines, etc.
  */
-function escapeForJS(str: string): string {
-  return str.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\n/g, "\\n");
+function js(str: string): string {
+  return JSON.stringify(str);
 }
 
 const SCRIPTLETS: Record<string, ScriptletFn> = {
@@ -37,7 +38,7 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
    */
   "abort-on-property-read": (property: string) => `
 (function() {
-  var props = "${escapeForJS(property)}".split(".");
+  var props = ${js(property)}.split(".");
   var base = window;
   for (var i = 0; i < props.length - 1; i++) {
     if (!(props[i] in base)) base[props[i]] = {};
@@ -56,7 +57,7 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
    */
   "abort-on-property-write": (property: string) => `
 (function() {
-  var props = "${escapeForJS(property)}".split(".");
+  var props = ${js(property)}.split(".");
   var base = window;
   for (var i = 0; i < props.length - 1; i++) {
     if (!(props[i] in base)) base[props[i]] = {};
@@ -99,7 +100,7 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
     }
     return `
 (function() {
-  var props = "${escapeForJS(property)}".split(".");
+  var props = ${js(property)}.split(".");
   var base = window;
   for (var i = 0; i < props.length - 1; i++) {
     if (!(props[i] in base)) base[props[i]] = {};
@@ -120,7 +121,7 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
    */
   "no-setTimeout-if": (match: string, _delay?: string) => `
 (function() {
-  var needle = "${escapeForJS(match)}";
+  var needle = ${js(match)};
   var origSetTimeout = window.setTimeout;
   window.setTimeout = function(fn, delay) {
     var s = typeof fn === "function" ? fn.toString() : String(fn);
@@ -132,7 +133,7 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
 
   "no-setInterval-if": (match: string, _delay?: string) => `
 (function() {
-  var needle = "${escapeForJS(match)}";
+  var needle = ${js(match)};
   var origSetInterval = window.setInterval;
   window.setInterval = function(fn, delay) {
     var s = typeof fn === "function" ? fn.toString() : String(fn);
@@ -150,15 +151,15 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
   var observer = new MutationObserver(function(mutations) {
     mutations.forEach(function(m) {
       m.addedNodes.forEach(function(node) {
-        if (node.nodeName && node.nodeName.toLowerCase() === "${escapeForJS(nodeName.toLowerCase())}") {
-          if (node.textContent && node.textContent.includes("${escapeForJS(match)}")) {
+        if (node.nodeName && node.nodeName.toLowerCase() === ${js(nodeName.toLowerCase())}) {
+          if (node.textContent && node.textContent.includes(${js(match)})) {
             node.remove();
           }
         }
       });
     });
   });
-  observer.observe(document.documentElement, { childList: true, subtree: true });
+  observer.observe(document.documentElement, { childList: true, subtree: true });\n  window.addEventListener("pagehide", function() { observer.disconnect(); });
 })();
 `,
 
@@ -188,7 +189,7 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
    */
   "cookie-remover": (match: string) => `
 (function() {
-  var needle = "${escapeForJS(match)}";
+  var needle = ${js(match)};
   var origDescriptor = Object.getOwnPropertyDescriptor(Document.prototype, "cookie");
   if (!origDescriptor) return;
   Object.defineProperty(document, "cookie", {
@@ -215,8 +216,8 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
    */
   "prevent-fetch": (match: string, responseBody?: string) => `
 (function() {
-  var needle = "${escapeForJS(match)}";
-  var body = ${responseBody ? `"${escapeForJS(responseBody)}"` : "''"};
+  var needle = ${js(match)};
+  var body = ${responseBody ? `${js(responseBody)}` : "''"};
   var origFetch = window.fetch;
   window.fetch = function(resource, init) {
     var url = typeof resource === "string" ? resource : (resource && resource.url) || "";
@@ -233,8 +234,8 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
    */
   "prevent-xhr": (match: string, responseText?: string) => `
 (function() {
-  var needle = "${escapeForJS(match)}";
-  var fakeResponse = ${responseText ? `"${escapeForJS(responseText)}"` : "''"};
+  var needle = ${js(match)};
+  var fakeResponse = ${responseText ? `${js(responseText)}` : "''"};
   var origOpen = XMLHttpRequest.prototype.open;
   var origSend = XMLHttpRequest.prototype.send;
   XMLHttpRequest.prototype.open = function(method, url) {
@@ -267,8 +268,8 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
    */
   "prevent-addEventListener": (eventType: string, match?: string) => `
 (function() {
-  var targetEvent = "${escapeForJS(eventType)}";
-  var needle = "${escapeForJS(match || "")}";
+  var targetEvent = ${js(eventType)};
+  var needle = ${js(match || "")};
   var origAdd = EventTarget.prototype.addEventListener;
   EventTarget.prototype.addEventListener = function(type, fn, options) {
     if (type === targetEvent || targetEvent === "") {
@@ -335,15 +336,15 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
    */
   "remove-class": (className: string, selector?: string) => `
 (function() {
-  var cls = "${escapeForJS(className)}";
-  var sel = "${escapeForJS(selector || "." + className)}";
+  var cls = ${js(className)};
+  var sel = ${js(selector || "." + className)};
   function removeAll() {
     var els = document.querySelectorAll(sel);
     els.forEach(function(el) { el.classList.remove(cls); });
   }
   removeAll();
   var observer = new MutationObserver(removeAll);
-  observer.observe(document.documentElement, { childList: true, subtree: true, attributes: true });
+  observer.observe(document.documentElement, { childList: true, subtree: true, attributes: true });\n  window.addEventListener("pagehide", function() { observer.disconnect(); });
 })();
 `,
 
@@ -352,15 +353,15 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
    */
   "remove-attr": (attr: string, selector?: string) => `
 (function() {
-  var attrName = "${escapeForJS(attr)}";
-  var sel = "${escapeForJS(selector || "[" + attr + "]")}";
+  var attrName = ${js(attr)};
+  var sel = ${js(selector || "[" + attr + "]")};
   function removeAll() {
     var els = document.querySelectorAll(sel);
     els.forEach(function(el) { el.removeAttribute(attrName); });
   }
   removeAll();
   var observer = new MutationObserver(removeAll);
-  observer.observe(document.documentElement, { childList: true, subtree: true, attributes: true });
+  observer.observe(document.documentElement, { childList: true, subtree: true, attributes: true });\n  window.addEventListener("pagehide", function() { observer.disconnect(); });
 })();
 `,
 
@@ -369,9 +370,9 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
    */
   "set-attr": (attr: string, value: string, selector?: string) => `
 (function() {
-  var attrName = "${escapeForJS(attr)}";
-  var attrValue = "${escapeForJS(value)}";
-  var sel = "${escapeForJS(selector || "*")}";
+  var attrName = ${js(attr)};
+  var attrValue = ${js(value)};
+  var sel = ${js(selector || "*")};
   function setAll() {
     var els = document.querySelectorAll(sel);
     els.forEach(function(el) { el.setAttribute(attrName, attrValue); });
@@ -389,7 +390,7 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
    */
   "hide-in-shadow-dom": (selector: string) => `
 (function() {
-  var sel = "${escapeForJS(selector)}";
+  var sel = ${js(selector)};
   var origAttachShadow = Element.prototype.attachShadow;
   Element.prototype.attachShadow = function() {
     var shadow = origAttachShadow.apply(this, arguments);
@@ -410,7 +411,7 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
   "set-local-storage-item": (key: string, value: string) => `
 (function() {
   try {
-    localStorage.setItem("${escapeForJS(key)}", "${escapeForJS(value)}");
+    localStorage.setItem(${js(key)}, ${js(value)});
   } catch(e) {}
 })();
 `,
@@ -421,7 +422,7 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
   "set-session-storage-item": (key: string, value: string) => `
 (function() {
   try {
-    sessionStorage.setItem("${escapeForJS(key)}", "${escapeForJS(value)}");
+    sessionStorage.setItem(${js(key)}, ${js(value)});
   } catch(e) {}
 })();
 `,
@@ -432,7 +433,7 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
   "remove-local-storage-item": (key: string) => `
 (function() {
   try {
-    localStorage.removeItem("${escapeForJS(key)}");
+    localStorage.removeItem(${js(key)});
   } catch(e) {}
 })();
 `,
@@ -444,7 +445,7 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
    */
   "no-requestAnimationFrame-if": (match: string) => `
 (function() {
-  var needle = "${escapeForJS(match)}";
+  var needle = ${js(match)};
   var origRAF = window.requestAnimationFrame;
   window.requestAnimationFrame = function(fn) {
     if (needle && typeof fn === "function" && fn.toString().includes(needle)) {
@@ -460,7 +461,7 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
    */
   "adjust-setTimeout": (match: string, newDelay: string) => `
 (function() {
-  var needle = "${escapeForJS(match)}";
+  var needle = ${js(match)};
   var delay = ${parseInt(newDelay) || 0};
   var origSetTimeout = window.setTimeout;
   window.setTimeout = function(fn, d) {
@@ -478,7 +479,7 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
    */
   "adjust-setInterval": (match: string, newDelay: string) => `
 (function() {
-  var needle = "${escapeForJS(match)}";
+  var needle = ${js(match)};
   var delay = ${parseInt(newDelay) || 0};
   var origSetInterval = window.setInterval;
   window.setInterval = function(fn, d) {
@@ -499,7 +500,7 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
    */
   "remove-overlay": (selector?: string) => `
 (function() {
-  var sel = "${escapeForJS(selector || "")}";
+  var sel = ${js(selector || "")};
   function removeOverlays() {
     var candidates = sel ? document.querySelectorAll(sel) : [];
     if (!sel) {
@@ -522,7 +523,7 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
     removeOverlays();
   }
   var observer = new MutationObserver(removeOverlays);
-  observer.observe(document.documentElement, { childList: true, subtree: true });
+  observer.observe(document.documentElement, { childList: true, subtree: true });\n  window.addEventListener("pagehide", function() { observer.disconnect(); });
 })();
 `,
 
@@ -549,8 +550,8 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
   "spoof-navigator": (property: string, value: string) => `
 (function() {
   try {
-    Object.defineProperty(Navigator.prototype, "${escapeForJS(property)}", {
-      get: function() { return ${value === "undefined" ? "undefined" : `"${escapeForJS(value)}"`}; }
+    Object.defineProperty(Navigator.prototype, ${js(property)}, {
+      get: function() { return ${value === "undefined" ? "undefined" : `${js(value)}`}; }
     });
   } catch(e) {}
 })();
@@ -592,7 +593,7 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
    */
   "log-on-property-read": (property: string) => `
 (function() {
-  var props = "${escapeForJS(property)}".split(".");
+  var props = ${js(property)}.split(".");
   var base = window;
   for (var i = 0; i < props.length - 1; i++) {
     if (!(props[i] in base)) return;
@@ -602,7 +603,7 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
   var origValue = base[prop];
   Object.defineProperty(base, prop, {
     get: function() {
-      console.trace("[Veil] Property read: " + "${escapeForJS(property)}");
+      console.trace("[Veil] Property read: " + ${js(property)});
       return origValue;
     },
     set: function(v) { origValue = v; },
@@ -631,8 +632,8 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
    */
   "json-prune": (propsToRemove: string, requiredProps?: string) => `
 (function() {
-  var prune = "${escapeForJS(propsToRemove)}".split(" ");
-  var required = "${escapeForJS(requiredProps || "")}".split(" ").filter(Boolean);
+  var prune = ${js(propsToRemove)}.split(" ");
+  var required = ${js(requiredProps || "")}.split(" ").filter(Boolean);
   var origParse = JSON.parse;
   JSON.parse = function() {
     var result = origParse.apply(this, arguments);
@@ -663,7 +664,7 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
    */
   "prevent-json-parse": (match: string) => `
 (function() {
-  var needle = "${escapeForJS(match)}";
+  var needle = ${js(match)};
   var origParse = JSON.parse;
   JSON.parse = function(text) {
     if (needle && typeof text === "string" && text.includes(needle)) {

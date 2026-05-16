@@ -10,12 +10,16 @@ interface FilterListItem {
 }
 
 function OptionsApp() {
-  const [tab, setTab] = useState<"filters" | "whitelist" | "custom">("filters");
+  const [tab, setTab] = useState<"filters" | "whitelist" | "custom" | "privacy" | "sync">("filters");
   const [filterLists, setFilterLists] = useState<FilterListItem[]>([]);
   const [whitelist, setWhitelist] = useState<string[]>([]);
   const [newDomain, setNewDomain] = useState("");
   const [customRules, setCustomRules] = useState("");
   const [saveStatus, setSaveStatus] = useState("");
+  const [privacyDomain, setPrivacyDomain] = useState("");
+  const [privacyScore, setPrivacyScore] = useState<any>(null);
+  const [qrText, setQrText] = useState("");
+  const [syncRules, setSyncRules] = useState("");
 
   useEffect(() => {
     loadData();
@@ -110,6 +114,8 @@ function OptionsApp() {
         <button style={styles.tab(tab === "filters")} onClick={() => setTab("filters")}>Фильтры</button>
         <button style={styles.tab(tab === "whitelist")} onClick={() => setTab("whitelist")}>Белый список</button>
         <button style={styles.tab(tab === "custom")} onClick={() => setTab("custom")}>Свои правила</button>
+        <button style={styles.tab(tab === "privacy")} onClick={() => setTab("privacy")}>Приватность</button>
+        <button style={styles.tab(tab === "sync")} onClick={() => setTab("sync")}>Синхронизация</button>
       </div>
 
       {tab === "filters" && (
@@ -190,8 +196,78 @@ function OptionsApp() {
           </div>
         </div>
       )}
+
+      {tab === "privacy" && (
+        <div>
+          <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+            <input
+              value={privacyDomain}
+              onChange={(e) => setPrivacyDomain(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && checkPrivacy()}
+              placeholder="example.com"
+              style={{ flex: 1, padding: "8px 12px", border: "1px solid #ddd", borderRadius: 6, fontSize: 14 }}
+            />
+            <button
+              onClick={checkPrivacy}
+              style={{ padding: "8px 16px", background: "#4A90D9", color: "white", border: "none", borderRadius: 6, cursor: "pointer" }}
+            >
+              Проверить
+            </button>
+          </div>
+          {privacyScore && (
+            <div style={styles.card}>
+              <div style={{ fontWeight: 600, marginBottom: 8 }}>{privacyScore.domain}</div>
+              <div style={{ fontSize: 28, fontWeight: 700, color: privacyScore.totalScore > 50 ? "#dc2626" : privacyScore.totalScore > 20 ? "#f59e0b" : "#22c55e" }}>
+                {privacyScore.totalScore}/100
+              </div>
+              <div style={{ fontSize: 12, color: "#888", marginTop: 4 }}>{privacyScore.events?.length ?? 0} событий отслеживания</div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {tab === "sync" && (
+        <div>
+          <div style={{ marginBottom: 16 }}>
+            <div style={{ fontWeight: 500, marginBottom: 8 }}>Экспорт правил в QR-код</div>
+            <textarea
+              value={syncRules}
+              onChange={(e) => setSyncRules(e.target.value)}
+              placeholder="Введите правила для экспорта..."
+              style={{ width: "100%", height: 120, padding: 12, border: "1px solid #ddd", borderRadius: 8, fontFamily: "monospace", fontSize: 13 }}
+            />
+            <button
+              onClick={exportToQR}
+              style={{ marginTop: 8, padding: "8px 16px", background: "#4A90D9", color: "white", border: "none", borderRadius: 6, cursor: "pointer" }}
+            >
+              Сгенерировать QR
+            </button>
+          </div>
+          {qrText && (
+            <div style={styles.card}>
+              <div style={{ fontSize: 12, color: "#888", marginBottom: 8 }}>QR-код содержимое ({qrText.length} символов):</div>
+              <div style={{ fontFamily: "monospace", fontSize: 11, wordBreak: "break-all", color: "#333", background: "#f5f5f5", padding: 8, borderRadius: 4 }}>{qrText}</div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
+
+  async function checkPrivacy() {
+    const domain = privacyDomain.trim();
+    if (!domain) return;
+    const resp = await chrome.runtime.sendMessage({ type: "GET_PRIVACY_SCORE", payload: domain });
+    if (resp?.score) setPrivacyScore(resp.score);
+    else setPrivacyScore({ domain, totalScore: 0, events: [] });
+  }
+
+  async function exportToQR() {
+    const lines = syncRules.split("\n").filter((l) => l.trim());
+    if (lines.length === 0) return;
+    // For now, just join rules; real QR export would use QRRulesExporter in background
+    setQrText(lines.join("\n"));
+  }
 }
 
 const root = document.getElementById("root");

@@ -88,7 +88,7 @@ export class RuleManager {
   /**
    * Add a custom rule from user input.
    */
-  addCustomRule(rawRule: string): { success: boolean; error?: string } {
+  addCustomRule(rawRule: string): { success: boolean; error?: string; engineIds?: number[] } {
     const rule = this.parser.parse(rawRule);
     if (!rule) {
       return { success: false, error: "Invalid rule syntax" };
@@ -96,8 +96,8 @@ export class RuleManager {
 
     rule.source = "custom";
     this.customRules.push(rule);
-    this.engine.addRules([rule]);
-    return { success: true };
+    const engineIds = this.engine.addRules([rule]);
+    return { success: true, engineIds };
   }
 
   /**

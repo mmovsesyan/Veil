@@ -39,6 +39,14 @@ export interface RuleModifiers {
   matchCase?: boolean;
   /** Redirect resource name for $redirect modifier (e.g. "noop.js", "1x1.gif") */
   redirect?: string;
+  /** Disables a matching rule */
+  badfilter?: boolean;
+  /** Overrides normal allow rules */
+  important?: boolean;
+  /** Hides generic cosmetic rules on this domain */
+  generichide?: boolean;
+  /** Disables all cosmetic rules on this domain */
+  elemhide?: boolean;
 }
 
 export interface DomainConstraint {

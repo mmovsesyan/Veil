@@ -354,6 +354,8 @@ export interface RuleFeedConfig {
   url: string;
   updateInterval: number; // hours
   enabled: boolean;
+  /** Base64-encoded Ed25519 public key for signature verification */
+  publicKey?: string;
 }
 
 /**
@@ -374,6 +376,8 @@ export const DEFAULT_RULE_FEEDS: RuleFeedConfig[] = [
 
 /**
  * Fetch and parse a remote rule feed.
+ * If a publicKey is configured, requires a valid Ed25519 signature
+ * in the X-Veil-Signature response header.
  */
 export async function fetchRuleFeed(config: RuleFeedConfig): Promise<string[]> {
   if (!config.enabled) return [];
@@ -387,6 +391,22 @@ export async function fetchRuleFeed(config: RuleFeedConfig): Promise<string[]> {
     if (!response.ok) return [];
 
     const text = await response.text();
+
+    // Signature verification (optional but recommended for remote feeds)
+    if (config.publicKey) {
+      const signature = response.headers.get("X-Veil-Signature");
+      if (!signature) {
+        console.warn("[Veil] Feed missing signature:", config.url);
+        return [];
+      }
+      const { verifyFeedSignature } = await import("./signature-verifier.js");
+      const valid = await verifyFeedSignature(text, signature, config.publicKey);
+      if (!valid) {
+        console.warn("[Veil] Feed signature invalid:", config.url);
+        return [];
+      }
+    }
+
     return text
       .split("\n")
       .map((line) => line.trim())

@@ -13,6 +13,7 @@ import {
   isHostnameOnlyRule,
   extractRuleHostname,
 } from "./token-bucket.js";
+import { matchAdBlockPattern } from "./pattern-compiler.js";
 
 /**
  * Production-grade blocking engine using token-bucket architecture.
@@ -31,6 +32,10 @@ export class BlockingEngine implements IBlockingEngine {
   // ─── Rule Storage ─────────────────────────────────────────────────────────
   private rules = new Map<number, Rule>();
   private nextId = 1;
+
+  // ─── Source Index ─────────────────────────────────────────────────────────
+  // Maps sourceId → ruleIds for O(1) removal without scanning all rules
+  private sourceIndex = new Map<string, Set<number>>();
 
   // ─── $badfilter Index ─────────────────────────────────────────────────────
   // Stores pattern signatures of $badfilter rules to disable matching rules
@@ -74,21 +79,38 @@ export class BlockingEngine implements IBlockingEngine {
     }
   }
 
-  addRules(rules: Rule[]): void {
+  addRules(rules: Rule[]): number[] {
+    const ids: number[] = [];
     for (const rule of rules) {
-      this.addRule(rule);
+      const id = this.addRule(rule);
+      if (id !== undefined) ids.push(id);
     }
+    return ids;
+  }
+
+  removeRuleById(id: number): boolean {
+    const rule = this.rules.get(id);
+    if (!rule) return false;
+    this.rules.delete(id);
+    const sourceSet = this.sourceIndex.get(rule.source);
+    if (sourceSet) {
+      sourceSet.delete(id);
+      if (sourceSet.size === 0) this.sourceIndex.delete(rule.source);
+    }
+    this.rebuildFromRules();
+    return true;
   }
 
   removeRules(sourceId: string): void {
-    const toRemove: number[] = [];
-    for (const [id, rule] of this.rules) {
-      if (rule.source === sourceId) toRemove.push(id);
-    }
-    for (const id of toRemove) {
+    const ids = this.sourceIndex.get(sourceId);
+    if (!ids || ids.size === 0) return;
+
+    for (const id of ids) {
       this.rules.delete(id);
     }
-    // Rebuild (could be optimized with reverse index, but removal is rare)
+    this.sourceIndex.delete(sourceId);
+
+    // Rebuild indexes (rare operation — filter list updates)
     this.rebuildFromRules();
   }
 
@@ -255,8 +277,7 @@ export class BlockingEngine implements IBlockingEngine {
     for (const id of this.genericAllowRules) {
       const rule = this.rules.get(id);
       if (!rule) continue;
-      const mods = rule.modifiers as Record<string, unknown>;
-      if (!mods[type]) continue;
+      if (!rule.modifiers[type]) continue;
 
       // Check if rule pattern matches this domain
       if (this.matchPattern(rule.pattern, `https://${domain}/`)) {
@@ -269,10 +290,7 @@ export class BlockingEngine implements IBlockingEngine {
       const id = this.hostnameAllowRules.get(domain);
       if (id !== undefined) {
         const rule = this.rules.get(id);
-        if (rule) {
-          const mods = rule.modifiers as Record<string, unknown>;
-          if (mods[type]) return true;
-        }
+        if (rule && rule.modifiers[type]) return true;
       }
     }
 
@@ -281,23 +299,27 @@ export class BlockingEngine implements IBlockingEngine {
 
   // ─── Private: Indexing ────────────────────────────────────────────────────
 
-  private addRule(rule: Rule): void {
+  private addRule(rule: Rule): number | undefined {
     // Handle $badfilter — disables matching rules instead of adding
-    const mods = rule.modifiers as Record<string, unknown>;
-    if (mods.badfilter) {
+    if (rule.modifiers.badfilter) {
       const sig = this.getBadfilterSignature(rule);
       this.badfilterPatterns.add(sig);
-      return;
+      return undefined;
     }
 
     // Check if this rule is disabled by a $badfilter
     const ruleSig = this.getRuleSignature(rule);
     if (this.badfilterPatterns.has(ruleSig)) {
-      return; // Rule is disabled
+      return undefined; // Rule is disabled
     }
 
     const id = this.nextId++;
     this.rules.set(id, rule);
+
+    // Track in source index for O(1) removal
+    const sourceSet = this.sourceIndex.get(rule.source) ?? new Set<number>();
+    sourceSet.add(id);
+    this.sourceIndex.set(rule.source, sourceSet);
 
     if (rule.type === RuleType.CosmeticHide || rule.type === RuleType.CosmeticCSS) {
       this.indexCosmetic(id, rule);
@@ -306,6 +328,7 @@ export class BlockingEngine implements IBlockingEngine {
     } else {
       this.indexBlock(id, rule);
     }
+    return id;
   }
 
   /**
@@ -472,55 +495,7 @@ export class BlockingEngine implements IBlockingEngine {
   }
 
   private matchPattern(pattern: string, url: string): boolean {
-    const lUrl = url.toLowerCase();
-    let lPat = pattern.toLowerCase();
-
-    if (lPat === "*") return true;
-
-    // || anchor: match domain boundary
-    if (lPat.startsWith("||")) {
-      lPat = lPat.slice(2);
-      const sep = lPat.indexOf("^");
-      const domain = sep !== -1 ? lPat.slice(0, sep) : lPat;
-      const path = sep !== -1 ? lPat.slice(sep + 1) : "";
-
-      // Check hostname contains domain
-      const protoEnd = lUrl.indexOf("://");
-      if (protoEnd === -1) return false;
-      const afterProto = lUrl.slice(protoEnd + 3);
-      const slashIdx = afterProto.indexOf("/");
-      const hostPart = slashIdx !== -1 ? afterProto.slice(0, slashIdx) : afterProto;
-
-      const domainMatch = hostPart === domain ||
-        hostPart.endsWith(`.${domain}`) ||
-        afterProto.startsWith(domain);
-
-      if (!domainMatch) return false;
-      if (path && !afterProto.includes(path)) return false;
-      return true;
-    }
-
-    // | anchor at start
-    if (lPat.startsWith("|")) {
-      lPat = lPat.slice(1);
-      return lUrl.startsWith(lPat.replace(/\^/g, "").replace(/\*/g, ""));
-    }
-
-    // Separator ^ and wildcard *
-    if (lPat.includes("*") || lPat.includes("^")) {
-      // Convert to simple regex-like matching
-      const parts = lPat.split(/[\^*]+/).filter(Boolean);
-      let pos = 0;
-      for (const part of parts) {
-        const idx = lUrl.indexOf(part, pos);
-        if (idx === -1) return false;
-        pos = idx + part.length;
-      }
-      return true;
-    }
-
-    // Plain substring
-    return lUrl.includes(lPat);
+    return matchAdBlockPattern(pattern, url);
   }
 
   // ─── Private: Utilities ───────────────────────────────────────────────────
@@ -528,6 +503,7 @@ export class BlockingEngine implements IBlockingEngine {
   private clear(): void {
     this.rules.clear();
     this.nextId = 1;
+    this.sourceIndex.clear();
     this.badfilterPatterns.clear();
     this.hostnameBlockSet.clear();
     this.hostnameBlockRules.clear();

@@ -1,6 +1,10 @@
 /**
- * Firefox content script for cosmetic filtering and social widget placeholders.
+ * Firefox content script for cosmetic filtering, privacy monitoring,
+ * social widget placeholders, and ML-based zero-day ad detection.
  */
+
+import { extractFeatures, classifyHeuristic, shouldBlock } from "@veil/core";
+import { generatePrivacyMonitorScript } from "@veil/core";
 
 const SOCIAL_DOMAINS: Record<string, string> = {
   "facebook.com": "facebook",
@@ -13,12 +17,15 @@ const SOCIAL_DOMAINS: Record<string, string> = {
 };
 
 let cosmeticSelectors: string[] = [];
+const mlEnabled = true;
 
 async function initialize(): Promise<void> {
+  const domain = window.location.hostname;
+
   try {
     const response = await browser.runtime.sendMessage({
       type: "GET_COSMETIC_RULES",
-      payload: window.location.hostname,
+      payload: domain,
     });
 
     if (response?.selectors && Array.isArray(response.selectors)) {
@@ -29,6 +36,9 @@ async function initialize(): Promise<void> {
   } catch {
     // Context invalidated
   }
+
+  // Inject privacy budget monitor directly (Firefox allows script tag injection from content script)
+  injectPrivacyMonitor();
 }
 
 function applyCosmeticRules(selectors: string[]): void {
@@ -43,8 +53,42 @@ function applyCosmeticRules(selectors: string[]): void {
   (document.head ?? document.documentElement).appendChild(style);
 }
 
+function injectPrivacyMonitor(): void {
+  try {
+    const code = generatePrivacyMonitorScript();
+    const script = document.createElement("script");
+    script.textContent = code;
+    script.dataset.veil = "privacy-monitor";
+    (document.head ?? document.documentElement).appendChild(script);
+  } catch {
+    // Injection may fail on restricted pages
+  }
+
+  // Listen for privacy events from the injected monitor
+  window.addEventListener("message", (event) => {
+    if (event.source !== window) return;
+    if (event.data?.type !== "veil-privacy-event") return;
+
+    try {
+      browser.runtime.sendMessage({
+        type: "PRIVACY_EVENT",
+        payload: {
+          method: event.data.method as string,
+          timestamp: event.data.timestamp as number,
+          url: event.data.url as string,
+          domain: window.location.hostname,
+        },
+      }).catch(() => {});
+    } catch {
+      // Background dead
+    }
+  });
+}
+
 function startObserver(): void {
   const observer = new MutationObserver((mutations) => {
+    const mlCandidates: HTMLElement[] = [];
+
     for (const mutation of mutations) {
       for (const node of mutation.addedNodes) {
         if (!(node instanceof HTMLElement)) continue;
@@ -69,6 +113,36 @@ function startObserver(): void {
         node.querySelectorAll("iframe").forEach((iframe) => {
           handleSocialIframe(iframe);
         });
+
+        // Collect ML candidates
+        if (mlEnabled && node.isConnected && node.style.display !== "none") {
+          const tag = node.tagName;
+          if (tag === "IFRAME" || tag === "IMG" || tag === "DIV" || tag === "SECTION" || tag === "ASIDE") {
+            mlCandidates.push(node);
+          }
+          const children = node.querySelectorAll("iframe, img, div, section, aside");
+          for (const child of children) {
+            if (child.isConnected && (child as HTMLElement).style.display !== "none") {
+              mlCandidates.push(child as HTMLElement);
+            }
+          }
+        }
+      }
+    }
+
+    // ML-based zero-day detection (throttled)
+    if (mlEnabled && mlCandidates.length > 0) {
+      for (const el of mlCandidates.slice(0, 20)) {
+        try {
+          const features = extractFeatures(el);
+          const result = classifyHeuristic(features);
+          if (shouldBlock(result)) {
+            el.style.setProperty("display", "none", "important");
+            el.setAttribute("data-veil-ml-blocked", result.label);
+          }
+        } catch {
+          // Skip unclassifiable elements
+        }
       }
     }
   });
@@ -87,15 +161,15 @@ function handleSocialIframe(iframe: HTMLIFrameElement): void {
         const placeholder = document.createElement("div");
         const wrapper = document.createElement("div");
         wrapper.style.cssText = "border:1px solid #e5e7eb;border-radius:8px;padding:16px;text-align:center;background:#f9fafb;";
-        
+
         const text = document.createElement("p");
         text.style.cssText = "margin:0 0 8px;font-size:14px;color:#6b7280;";
         text.textContent = `Виджет ${network} заблокирован`;
-        
+
         const button = document.createElement("button");
         button.style.cssText = "padding:6px 16px;border:1px solid #d1d5db;border-radius:6px;background:white;cursor:pointer;";
         button.textContent = "Загрузить";
-        
+
         wrapper.appendChild(text);
         wrapper.appendChild(button);
         placeholder.appendChild(wrapper);

@@ -1,8 +1,10 @@
 /**
  * Element Picker — visual element selection for creating custom blocking rules.
- * 
+ *
  * Injected into the page when user activates "Pick element" mode.
  * Highlights elements on hover and generates optimal CSS selectors.
+ * ML-enhanced: shows real-time classification (ad / tracker / social / annoyance).
+ *
  * Similar to uBlock Origin's element picker.
  */
 
@@ -112,8 +114,45 @@ export function getPickerOverlayCode(): string {
     highlight.style.height = rect.height + "px";
 
     info.style.display = "block";
-    info.textContent = el.tagName.toLowerCase() + (el.id ? "#" + el.id : "") + (el.className ? "." + el.className.split(" ").slice(0,2).join(".") : "");
+    var desc = el.tagName.toLowerCase() + (el.id ? "#" + el.id : "") + (el.className ? "." + el.className.split(" ").slice(0,2).join(".") : "");
+
+    // Request ML classification from the extension
+    window.postMessage({
+      type: "VEIL_ML_CLASSIFY",
+      tagName: el.tagName,
+      className: el.className || "",
+      rect: { width: rect.width, height: rect.height, top: rect.top, left: rect.left, bottom: rect.bottom, right: rect.right },
+      parentTag: el.parentElement ? el.parentElement.tagName : "",
+      childCount: el.children.length,
+      hasMedia: el.querySelectorAll("img, iframe, video").length > 0,
+      position: getComputedStyle(el).position,
+      zIndex: getComputedStyle(el).zIndex,
+    }, "*");
+
+    info.textContent = desc;
   }, true);
+
+  // Listen for ML results to update the highlight color
+  window.addEventListener("message", function(ev) {
+    if (ev.data && ev.data.type === "VEIL_ML_RESULT" && currentEl) {
+      var label = ev.data.label;
+      var conf = ev.data.confidence;
+      info.textContent += "  [" + label + " " + Math.round(conf * 100) + "%]";
+      if (label === "ad" || label === "tracker") {
+        highlight.style.borderColor = "#E74C3C"; // red
+        highlight.style.background = "rgba(231,76,60,0.15)";
+      } else if (label === "social") {
+        highlight.style.borderColor = "#3498DB"; // blue
+        highlight.style.background = "rgba(52,152,219,0.15)";
+      } else if (label === "annoyance") {
+        highlight.style.borderColor = "#F39C12"; // orange
+        highlight.style.background = "rgba(243,156,18,0.15)";
+      } else {
+        highlight.style.borderColor = "#4A90D9"; // default blue
+        highlight.style.background = "rgba(74,144,217,0.2)";
+      }
+    }
+  });
 
   document.addEventListener("click", function(e) {
     e.preventDefault();

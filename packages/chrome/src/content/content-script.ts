@@ -1,13 +1,18 @@
 /**
- * Chrome content script for cosmetic filtering and anti-adblock bypass.
- * 
+ * Chrome content script for cosmetic filtering, anti-adblock bypass,
+ * privacy budget monitoring, and ML-based zero-day ad detection.
+ *
  * Key design decisions:
  * 1. Runs at document_start for immediate element hiding
  * 2. Falls back to chrome.storage.session if service worker is dead
  * 3. Uses MutationObserver for dynamic content (SPA, lazy loading)
  * 4. Injects scriptlets for anti-adblock bypass
  * 5. Replaces social widget iframes with placeholders
+ * 6. Injects privacy budget monitor (fingerprinting detection)
+ * 7. ML heuristic classifier catches ads not covered by filter lists
  */
+
+import { extractFeatures, classifyHeuristic, shouldBlock } from "@veil/core";
 
 const SOCIAL_DOMAINS: Record<string, string> = {
   "facebook.com": "Facebook",
@@ -26,6 +31,7 @@ let cosmeticSelectors: string[] = [];
 let scriptlets: string[] = [];
 let observer: MutationObserver | null = null;
 let styleElement: HTMLStyleElement | null = null;
+const mlEnabled = true;
 
 // ─── Initialization ───────────────────────────────────────────────────────────
 
@@ -82,6 +88,9 @@ async function initialize(): Promise<void> {
     injectScriptlets();
   }
 
+  // Inject privacy budget monitor (detect fingerprinting APIs)
+  injectPrivacyMonitor();
+
   // Start observing DOM changes
   startObserver();
 
@@ -93,6 +102,38 @@ async function initialize(): Promise<void> {
   } catch {
     // storage.session not available
   }
+}
+
+// ─── Privacy Budget Monitor ───────────────────────────────────────────────────
+
+function injectPrivacyMonitor(): void {
+  // Ask background to inject the monitor script into MAIN world
+  try {
+    chrome.runtime.sendMessage({ type: "INJECT_PRIVACY_MONITOR" }).catch(() => {});
+  } catch {
+    // Extension context invalidated
+  }
+
+  // Listen for privacy events from the injected monitor
+  window.addEventListener("message", (event) => {
+    if (event.source !== window) return;
+    if (event.data?.type !== "veil-privacy-event") return;
+
+    // Relay to background script
+    try {
+      chrome.runtime.sendMessage({
+        type: "PRIVACY_EVENT",
+        payload: {
+          method: event.data.method as string,
+          timestamp: event.data.timestamp as number,
+          url: event.data.url as string,
+          domain: window.location.hostname,
+        },
+      }).catch(() => {});
+    } catch {
+      // Service worker dead
+    }
+  });
 }
 
 // ─── Cosmetic Filtering ───────────────────────────────────────────────────────
@@ -139,6 +180,7 @@ function startObserver(): void {
 
   observer = new MutationObserver((mutations) => {
     let needsUpdate = false;
+    const mlCandidates: HTMLElement[] = [];
 
     for (const mutation of mutations) {
       for (const node of mutation.addedNodes) {
@@ -170,6 +212,38 @@ function startObserver(): void {
           } catch {
             // Invalid selector — skip
           }
+        }
+
+        // Collect ML candidates (elements not hidden by cosmetic rules)
+        if (mlEnabled && node.isConnected && (node as HTMLElement).style.display !== "none") {
+          const tag = node.tagName;
+          if (tag === "IFRAME" || tag === "IMG" || tag === "DIV" || tag === "SECTION" || tag === "ASIDE") {
+            mlCandidates.push(node as HTMLElement);
+          }
+          // Also check children
+          const children = node.querySelectorAll("iframe, img, div, section, aside");
+          for (const child of children) {
+            if (child.isConnected && (child as HTMLElement).style.display !== "none") {
+              mlCandidates.push(child as HTMLElement);
+            }
+          }
+        }
+      }
+    }
+
+    // ML-based zero-day detection (throttled)
+    if (mlEnabled && mlCandidates.length > 0) {
+      for (const el of mlCandidates.slice(0, 20)) {
+        try {
+          const features = extractFeatures(el);
+          const result = classifyHeuristic(features);
+          if (shouldBlock(result)) {
+            el.style.setProperty("display", "none", "important");
+            el.setAttribute("data-veil-ml-blocked", result.label);
+            needsUpdate = true;
+          }
+        } catch {
+          // Skip unclassifiable elements
         }
       }
     }

@@ -60,6 +60,35 @@ describe("Scriptlets", () => {
     expect(result!.args).toEqual(["ads.loaded", "true"]);
   });
 
+  it("escapes malicious argument values to prevent injection", () => {
+    const malicious = 'foo"); alert("XSS'; // double-quote + paren injection
+    const code = generateScriptlet("abort-on-property-read", malicious);
+    expect(code).not.toBeNull();
+    // The generated code must remain syntactically valid and not execute alert
+    expect(() => new Function(code!)).not.toThrow();
+    // The payload must be trapped inside the string literal, not raw JS
+    expect(code).toContain('"foo\\"); alert(\\"XSS"');
+  });
+
+  it("escapes backticks and template interpolation", () => {
+    const malicious = "`${process.env}`";
+    const code = generateScriptlet("no-setTimeout-if", malicious);
+    expect(code).not.toBeNull();
+    // Must remain syntactically valid — back-tick must not break out of string literal
+    expect(() => new Function(code!)).not.toThrow();
+    // The back-tick should appear inside the double-quoted string, not as raw JS
+    expect(code).toMatch(/needle = "[^"]*`[^"]*"/);
+  });
+
+  it("escapes newlines and carriage returns", () => {
+    const malicious = "line1\nline2\rline3";
+    const code = generateScriptlet("prevent-fetch", malicious);
+    expect(code).not.toBeNull();
+    // Newlines must be serialized as \\n inside the string literal
+    expect(code).toContain('"line1\\nline2\\rline3"');
+    expect(() => new Function(code!)).not.toThrow();
+  });
+
   it("returns null for invalid scriptlet rule", () => {
     const result = parseScriptletRule("not a scriptlet rule");
     expect(result).toBeNull();

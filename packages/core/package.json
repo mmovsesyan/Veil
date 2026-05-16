@@ -19,5 +19,10 @@
     "test:watch": "vitest",
     "clean": "rm -rf dist"
   },
-  "files": ["dist"]
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@tensorflow/tfjs": "^4.22.0"
+  }
 }

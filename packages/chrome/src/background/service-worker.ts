@@ -10,6 +10,7 @@
 
 import { BlockingEngine, RuleParser, StatisticsTracker, WhitelistManager, AutoRulesEngine } from "@veil/core";
 import { getRedirectResource, getDefaultRedirect, parseScriptletRule } from "@veil/core";
+import { PrivacyBudgetTracker, generatePrivacyMonitorScript } from "@veil/core";
 import type { Rule, CosmeticRule } from "@veil/core";
 
 // ─── Core instances ───────────────────────────────────────────────────────────
@@ -19,10 +20,35 @@ const parser = new RuleParser();
 const stats = new StatisticsTracker();
 const whitelist = new WhitelistManager();
 const autoRules = new AutoRulesEngine();
+const privacyTracker = new PrivacyBudgetTracker();
 
 let isEnabled = true;
 const cosmeticRulesCache = new Map<string, CosmeticRule[]>();
 const COSMETIC_CACHE_MAX_SIZE = 500;
+
+// ─── Recent picker rules (undo support) ───────────────────────────────────────
+
+interface RecentPickerRule {
+  engineId: number;
+  raw: string;
+  timestamp: number;
+}
+
+let recentPickerRules: RecentPickerRule[] = [];
+const PICKER_RULE_MAX_AGE_MS = 60_000;
+const PICKER_RULE_MAX_COUNT = 5;
+
+function pruneRecentPickerRules(): void {
+  const cutoff = Date.now() - PICKER_RULE_MAX_AGE_MS;
+  recentPickerRules = recentPickerRules.filter((r) => r.timestamp > cutoff);
+  if (recentPickerRules.length > PICKER_RULE_MAX_COUNT) {
+    recentPickerRules = recentPickerRules.slice(-PICKER_RULE_MAX_COUNT);
+  }
+}
+
+async function persistRecentPickerRules(): Promise<void> {
+  await chrome.storage.local.set({ recentPickerRules });
+}
 
 // ─── Stable whitelist rule ID generation ──────────────────────────────────────
 
@@ -84,6 +110,7 @@ async function doInitialize(): Promise<void> {
       "customRules",
       "cachedRules",
       "autoLearnedRules",
+      "recentPickerRules",
     ]);
 
     isEnabled = stored["enabled"] !== false;
@@ -159,7 +186,14 @@ async function doInitialize(): Promise<void> {
       }
     }
 
-    // 6. Schedule background filter list update (non-blocking)
+    // 6. Restore recent picker rules (for undo)
+    const storedRecent = stored["recentPickerRules"] as RecentPickerRule[] | undefined;
+    if (storedRecent) {
+      recentPickerRules = storedRecent;
+      pruneRecentPickerRules();
+    }
+
+    // 7. Schedule background filter list update (non-blocking)
     scheduleFilterUpdate();
 
     console.log("[Content Blocker] Initialized");
@@ -616,13 +650,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
-  handleMessage(message).then(sendResponse).catch((e) => {
+  handleMessage(message, sender).then(sendResponse).catch((e) => {
     sendResponse({ error: String(e) });
   });
   return true; // Keep channel open for async
 });
 
-async function handleMessage(message: { type: string; payload?: unknown }): Promise<unknown> {
+async function handleMessage(
+  message: { type: string; payload?: unknown },
+  sender: chrome.runtime.MessageSender,
+): Promise<unknown> {
   switch (message.type) {
     case "GET_STATUS":
       return { enabled: isEnabled };
@@ -769,7 +806,24 @@ async function handleMessage(message: { type: string; payload?: unknown }): Prom
       if (!rule) return { success: false, error: "Invalid syntax" };
 
       rule.source = "custom";
-      engine.addRules([rule]);
+      const ids = engine.addRules([rule]);
+
+      // Track for undo
+      if (ids.length > 0) {
+        pruneRecentPickerRules();
+        recentPickerRules.push({
+          engineId: ids[0]!,
+          raw,
+          timestamp: Date.now(),
+        });
+        if (recentPickerRules.length > PICKER_RULE_MAX_COUNT) {
+          recentPickerRules = recentPickerRules.slice(-PICKER_RULE_MAX_COUNT);
+        }
+        await persistRecentPickerRules();
+        console.log("[Veil] Added picker rule for undo:", { raw, engineId: ids[0], recentCount: recentPickerRules.length });
+      } else {
+        console.warn("[Veil] ADD_CUSTOM_RULE: no engine IDs returned for rule:", raw);
+      }
 
       // Persist
       const stored = await chrome.storage.local.get(["customRules"]);
@@ -783,6 +837,34 @@ async function handleMessage(message: { type: string; payload?: unknown }): Prom
       chrome.storage.local.set({ autoLearnedRules: autoRules.getConfirmedRules() });
 
       return { success: true };
+    }
+
+    case "UNDO_LAST_PICKER_RULE": {
+      pruneRecentPickerRules();
+      const last = recentPickerRules.pop();
+      if (!last) return { success: false, error: "Нет правил для отмены" };
+
+      // Remove from engine
+      const removed = engine.removeRuleById(last.engineId);
+
+      // Remove from custom rules storage
+      const stored = await chrome.storage.local.get(["customRules"]);
+      const existing = (stored["customRules"] as string[]) ?? [];
+      const filtered = existing.filter((r) => r !== last.raw);
+      if (filtered.length !== existing.length) {
+        await chrome.storage.local.set({ customRules: filtered });
+      }
+
+      await persistRecentPickerRules();
+
+      return { success: removed, rule: last.raw };
+    }
+
+    case "GET_RECENT_PICKER_RULES": {
+      pruneRecentPickerRules();
+      const last = recentPickerRules[recentPickerRules.length - 1] ?? null;
+      console.log("[Veil] GET_RECENT_PICKER_RULES:", { count: recentPickerRules.length, last });
+      return { last: last ? { raw: last.raw, timestamp: last.timestamp } : null };
     }
 
     case "GET_COSMETIC_RULES": {
@@ -849,6 +931,35 @@ async function handleMessage(message: { type: string; payload?: unknown }): Prom
     case "REJECT_AUTO_RULE": {
       autoRules.rejectRule(message.payload as string);
       return { success: true };
+    }
+
+    case "INJECT_PRIVACY_MONITOR": {
+      if (sender.tab?.id) {
+        const code = generatePrivacyMonitorScript();
+        chrome.scripting.executeScript({
+          target: { tabId: sender.tab.id },
+          world: "MAIN",
+          func: (scriptCode: string) => { eval(scriptCode); },
+          args: [code],
+        }).catch(() => {});
+      }
+      return { success: true };
+    }
+
+    case "PRIVACY_EVENT": {
+      const payload = message.payload as { method: string; timestamp: number; url: string; domain: string };
+      privacyTracker.recordEvent(payload.domain, {
+        api: payload.method.split(".")[0] ?? "unknown",
+        method: payload.method,
+        entropyBits: 1.0,
+      });
+      return { success: true };
+    }
+
+    case "GET_PRIVACY_SCORE": {
+      const domain = message.payload as string;
+      const score = privacyTracker.getScore(domain);
+      return { score: score ?? null };
     }
 
     default:

@@ -12,6 +12,7 @@ function PopupApp() {
   const [blocked, setBlocked] = useState(0);
   const [loading, setLoading] = useState(true);
   const [isWhitelisted, setIsWhitelisted] = useState(false);
+  const [lastPickerRule, setLastPickerRule] = useState<{ raw: string; timestamp: number } | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -49,6 +50,13 @@ function PopupApp() {
           });
           setBlocked(stats?.blocked ?? 0);
         }
+
+        // Check for recent picker rule (undo support)
+        const recent = await chrome.runtime.sendMessage({ type: "GET_RECENT_PICKER_RULES" });
+        console.log("[Veil Popup] recent picker response:", recent);
+        if (recent?.last) {
+          setLastPickerRule(recent.last as { raw: string; timestamp: number });
+        }
       } catch (e) {
         console.error("Popup load error:", e);
       } finally {
@@ -70,6 +78,22 @@ function PopupApp() {
       }
     } catch (e) {
       console.error("Toggle error:", e);
+    }
+  };
+
+  const handleUndoPicker = async () => {
+    try {
+      const response = await chrome.runtime.sendMessage({ type: "UNDO_LAST_PICKER_RULE" });
+      if (response?.success) {
+        setLastPickerRule(null);
+        // Reload current tab to restore hidden element
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (tab?.id) {
+          chrome.tabs.reload(tab.id);
+        }
+      }
+    } catch (e) {
+      console.error("Undo picker error:", e);
     }
   };
 
@@ -293,6 +317,28 @@ function PopupApp() {
       >
         🎯 Заблокировать элемент
       </button>
+
+      {lastPickerRule && (
+        <button
+          onClick={handleUndoPicker}
+          style={{
+            width: "100%",
+            padding: "8px 16px",
+            marginTop: 8,
+            borderRadius: 8,
+            border: "1px solid #fca5a5",
+            background: "#fef2f2",
+            fontSize: 12,
+            color: "#dc2626",
+            cursor: "pointer",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          ↩ Отменить блокировку ({lastPickerRule.raw.length > 30 ? lastPickerRule.raw.slice(0, 30) + "…" : lastPickerRule.raw})
+        </button>
+      )}
 
       <button
         onClick={() => chrome.runtime.openOptionsPage()}

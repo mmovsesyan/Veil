@@ -83,7 +83,7 @@ export class HybridWasmEngine implements IBlockingEngine {
     await this.jsEngine.initialize(rules);
   }
 
-  addRules(rules: Rule[]): void {
+  addRules(rules: Rule[]): number[] {
     this.rules.push(...rules);
 
     if (this.wasmAvailable && this.wasmEngine) {
@@ -92,7 +92,7 @@ export class HybridWasmEngine implements IBlockingEngine {
       }
     }
 
-    this.jsEngine.addRules(rules);
+    return this.jsEngine.addRules(rules);
   }
 
   removeRules(sourceId: string): void {
@@ -103,6 +103,10 @@ export class HybridWasmEngine implements IBlockingEngine {
     if (this.wasmAvailable) {
       this.rebuildWasm();
     }
+  }
+
+  removeRuleById(id: number): boolean {
+    return this.jsEngine.removeRuleById(id);
   }
 
   shouldBlock(request: NetworkRequest): BlockDecision {
