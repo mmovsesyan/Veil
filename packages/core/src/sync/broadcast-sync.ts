@@ -20,6 +20,9 @@
  */
 
 import type { CollaborativeRule } from "./collaborative-rules.js";
+import { createLogger } from "../logger.js";
+
+const logger = createLogger("broadcast-sync");
 
 interface BroadcastSyncConfig {
   channelName: string;
@@ -62,7 +65,7 @@ export class BroadcastSync {
         /* ignore corrupt messages */
       };
     } catch {
-      console.warn("[Veil] BroadcastChannel unavailable, using storage fallback");
+      logger.warn("BroadcastChannel unavailable, using storage fallback");
     }
 
     // Storage fallback (works in Safari and when BC is unavailable)

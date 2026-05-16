@@ -1,13 +1,17 @@
 /**
  * Auto-discovery and addition of new blocking rules.
- * 
+ *
  * Three mechanisms:
  * 1. Heuristic detection — analyze page requests and detect ad/tracker patterns
  * 2. Community reports — users report missed ads, system generates rules
  * 3. Remote rule feed — subscribe to auto-updated rule sources
- * 
+ *
  * This is what makes the blocker self-improving over time.
  */
+
+import { createLogger } from "../logger.js";
+
+const logger = createLogger("auto-rules");
 
 export interface DetectedPattern {
   url: string;
@@ -396,13 +400,13 @@ export async function fetchRuleFeed(config: RuleFeedConfig): Promise<string[]> {
     if (config.publicKey) {
       const signature = response.headers.get("X-Veil-Signature");
       if (!signature) {
-        console.warn("[Veil] Feed missing signature:", config.url);
+        logger.warn("Feed missing signature", { url: config.url });
         return [];
       }
       const { verifyFeedSignature } = await import("./signature-verifier.js");
       const valid = await verifyFeedSignature(text, signature, config.publicKey);
       if (!valid) {
-        console.warn("[Veil] Feed signature invalid:", config.url);
+        logger.warn("Feed signature invalid", { url: config.url });
         return [];
       }
     }

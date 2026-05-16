@@ -12,6 +12,9 @@ import type { Rule, NetworkRequest, BlockDecision, CosmeticRule } from "../types
 import type { IBlockingEngine } from "../types/interfaces.js";
 import { RuleAction, RuleType } from "../types/index.js";
 import { BlockingEngine } from "./blocking-engine.js";
+import { createLogger } from "../logger.js";
+
+const logger = createLogger("wasm-engine");
 
 // Resource type bitmap (must match Rust side)
 const TYPE_BITS: Record<string, number> = {
@@ -68,7 +71,7 @@ export class HybridWasmEngine implements IBlockingEngine {
     try {
       await this.loadWasm();
     } catch {
-      console.warn("[Content Blocker] WASM not available, using JS engine");
+      logger.warn("WASM not available, using JS engine");
       this.wasmAvailable = false;
     }
 
@@ -132,6 +135,13 @@ export class HybridWasmEngine implements IBlockingEngine {
 
     // Fallback to JS engine
     return this.jsEngine.shouldBlock(request);
+  }
+
+  getRuleCount(): number {
+    if (this.wasmAvailable && this.wasmEngine) {
+      return this.wasmEngine.rule_count();
+    }
+    return this.jsEngine.getRuleCount();
   }
 
   getCosmeticRules(domain: string): CosmeticRule[] {

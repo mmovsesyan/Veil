@@ -603,7 +603,7 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
   var origValue = base[prop];
   Object.defineProperty(base, prop, {
     get: function() {
-      console.trace("[Veil] Property read: " + ${js(property)});
+      // Debug output removed to avoid anti-adblock detection
       return origValue;
     },
     set: function(v) { origValue = v; },
@@ -619,7 +619,7 @@ const SCRIPTLETS: Record<string, ScriptletFn> = {
 (function() {
   var origAdd = EventTarget.prototype.addEventListener;
   EventTarget.prototype.addEventListener = function(type, fn, options) {
-    console.log("[Veil] addEventListener:", type, fn && fn.toString().slice(0, 80));
+    // Debug output removed to avoid anti-adblock detection
     return origAdd.call(this, type, fn, options);
   };
 })();

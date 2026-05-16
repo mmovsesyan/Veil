@@ -48,6 +48,9 @@ export interface IBlockingEngine {
 
   /** Get cosmetic rules applicable to a domain */
   getCosmeticRules(domain: string): CosmeticRule[];
+
+  /** Return the total number of loaded rules */
+  getRuleCount(): number;
 }
 
 // ─── Whitelist Manager Interface ──────────────────────────────────────────────

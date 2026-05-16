@@ -223,7 +223,7 @@ export const COMPAT_SCRIPTLETS: Record<string, ScriptletFn> = {
 (function() {
   var origAdd = EventTarget.prototype.addEventListener;
   EventTarget.prototype.addEventListener = function(type, fn) {
-    console.log("[CB] addEventListener:", type, this.tagName || "window", fn.toString().slice(0, 80));
+    // Debug output removed to avoid anti-adblock detection
     return origAdd.apply(this, arguments);
   };
 })();

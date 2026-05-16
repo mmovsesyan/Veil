@@ -13,6 +13,9 @@
  */
 
 import type { DOMFeatures } from "./dom-features.js";
+import { createLogger } from "../logger.js";
+
+const logger = createLogger("ml-classifier");
 
 export type ClassificationLabel = "content" | "ad" | "tracker" | "social" | "annoyance";
 
@@ -58,7 +61,7 @@ export class SmartDOMClassifier {
         metrics: ["accuracy"],
       });
     } catch {
-      console.warn("[Veil] TF.js unavailable, falling back to heuristic classifier");
+      logger.warn("TF.js unavailable, falling back to heuristic classifier");
       this.fallbackMode = true;
     }
   }

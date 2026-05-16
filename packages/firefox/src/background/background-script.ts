@@ -7,8 +7,11 @@ import { BlockingEngine, RuleParser, StatisticsTracker, WhitelistManager, RuleMa
 import { checkKnownCNAMECloak, isTrackerCNAMETarget, AutoRulesEngine } from "@veil/core";
 import { PrivacyBudgetTracker } from "@veil/core";
 import type { ResourceType } from "@veil/core";
+import { createLogger } from "./logger.js";
 
 declare const browser: any; // Firefox WebExtension API
+
+const logger = createLogger("firefox-bg");
 
 const engine = new BlockingEngine();
 const parser = new RuleParser();
@@ -64,6 +67,31 @@ broadcastSync.onRule((rule) => {
   }
 });
 
+// ─── Health Check ─────────────────────────────────────────────────────────────
+
+interface HealthStatus {
+  initialized: boolean;
+  enabled: boolean;
+  ruleCount: number;
+  whitelistSize: number;
+  lastError?: string;
+  uptime: number;
+}
+
+const initTime = Date.now();
+let lastInitError: string | undefined;
+
+function getHealthStatus(): HealthStatus {
+  return {
+    initialized: lastInitError === undefined,
+    enabled: isEnabled,
+    ruleCount: engine.getRuleCount?.() ?? 0,
+    whitelistSize: whitelist.getAll().length,
+    lastError: lastInitError,
+    uptime: Date.now() - initTime,
+  };
+}
+
 // ─── Initialization ───────────────────────────────────────────────────────────
 
 async function initializeExtension(): Promise<void> {
@@ -111,14 +139,17 @@ async function initializeExtension(): Promise<void> {
       try {
         await ruleManager.activateList(listId);
       } catch (e) {
-        console.warn(`[Content Blocker] Failed to load ${listId}:`, e);
+        logger.warn(`Failed to load ${listId}`, { error: String(e) });
       }
     }
 
     ruleManager.startAutoUpdates();
-    console.log("[Content Blocker] Firefox extension initialized");
+    logger.info("Firefox extension initialized");
   } catch (e) {
-    console.error("[Content Blocker] Init failed:", e);
+    lastInitError = String(e);
+    logger.error("Initialization failed", { error: lastInitError });
+    // Graceful degradation: keep running with empty rules
+    isEnabled = false;
   }
 }
 
@@ -186,7 +217,7 @@ browser.webRequest.onBeforeRequest.addListener(
           engine.addRules([rule]);
           // Persist auto-learned rules
           browser.storage.local.set({ autoLearnedRules: autoRules.getConfirmedRules() });
-          console.log(`[Veil Auto-Learn] New rule: ${confirmed.suggestedRule}`);
+          logger.info("Auto-learned rule applied", { rule: confirmed.suggestedRule });
         }
       }
     }
@@ -350,6 +381,9 @@ browser.runtime.onMessage.addListener((message: { type: string; payload?: unknow
     case "GET_STATUS":
       return Promise.resolve({ enabled: isEnabled });
 
+    case "GET_HEALTH":
+      return Promise.resolve(getHealthStatus());
+
     case "GET_TAB_STATS":
       return Promise.resolve(stats.getTabStats(message.payload as number));
 
@@ -465,6 +499,12 @@ browser.runtime.onMessage.addListener((message: { type: string; payload?: unknow
       const domain = message.payload as string;
       const score = privacyTracker.getScore(domain);
       return Promise.resolve({ score: score ?? null });
+    }
+
+    case "LOG_CLIENT_ERROR": {
+      const payload = message.payload as { context: string; error: string };
+      logger.error("Client error", payload);
+      return Promise.resolve({ success: true });
     }
 
     default:

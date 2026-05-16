@@ -220,6 +220,10 @@ export class BlockingEngine implements IBlockingEngine {
     return bestRule;
   }
 
+  getRuleCount(): number {
+    return this.rules.size;
+  }
+
   getCosmeticRules(domain: string): CosmeticRule[] {
     const result: CosmeticRule[] = [];
     const exclusions = this.domainCosmeticExclusions.get(domain);

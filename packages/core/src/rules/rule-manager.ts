@@ -2,6 +2,9 @@ import type { FilterList, Rule } from "../types/index.js";
 import type { FilterCategory } from "../types/index.js";
 import type { IBlockingEngine } from "../types/interfaces.js";
 import { RuleParser } from "./parser.js";
+import { createLogger } from "../logger.js";
+
+const logger = createLogger("rule-manager");
 
 interface FilterListRegistry {
   id: string;
@@ -152,7 +155,7 @@ export class RuleManager {
         updated.push(listId);
       } catch {
         // Keep current rules on failure
-        console.warn(`Failed to update filter list: ${listId}`);
+        logger.warn("Failed to update filter list", { listId });
       }
     }
 

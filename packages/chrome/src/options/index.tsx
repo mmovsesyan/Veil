@@ -9,6 +9,15 @@ interface FilterListItem {
   rulesCount: number;
 }
 
+function reportError(context: string, error: unknown): void {
+  const message = error instanceof Error ? error.message : String(error);
+  try {
+    chrome.runtime.sendMessage({ type: "LOG_CLIENT_ERROR", payload: { context, error: message } }).catch(() => {});
+  } catch {
+    // Extension context invalid
+  }
+}
+
 function OptionsApp() {
   const [tab, setTab] = useState<"filters" | "whitelist" | "custom" | "privacy" | "sync">("filters");
   const [filterLists, setFilterLists] = useState<FilterListItem[]>([]);
@@ -39,7 +48,7 @@ function OptionsApp() {
       const wlResp = await chrome.runtime.sendMessage({ type: "GET_WHITELIST" });
       if (wlResp?.whitelist) setWhitelist(wlResp.whitelist);
     } catch (e) {
-      console.error("Failed to load data:", e);
+      reportError("options-load-data", e);
     }
   }
 
@@ -76,7 +85,7 @@ function OptionsApp() {
       }
       setSaveStatus(`Добавлено ${added} правил`);
     } catch (e) {
-      console.error("Failed to save custom rules:", e);
+      reportError("options-save-custom-rules", e);
       setSaveStatus(`Ошибка: добавлено ${added} из ${lines.length}`);
     }
     setTimeout(() => setSaveStatus(""), 3000);

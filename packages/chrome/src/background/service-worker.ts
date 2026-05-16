@@ -82,6 +82,31 @@ function getWhitelistRuleId(domain: string): number {
   return 900000 + (Math.abs(hash) % 30000);
 }
 
+// ─── Health Check ─────────────────────────────────────────────────────────────
+
+interface HealthStatus {
+  initialized: boolean;
+  enabled: boolean;
+  ruleCount: number;
+  whitelistSize: number;
+  lastError?: string;
+  uptime: number;
+}
+
+const initTime = Date.now();
+let lastInitError: string | undefined;
+
+function getHealthStatus(): HealthStatus {
+  return {
+    initialized: initPromise === null && lastInitError === undefined,
+    enabled: isEnabled,
+    ruleCount: engine.getRuleCount?.() ?? 0,
+    whitelistSize: whitelist.getAll().length,
+    lastError: lastInitError,
+    uptime: Date.now() - initTime,
+  };
+}
+
 // ─── Lifecycle ────────────────────────────────────────────────────────────────
 
 chrome.runtime.onInstalled.addListener(async (details) => {
@@ -213,7 +238,11 @@ async function doInitialize(): Promise<void> {
 
     logger.info("Initialized");
   } catch (e) {
-    logger.error("Initialization failed", { error: String(e) });
+    lastInitError = String(e);
+    logger.error("Initialization failed", { error: lastInitError });
+    // Graceful degradation: keep running with empty rules so the extension
+    // doesn't become completely non-functional.
+    isEnabled = false;
   }
 }
 
@@ -689,6 +718,9 @@ async function handleMessage(
     case "GET_STATUS":
       return { enabled: isEnabled };
 
+    case "GET_HEALTH":
+      return getHealthStatus();
+
     case "GET_TAB_STATS":
       return stats.getTabStats(message.payload as number);
 
@@ -845,9 +877,9 @@ async function handleMessage(
           recentPickerRules = recentPickerRules.slice(-PICKER_RULE_MAX_COUNT);
         }
         await persistRecentPickerRules();
-        console.log("[Veil] Added picker rule for undo:", { raw, engineId: ids[0], recentCount: recentPickerRules.length });
+        logger.info("Added picker rule for undo", { raw, engineId: ids[0], recentCount: recentPickerRules.length });
       } else {
-        console.warn("[Veil] ADD_CUSTOM_RULE: no engine IDs returned for rule:", raw);
+        logger.warn("ADD_CUSTOM_RULE: no engine IDs returned for rule", { raw });
       }
 
       // Persist
@@ -888,7 +920,7 @@ async function handleMessage(
     case "GET_RECENT_PICKER_RULES": {
       pruneRecentPickerRules();
       const last = recentPickerRules[recentPickerRules.length - 1] ?? null;
-      console.log("[Veil] GET_RECENT_PICKER_RULES:", { count: recentPickerRules.length, last });
+      logger.debug("GET_RECENT_PICKER_RULES", { count: recentPickerRules.length, last: last ? { raw: last.raw, timestamp: last.timestamp } : null });
       return { last: last ? { raw: last.raw, timestamp: last.timestamp } : null };
     }
 
@@ -985,6 +1017,12 @@ async function handleMessage(
       const domain = message.payload as string;
       const score = privacyTracker.getScore(domain);
       return { score: score ?? null };
+    }
+
+    case "LOG_CLIENT_ERROR": {
+      const payload = message.payload as { context: string; error: string };
+      logger.error("Client error", payload);
+      return { success: true };
     }
 
     default:

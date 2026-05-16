@@ -19,8 +19,11 @@ import { RuleParser, AutoRulesEngine, StatisticsTracker, WhitelistManager } from
 import type { Rule } from "@veil/core";
 import { SafariAdapter } from "../adapter/safari-adapter.js";
 import { reloadContentBlocker } from "../native/bridge.js";
+import { createLogger } from "./logger.js";
 
 // ─── Core instances ───────────────────────────────────────────────────────────
+
+const logger = createLogger("safari-bg");
 
 const parser = new RuleParser();
 const adapter = new SafariAdapter();
@@ -31,6 +34,31 @@ const whitelist = new WhitelistManager();
 const allRules: Rule[] = [];
 const MAX_RULES = 50000;
 let isEnabled = true;
+
+// ─── Health Check ─────────────────────────────────────────────────────────────
+
+interface HealthStatus {
+  initialized: boolean;
+  enabled: boolean;
+  ruleCount: number;
+  whitelistSize: number;
+  lastError?: string;
+  uptime: number;
+}
+
+const initTime = Date.now();
+let lastInitError: string | undefined;
+
+function getHealthStatus(): HealthStatus {
+  return {
+    initialized: lastInitError === undefined,
+    enabled: isEnabled,
+    ruleCount: allRules.length,
+    whitelistSize: whitelist.getAll().length,
+    lastError: lastInitError,
+    uptime: Date.now() - initTime,
+  };
+}
 
 // ─── Initialization ───────────────────────────────────────────────────────────
 
@@ -60,9 +88,12 @@ async function initialize(): Promise<void> {
       }
     }
 
-    console.log("[Veil Safari] Initialized");
+    logger.info("Initialized");
   } catch (e) {
-    console.error("[Veil Safari] Init error:", e);
+    lastInitError = String(e);
+    logger.error("Initialization failed", { error: lastInitError });
+    // Graceful degradation
+    isEnabled = false;
   }
 }
 
@@ -125,9 +156,9 @@ function processResourceReport(report: {
       persistAutoLearnedRules();
 
       // Recompile content blocker with new rule
-      compileAndReload().catch(console.warn);
+      compileAndReload().catch((e) => logger.warn("compileAndReload failed", { error: String(e) }));
 
-      console.log(`[Veil Safari Auto-Learn] New rule: ${confirmed.suggestedRule}`);
+      logger.info("Auto-learned rule applied", { rule: confirmed.suggestedRule });
     }
   }
 }
@@ -151,6 +182,9 @@ if (typeof browser !== "undefined" && browser.runtime?.onMessage) {
 
       case "GET_STATUS":
         return Promise.resolve({ enabled: isEnabled, rulesCount: allRules.length });
+
+      case "GET_HEALTH":
+        return Promise.resolve(getHealthStatus());
 
       case "TOGGLE_ENABLED":
         isEnabled = !isEnabled;
@@ -183,7 +217,7 @@ if (typeof browser !== "undefined" && browser.runtime?.onMessage) {
         if (rule) {
           rule.source = "auto-learned";
           allRules.push(rule);
-          compileAndReload().catch(console.warn);
+          compileAndReload().catch((e) => logger.warn("compileAndReload failed", { error: String(e) }));
         }
         persistAutoLearnedRules();
         return Promise.resolve({ success: true });
@@ -204,6 +238,12 @@ if (typeof browser !== "undefined" && browser.runtime?.onMessage) {
 
       case "GET_TAB_STATS":
         return Promise.resolve(stats.getTabStats(message.payload as number));
+
+      case "LOG_CLIENT_ERROR": {
+        const payload = message.payload as { context: string; error: string };
+        logger.error("Client error", payload);
+        return Promise.resolve({ success: true });
+      }
 
       default:
         return Promise.resolve({ error: "Unknown message type" });
@@ -264,6 +304,6 @@ export const SAFARI_CONTENT_SCRIPT = `
 
 // Initialize
 declare const browser: any;
-initialize().catch(console.error);
+initialize().catch((e) => logger.error("Top-level init failed", { error: String(e) }));
 
 export { initialize, processResourceReport, compileAndReload, autoRules, stats, whitelist };

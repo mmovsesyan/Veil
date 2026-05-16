@@ -6,6 +6,15 @@ interface TabStats {
   byCategory: Record<string, number>;
 }
 
+function reportError(context: string, error: unknown): void {
+  const message = error instanceof Error ? error.message : String(error);
+  try {
+    chrome.runtime.sendMessage({ type: "LOG_CLIENT_ERROR", payload: { context, error: message } }).catch(() => {});
+  } catch {
+    // Extension context invalid
+  }
+}
+
 function PopupApp() {
   const [enabled, setEnabled] = useState(true);
   const [domain, setDomain] = useState("");
@@ -53,12 +62,11 @@ function PopupApp() {
 
         // Check for recent picker rule (undo support)
         const recent = await chrome.runtime.sendMessage({ type: "GET_RECENT_PICKER_RULES" });
-        console.log("[Veil Popup] recent picker response:", recent);
         if (recent?.last) {
           setLastPickerRule(recent.last as { raw: string; timestamp: number });
         }
       } catch (e) {
-        console.error("Popup load error:", e);
+        reportError("popup-load", e);
       } finally {
         setLoading(false);
       }
@@ -77,7 +85,7 @@ function PopupApp() {
         chrome.tabs.reload(tab.id);
       }
     } catch (e) {
-      console.error("Toggle error:", e);
+      reportError("popup-toggle", e);
     }
   };
 
@@ -93,7 +101,7 @@ function PopupApp() {
         }
       }
     } catch (e) {
-      console.error("Undo picker error:", e);
+      reportError("popup-undo-picker", e);
     }
   };
 
@@ -117,7 +125,7 @@ function PopupApp() {
         chrome.tabs.reload(tab.id);
       }
     } catch (e) {
-      console.error("Whitelist toggle error:", e);
+      reportError("popup-whitelist-toggle", e);
     }
   };
 

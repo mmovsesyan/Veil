@@ -19,6 +19,9 @@
  */
 
 import type { RuleType } from "../types/index.js";
+import { createLogger } from "../logger.js";
+
+const logger = createLogger("collaborative-rules");
 
 export interface CollaborativeRule {
   /** Domain this rule applies to */
@@ -76,7 +79,7 @@ export class CollaborativeRulesEngine {
       this.bc.onmessage = (ev) => this.handleMessage(ev.data);
       this.bc.onmessageerror = () => { /* ignore */ };
     } catch {
-      console.warn("[Veil] BroadcastChannel unavailable, collaborative sync disabled");
+      logger.warn("BroadcastChannel unavailable, collaborative sync disabled");
     }
   }
 

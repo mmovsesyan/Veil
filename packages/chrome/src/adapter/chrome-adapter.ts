@@ -1,5 +1,8 @@
 import type { IPlatformAdapter } from "@veil/core";
 import type { NavigationCallback, Rule, TabInfo } from "@veil/core";
+import { createLogger } from "../background/logger.js";
+
+const logger = createLogger("chrome-adapter");
 
 /**
  * Chrome extension adapter using Manifest V3 declarativeNetRequest API.
@@ -41,10 +44,11 @@ export class ChromeAdapter implements IPlatformAdapter {
     }
 
     if (dnrRules.length > ChromeAdapter.DYNAMIC_RULE_LIMIT) {
-      console.warn(
-        `[ChromeAdapter] ${dnrRules.length} rules exceed limit of ${ChromeAdapter.DYNAMIC_RULE_LIMIT}. ` +
-        `${dnrRules.length - ChromeAdapter.DYNAMIC_RULE_LIMIT} rules dropped. Use static rulesets for full coverage.`
-      );
+      logger.warn("DNR rules exceed limit", {
+        total: dnrRules.length,
+        limit: ChromeAdapter.DYNAMIC_RULE_LIMIT,
+        dropped: dnrRules.length - ChromeAdapter.DYNAMIC_RULE_LIMIT,
+      });
     }
   }
 

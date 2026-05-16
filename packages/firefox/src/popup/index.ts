@@ -7,6 +7,15 @@ interface TabStats {
   byCategory: Record<string, number>;
 }
 
+function reportError(context: string, error: unknown): void {
+  const message = error instanceof Error ? error.message : String(error);
+  try {
+    browser.runtime.sendMessage({ type: "LOG_CLIENT_ERROR", payload: { context, error: message } }).catch(() => {});
+  } catch {
+    // Extension context invalid
+  }
+}
+
 async function init() {
   const container = document.getElementById("root");
   if (!container) return;
@@ -55,7 +64,7 @@ async function init() {
       lastPickerRule = recent.last as { raw: string; timestamp: number };
     }
   } catch (e) {
-    console.error("Popup load error:", e);
+    reportError("firefox-popup-load", e);
   }
 
   // Header
@@ -87,9 +96,23 @@ async function init() {
   statsBlock.style.cssText = `background:${isWhitelisted ? "#f0fdf4" : "#f5f5f5"};border-radius:8px;padding:12px;margin-bottom:12px;text-align:center;`;
 
   if (isWhitelisted) {
-    statsBlock.innerHTML = `<div style="font-size:20px;font-weight:700;color:#22c55e">✓</div><div style="font-size:12px;color:#666">блокировка отключена для этого сайта</div>`;
+    const check = document.createElement("div");
+    check.style.cssText = "font-size:20px;font-weight:700;color:#22c55e";
+    check.textContent = "✓";
+    const msg = document.createElement("div");
+    msg.style.cssText = "font-size:12px;color:#666";
+    msg.textContent = "блокировка отключена для этого сайта";
+    statsBlock.appendChild(check);
+    statsBlock.appendChild(msg);
   } else {
-    statsBlock.innerHTML = `<div style="font-size:28px;font-weight:700;color:#4A90D9">${blocked}</div><div style="font-size:12px;color:#666">заблокировано на этой странице</div>`;
+    const count = document.createElement("div");
+    count.style.cssText = "font-size:28px;font-weight:700;color:#4A90D9";
+    count.textContent = String(blocked);
+    const msg = document.createElement("div");
+    msg.style.cssText = "font-size:12px;color:#666";
+    msg.textContent = "заблокировано на этой странице";
+    statsBlock.appendChild(count);
+    statsBlock.appendChild(msg);
   }
   container.appendChild(statsBlock);
 
