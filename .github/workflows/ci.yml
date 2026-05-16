@@ -5,11 +5,20 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  schedule:
+    # Daily EasyList regression at 06:00 UTC
+    - cron: "0 6 * * *"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
+  # ─── Core Quality Gates ───────────────────────────────────────────────────────
   test:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         node-version: [20, 22]
 
@@ -18,6 +27,8 @@ jobs:
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -37,12 +48,60 @@ jobs:
       - name: Lint
         run: pnpm run lint
 
-      - name: Test
-        run: pnpm vitest run --reporter=verbose
+      - name: Test with coverage
+        run: pnpm vitest run --reporter=verbose --coverage
+
+      - name: Upload coverage
+        if: matrix.node-version == 22
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
 
       - name: Build
         run: pnpm run build
 
+  # ─── E2E Browser Tests ──────────────────────────────────────────────────────
+  e2e:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright
+        run: pnpm exec playwright install chromium
+
+      - name: Build all packages
+        run: pnpm run build
+
+      - name: Run E2E tests
+        run: |
+          cd e2e
+          pnpm exec playwright test --config=playwright.config.ts
+
+      - name: Upload E2E results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-results
+          path: e2e/test-results/
+
+  # ─── Extension Packaging ──────────────────────────────────────────────────────
   build-extensions:
     runs-on: ubuntu-latest
     needs: test
@@ -52,6 +111,8 @@ jobs:
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -68,12 +129,18 @@ jobs:
       - name: Package Chrome extension
         run: |
           cd packages/chrome
-          zip -r ../../chrome-extension.zip dist/ manifest.json icons/ popup.html options.html rules/ filter-lists/ bundled-rules/
+          zip -r ../../chrome-extension.zip \
+            dist/ manifest.json icons/ popup.html options.html \
+            rules/ filter-lists/ bundled-rules/ \
+            -x "*.test.*" "*.map"
 
       - name: Package Firefox extension
         run: |
           cd packages/firefox
-          zip -r ../../firefox-extension.xpi dist/ manifest.json icons/ popup.html options.html filter-lists/ bundled-rules/
+          zip -r ../../firefox-extension.xpi \
+            dist/ manifest.json icons/ popup.html options.html \
+            filter-lists/ bundled-rules/ \
+            -x "*.test.*" "*.map"
 
       - name: Upload Chrome extension
         uses: actions/upload-artifact@v4
@@ -87,16 +154,18 @@ jobs:
           name: firefox-extension
           path: firefox-extension.xpi
 
+  # ─── Filter List Regression ─────────────────────────────────────────────────
   filter-list-regression:
     runs-on: ubuntu-latest
     needs: test
-    if: github.event_name == 'push' || github.event.schedule
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -110,11 +179,13 @@ jobs:
       - name: Build core
         run: pnpm --filter @veil/core run build
 
-      - name: Download EasyList
+      - name: Download filter lists
         run: |
           mkdir -p filter-lists/downloaded
-          curl -sL "https://easylist.to/easylist/easylist.txt" -o filter-lists/downloaded/easylist.txt
-          curl -sL "https://easylist.to/easylist/easyprivacy.txt" -o filter-lists/downloaded/easyprivacy.txt
+          curl -fsSL "https://easylist.to/easylist/easylist.txt" \
+            -o filter-lists/downloaded/easylist.txt
+          curl -fsSL "https://easylist.to/easylist/easyprivacy.txt" \
+            -o filter-lists/downloaded/easyprivacy.txt
           echo "EasyList: $(wc -l < filter-lists/downloaded/easylist.txt) lines"
           echo "EasyPrivacy: $(wc -l < filter-lists/downloaded/easyprivacy.txt) lines"
 
@@ -124,15 +195,96 @@ jobs:
           import { readFileSync } from 'fs';
           import { RuleParser } from './packages/core/dist/index.js';
           const parser = new RuleParser();
-          const text = readFileSync('filter-lists/downloaded/easylist.txt', 'utf-8');
-          const result = parser.parseList(text);
-          const total = text.split('\n').length;
-          const rate = (result.rules.length / (total - result.skipped)) * 100;
-          console.log('EasyList Results:');
-          console.log('  Total lines:', total);
-          console.log('  Parsed rules:', result.rules.length);
-          console.log('  Skipped:', result.skipped);
-          console.log('  Errors:', result.errors.length);
-          console.log('  Parse rate:', rate.toFixed(1) + '%');
-          if (rate < 90) { process.exit(1); }
+
+          const sources = [
+            { name: 'EasyList', file: 'filter-lists/downloaded/easylist.txt', minRate: 90 },
+            { name: 'EasyPrivacy', file: 'filter-lists/downloaded/easyprivacy.txt', minRate: 90 },
+          ];
+
+          let failed = false;
+          for (const src of sources) {
+            const text = readFileSync(src.file, 'utf-8');
+            const result = parser.parseList(text);
+            const total = text.split('\n').length;
+            const parseable = total - result.skipped;
+            const rate = parseable > 0 ? (result.rules.length / parseable) * 100 : 0;
+
+            console.log('--- ' + src.name + ' ---');
+            console.log('  Total lines:', total);
+            console.log('  Parsed rules:', result.rules.length);
+            console.log('  Skipped:', result.skipped);
+            console.log('  Errors:', result.errors.length);
+            console.log('  Parse rate:', rate.toFixed(1) + '%');
+
+            if (rate < src.minRate) {
+              console.error('FAIL: ' + src.name + ' parse rate ' + rate.toFixed(1) + '% < ' + src.minRate + '%');
+              failed = true;
+            }
+          }
+
+          if (failed) process.exit(1);
+          console.log('All filter lists pass regression.');
           "
+
+      - name: Upload regression results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: filter-regression
+          path: filter-lists/downloaded/
+
+  # ─── Bundle Size Budget ─────────────────────────────────────────────────────
+  bundle-size:
+    runs-on: ubuntu-latest
+    needs: build-extensions
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build all packages
+        run: pnpm run build
+
+      - name: Check bundle sizes
+        run: |
+          echo "--- Chrome Bundle Sizes ---"
+          du -sh packages/chrome/dist/*
+          echo ""
+          echo "--- Firefox Bundle Sizes ---"
+          du -sh packages/firefox/dist/*
+          echo ""
+
+          # Chrome service worker budget: < 100 KB
+          SW_SIZE=$(stat -c%s packages/chrome/dist/background/service-worker.js 2>/dev/null || stat -f%z packages/chrome/dist/background/service-worker.js)
+          SW_KB=$((SW_SIZE / 1024))
+          echo "Chrome service-worker.js: ${SW_KB} KB"
+          if [ "$SW_KB" -gt 100 ]; then
+            echo "WARNING: service-worker exceeds 100 KB budget"
+          fi
+
+          # Content script budget: < 50 KB
+          CS_SIZE=$(stat -c%s packages/chrome/dist/content/content-script.js 2>/dev/null || stat -f%z packages/chrome/dist/content/content-script.js)
+          CS_KB=$((CS_SIZE / 1024))
+          echo "Chrome content-script.js: ${CS_KB} KB"
+          if [ "$CS_KB" -gt 50 ]; then
+            echo "WARNING: content-script exceeds 50 KB budget"
+          fi
+
+      - name: Upload size report
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-size-report
+          path: packages/*/dist/
