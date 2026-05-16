@@ -3,8 +3,10 @@
  */
 
 import { defineConfig } from "@playwright/test";
-import { resolve } from "path";
+import { dirname, resolve } from "path";
+import { fileURLToPath } from "url";
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const EXTENSION_PATH = resolve(__dirname, "../packages/chrome");
 
 export default defineConfig({
