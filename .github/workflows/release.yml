@@ -64,12 +64,12 @@ jobs:
           files: dist-release/*
           generate_release_notes: true
           body: |
-            ## Veil ${GITHUB_REF_NAME}
+            ## Veil ${{ github.ref_name }}
 
             ### Downloads
-            - **Chrome / Edge / Brave**: `veil-chrome-${GITHUB_REF_NAME}.zip`
+            - **Chrome / Edge / Brave**: `veil-chrome-${{ github.ref_name }}.zip`
               - Unzip → `chrome://extensions` → Developer mode → Load unpacked
-            - **Firefox**: `veil-firefox-${GITHUB_REF_NAME}.xpi`
+            - **Firefox**: `veil-firefox-${{ github.ref_name }}.xpi`
               - `about:debugging#/runtime/this-firefox` → Load Temporary Add-on → `manifest.json`
             - **Safari**: Requires Xcode build from source (see README)
 
