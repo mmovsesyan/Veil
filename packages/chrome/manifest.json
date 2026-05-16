@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Veil",
-  "version": "2.0.0",
+  "version": "2.1.1",
   "description": "Блокировщик рекламы, трекеров и социальных виджетов",
   "permissions": [
     "declarativeNetRequest",
