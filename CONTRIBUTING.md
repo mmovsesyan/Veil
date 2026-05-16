@@ -122,7 +122,7 @@ veil/
 ## Running Tests
 
 ```bash
-# Run all tests (229 tests, typically <2s)
+# Run all tests (281 tests, typically <2s)
 pnpm test
 
 # Run tests in watch mode
@@ -170,6 +170,9 @@ pnpm run lint
 # Format all files
 pnpm run format
 
+# One-shot verification (lint + typecheck + test)
+pnpm run check
+
 # Package extensions into distributable archives (zip/xpi)
 pnpm run package
 ```
@@ -209,6 +212,23 @@ To reload after changes: click **Reload** on the extension card in `about:debugg
 4. Open Safari → Preferences → Extensions
 5. Enable the Veil content blocker
 6. For development, enable "Allow Unsigned Extensions" in Safari's Develop menu
+
+---
+
+## VS Code Debugging
+
+Launch configurations are provided in `.vscode/launch.json`:
+
+| Configuration | Purpose |
+|---------------|---------|
+| **Launch Chrome Extension** | Opens Chrome with extension loaded from `packages/chrome/` |
+| **Attach to Chrome (Extension)** | Attaches to running Chrome instance on port 9222 |
+| **Debug Unit Tests** | Runs all tests in debug mode |
+| **Debug Current Test File** | Runs only the focused test file |
+
+Use the Run and Debug panel (`Ctrl+Shift+D` / `Cmd+Shift+D`) to start.
+
+Recommended extensions are listed in `.vscode/extensions.json` and suggested automatically on first open.
 
 ---
 
@@ -365,11 +385,10 @@ Modifiers control how filter rules are applied (e.g., `$third-party`, `$script`,
 
 3. **Ensure all checks pass**:
    ```bash
-   pnpm test          # All 229+ tests pass
+   pnpm run check     # lint + typecheck + test (same as CI)
    pnpm run build     # Build succeeds
-   pnpm run typecheck # No type errors
-   pnpm run lint      # No lint errors
    ```
+   Pre-commit hooks (lefthook) run automatically on `git commit`.
 
 4. **Write/update tests** for any new or changed functionality
 

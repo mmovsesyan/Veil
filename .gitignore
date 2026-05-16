@@ -6,7 +6,10 @@ dist/
 *.tsbuildinfo
 
 # IDE
-.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
 .idea/
 .kiro/
 *.swp

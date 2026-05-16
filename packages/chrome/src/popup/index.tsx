@@ -1,5 +1,5 @@
 import { createRoot } from "react-dom/client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Component, type ReactNode } from "react";
 
 interface TabStats {
   blocked: number;
@@ -12,6 +12,33 @@ function reportError(context: string, error: unknown): void {
     chrome.runtime.sendMessage({ type: "LOG_CLIENT_ERROR", payload: { context, error: message } }).catch(() => {});
   } catch {
     // Extension context invalid
+  }
+}
+
+class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(): { hasError: boolean } {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error): void {
+    reportError("popup-error-boundary", error);
+  }
+
+  render(): ReactNode {
+    if (this.state.hasError) {
+      return (
+        <div style={{ width: 320, padding: 16, fontFamily: "system-ui, sans-serif", textAlign: "center" }}>
+          <p style={{ color: "#dc2626", fontSize: 14 }}>Что-то пошло не так.</p>
+          <p style={{ color: "#888", fontSize: 12 }}>Перезагрузите страницу или попробуйте позже.</p>
+        </div>
+      );
+    }
+    return this.props.children;
   }
 }
 
@@ -370,5 +397,9 @@ function PopupApp() {
 
 const root = document.getElementById("root");
 if (root) {
-  createRoot(root).render(<PopupApp />);
+  createRoot(root).render(
+    <ErrorBoundary>
+      <PopupApp />
+    </ErrorBoundary>
+  );
 }

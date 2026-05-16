@@ -1,0 +1,20 @@
+# Lefthook configuration — fast git hooks without Husky
+# https://lefthook.dev/configuration/
+
+pre-commit:
+  parallel: true
+  jobs:
+    - name: lint
+      run: pnpm exec eslint --max-warnings=0 {staged_files}
+      glob: "*.{ts,tsx,js}"
+    - name: format
+      run: pnpm exec prettier --check {staged_files}
+      glob: "*.{ts,tsx,js,json,md,yml,yaml}"
+
+pre-push:
+  parallel: true
+  jobs:
+    - name: typecheck
+      run: pnpm run typecheck
+    - name: test
+      run: pnpm run test

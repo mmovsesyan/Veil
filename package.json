@@ -18,6 +18,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "pnpm -r run typecheck",
+    "check": "pnpm run lint && pnpm run typecheck && pnpm run test",
     "clean": "pnpm -r run clean && rm -rf node_modules",
     "package": "bash scripts/package-extensions.sh",
     "download-filters": "npx tsx scripts/download-filters.ts"
@@ -39,6 +40,7 @@
     "eslint-plugin-react-hooks": "5.1.0",
     "fast-check": "3.23.2",
     "jsdom": "^29.1.1",
+    "lefthook": "^2.1.6",
     "prettier": "3.4.2",
     "typescript": "5.7.2",
     "typescript-eslint": "8.18.1",

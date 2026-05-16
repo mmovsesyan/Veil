@@ -1,0 +1,73 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Chrome Extension",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost",
+      "webRoot": "${workspaceFolder}",
+      "userDataDir": "${workspaceFolder}/.chrome-debug-profile",
+      "runtimeArgs": [
+        "--load-extension=${workspaceFolder}/packages/chrome",
+        "--no-first-run",
+        "--no-default-browser-check"
+      ],
+      "sourceMapPathOverrides": {
+        "webpack:///./*": "${webRoot}/*"
+      },
+      "preLaunchTask": "npm: build",
+      "presentation": {
+        "group": "extension",
+        "order": 1
+      }
+    },
+    {
+      "name": "Attach to Chrome (Extension)",
+      "type": "chrome",
+      "request": "attach",
+      "port": 9222,
+      "webRoot": "${workspaceFolder}",
+      "sourceMapPathOverrides": {
+        "webpack:///./*": "${webRoot}/*"
+      },
+      "presentation": {
+        "group": "extension",
+        "order": 2
+      }
+    },
+    {
+      "name": "Debug Unit Tests",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vitest", "run", "--reporter=verbose"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "presentation": {
+        "group": "test",
+        "order": 1
+      }
+    },
+    {
+      "name": "Debug Current Test File",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vitest", "run", "--reporter=verbose", "${relativeFile}"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "presentation": {
+        "group": "test",
+        "order": 2
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug Extension + Tests",
+      "configurations": ["Launch Chrome Extension", "Debug Unit Tests"],
+      "stopAll": true
+    }
+  ]
+}

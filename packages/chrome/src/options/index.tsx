@@ -1,5 +1,5 @@
 import { createRoot } from "react-dom/client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Component, type ReactNode } from "react";
 
 interface FilterListItem {
   id: string;
@@ -7,6 +7,33 @@ interface FilterListItem {
   category: string;
   enabled: boolean;
   rulesCount: number;
+}
+
+class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(): { hasError: boolean } {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error): void {
+    reportError("options-error-boundary", error);
+  }
+
+  render(): ReactNode {
+    if (this.state.hasError) {
+      return (
+        <div style={{ maxWidth: 700, margin: "0 auto", padding: 24, fontFamily: "system-ui, sans-serif", textAlign: "center" }}>
+          <p style={{ color: "#dc2626", fontSize: 16 }}>Что-то пошло не так.</p>
+          <p style={{ color: "#888", fontSize: 14 }}>Перезагрузите страницу или попробуйте позже.</p>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
 }
 
 function reportError(context: string, error: unknown): void {
@@ -281,5 +308,9 @@ function OptionsApp() {
 
 const root = document.getElementById("root");
 if (root) {
-  createRoot(root).render(<OptionsApp />);
+  createRoot(root).render(
+    <ErrorBoundary>
+      <OptionsApp />
+    </ErrorBoundary>
+  );
 }
