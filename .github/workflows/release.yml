@@ -1,0 +1,85 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build all packages
+        run: pnpm run build
+
+      - name: Package Chrome extension
+        run: |
+          mkdir -p dist-release
+          cd packages/chrome
+          zip -r "../../dist-release/veil-chrome-${GITHUB_REF_NAME}.zip" \
+            dist/ \
+            rules/ \
+            icons/ \
+            manifest.json \
+            popup.html \
+            options.html \
+            filter-lists/ \
+            bundled-rules/ \
+            -x "*.test.*" "*.map"
+
+      - name: Package Firefox extension
+        run: |
+          cd packages/firefox
+          zip -r "../../dist-release/veil-firefox-${GITHUB_REF_NAME}.xpi" \
+            dist/ \
+            icons/ \
+            manifest.json \
+            popup.html \
+            options.html \
+            filter-lists/ \
+            bundled-rules/ \
+            -x "*.test.*" "*.map"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist-release/*
+          generate_release_notes: true
+          body: |
+            ## Veil ${GITHUB_REF_NAME}
+
+            ### Downloads
+            - **Chrome / Edge / Brave**: `veil-chrome-${GITHUB_REF_NAME}.zip`
+              - Unzip → `chrome://extensions` → Developer mode → Load unpacked
+            - **Firefox**: `veil-firefox-${GITHUB_REF_NAME}.xpi`
+              - `about:debugging#/runtime/this-firefox` → Load Temporary Add-on → `manifest.json`
+            - **Safari**: Requires Xcode build from source (see README)
+
+            ### Install from source
+            ```bash
+            git clone https://github.com/mmovsesyan/Veil.git
+            cd Veil
+            pnpm install
+            pnpm run build
+            pnpm run package
+            ```
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

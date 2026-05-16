@@ -68,12 +68,12 @@ jobs:
       - name: Package Chrome extension
         run: |
           cd packages/chrome
-          zip -r ../../chrome-extension.zip dist/ manifest.json icons/ popup.html options.html rules/ filter-lists/
+          zip -r ../../chrome-extension.zip dist/ manifest.json icons/ popup.html options.html rules/ filter-lists/ bundled-rules/
 
       - name: Package Firefox extension
         run: |
           cd packages/firefox
-          zip -r ../../firefox-extension.xpi dist/ manifest.json icons/ popup.html options.html
+          zip -r ../../firefox-extension.xpi dist/ manifest.json icons/ popup.html options.html filter-lists/ bundled-rules/
 
       - name: Upload Chrome extension
         uses: actions/upload-artifact@v4
