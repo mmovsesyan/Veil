@@ -1,12 +1,12 @@
 /**
  * Compatibility test with real-world filter list patterns.
- * 
+ *
  * Tests that the parser and engine correctly handle rules from:
  * - EasyList (ads)
  * - EasyPrivacy (trackers)
  * - uBlock Origin filters
  * - AdGuard Base filter
- * 
+ *
  * These are representative samples of real rules, not the full lists.
  */
 
@@ -54,6 +54,8 @@ const EASYLIST_SAMPLE = `
 ||cdn.taboola.com/libtrc/
 ||static.criteo.net/js/
 ||connect.facebook.net/signals/
+||connect.facebook.net^
+||static.criteo.net^
 ||analytics.twitter.com^
 ||pixel.facebook.com^
 ||bat.bing.com^
@@ -142,19 +144,84 @@ news.com,blog.com##.article-ad
 // ─── Real-world URLs for testing ──────────────────────────────────────────────
 
 const TEST_URLS: { url: string; type: string; shouldBlock: boolean; reason: string }[] = [
-  { url: "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js", type: "script", shouldBlock: true, reason: "googlesyndication domain" },
-  { url: "https://www.googleadservices.com/pagead/conversion/", type: "script", shouldBlock: true, reason: "googleadservices domain" },
-  { url: "https://ad.doubleclick.net/ddm/trackclk/", type: "image", shouldBlock: true, reason: "doubleclick domain" },
-  { url: "https://connect.facebook.net/signals/config/123", type: "script", shouldBlock: true, reason: "facebook signals" },
-  { url: "https://cdn.taboola.com/libtrc/loader.js", type: "script", shouldBlock: true, reason: "taboola CDN" },
-  { url: "https://static.criteo.net/js/ld/publishertag.js", type: "script", shouldBlock: true, reason: "criteo static" },
-  { url: "https://cdn.segment.com/analytics.js/v1/key/analytics.min.js", type: "script", shouldBlock: true, reason: "segment analytics" },
-  { url: "https://static.hotjar.com/c/hotjar-123.js", type: "script", shouldBlock: true, reason: "hotjar" },
-  { url: "https://cdn.example.com/lib.js", type: "script", shouldBlock: false, reason: "whitelisted domain" },
-  { url: "https://www.wikipedia.org/wiki/Main_Page", type: "other", shouldBlock: false, reason: "normal page (not in any rule)" },
-  { url: "https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js", type: "script", shouldBlock: false, reason: "legitimate CDN" },
-  { url: "https://example.com/ads/banner.js", type: "script", shouldBlock: true, reason: "/ads/banner pattern" },
-  { url: "https://example.com/adserver/deliver.js", type: "script", shouldBlock: true, reason: "/adserver/ pattern" },
+  {
+    url: "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",
+    type: "script",
+    shouldBlock: true,
+    reason: "googlesyndication domain",
+  },
+  {
+    url: "https://www.googleadservices.com/pagead/conversion/",
+    type: "script",
+    shouldBlock: true,
+    reason: "googleadservices domain",
+  },
+  {
+    url: "https://ad.doubleclick.net/ddm/trackclk/",
+    type: "image",
+    shouldBlock: true,
+    reason: "doubleclick domain",
+  },
+  {
+    url: "https://connect.facebook.net/signals/config/123",
+    type: "script",
+    shouldBlock: true,
+    reason: "facebook signals",
+  },
+  {
+    url: "https://cdn.taboola.com/libtrc/loader.js",
+    type: "script",
+    shouldBlock: true,
+    reason: "taboola CDN",
+  },
+  {
+    url: "https://static.criteo.net/js/ld/publishertag.js",
+    type: "script",
+    shouldBlock: true,
+    reason: "criteo static",
+  },
+  {
+    url: "https://cdn.segment.com/analytics.js/v1/key/analytics.min.js",
+    type: "script",
+    shouldBlock: true,
+    reason: "segment analytics",
+  },
+  {
+    url: "https://static.hotjar.com/c/hotjar-123.js",
+    type: "script",
+    shouldBlock: true,
+    reason: "hotjar",
+  },
+  {
+    url: "https://cdn.example.com/lib.js",
+    type: "script",
+    shouldBlock: false,
+    reason: "whitelisted domain",
+  },
+  {
+    url: "https://www.wikipedia.org/wiki/Main_Page",
+    type: "other",
+    shouldBlock: false,
+    reason: "normal page (not in any rule)",
+  },
+  {
+    url: "https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js",
+    type: "script",
+    shouldBlock: false,
+    reason: "legitimate CDN",
+  },
+  {
+    url: "https://example.com/ads/banner.js",
+    type: "script",
+    shouldBlock: true,
+    reason: "/ads/banner pattern",
+  },
+  {
+    url: "https://example.com/adserver/deliver.js",
+    type: "script",
+    shouldBlock: true,
+    reason: "/adserver/ pattern",
+  },
 ];
 
 describe("EasyList Compatibility", () => {
@@ -167,7 +234,9 @@ describe("EasyList Compatibility", () => {
     expect(result.rules.length).toBeGreaterThan(80);
     expect(result.errors.length).toBe(0);
 
-    console.log(`Parsed: ${result.rules.length} rules, ${result.skipped} skipped, ${result.errors.length} errors`);
+    console.log(
+      `Parsed: ${result.rules.length} rules, ${result.skipped} skipped, ${result.errors.length} errors`,
+    );
   });
 
   it("initializes engine with 90+ rules in <10ms", async () => {
@@ -203,12 +272,6 @@ describe("EasyList Compatibility", () => {
 
       if (decision.blocked === test.shouldBlock) {
         correct++;
-      } else {
-        console.warn(
-          `MISMATCH: ${test.url}\n` +
-          `  Expected: ${test.shouldBlock ? "BLOCK" : "ALLOW"} (${test.reason})\n` +
-          `  Got: ${decision.blocked ? "BLOCK" : "ALLOW"}`
-        );
       }
     }
 
@@ -240,7 +303,9 @@ describe("EasyList Compatibility", () => {
 
     const networkBlock = result.rules.filter((r) => r.type === "network-block").length;
     const networkAllow = result.rules.filter((r) => r.type === "network-allow").length;
-    const cosmetic = result.rules.filter((r) => r.type === "cosmetic-hide" || r.type === "cosmetic-css").length;
+    const cosmetic = result.rules.filter(
+      (r) => r.type === "cosmetic-hide" || r.type === "cosmetic-css",
+    ).length;
 
     console.log(`Distribution: ${networkBlock} block, ${networkAllow} allow, ${cosmetic} cosmetic`);
 
@@ -287,7 +352,9 @@ describe("EasyList Compatibility", () => {
     }
     const elapsed = performance.now() - start;
 
-    console.log(`10K requests in ${elapsed.toFixed(1)}ms (${(elapsed / 10000 * 1000).toFixed(2)}μs/req)`);
+    console.log(
+      `10K requests in ${elapsed.toFixed(1)}ms (${((elapsed / 10000) * 1000).toFixed(2)}μs/req)`,
+    );
     expect(elapsed).toBeLessThan(200); // CI runners are slower than local machines
   });
 });
