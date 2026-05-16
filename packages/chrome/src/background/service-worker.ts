@@ -12,6 +12,9 @@ import { BlockingEngine, RuleParser, StatisticsTracker, WhitelistManager, AutoRu
 import { getRedirectResource, getDefaultRedirect, parseScriptletRule } from "@veil/core";
 import { PrivacyBudgetTracker, generatePrivacyMonitorScript } from "@veil/core";
 import type { Rule, CosmeticRule } from "@veil/core";
+import { createLogger } from "./logger.js";
+
+const logger = createLogger("service-worker");
 
 // ─── Script Injection Helper ──────────────────────────────────────────────────
 
@@ -111,7 +114,7 @@ async function initialize(): Promise<void> {
 }
 
 // Also initialize immediately (service worker can restart at any time)
-initialize().catch(console.error);
+initialize().catch((e) => logger.error("Background init failed", { error: String(e) }));
 
 async function doInitialize(): Promise<void> {
   try {
@@ -166,10 +169,10 @@ async function doInitialize(): Promise<void> {
           });
           // Update DNR
           await updateDNRRules(result.rules);
-          console.log(`[Content Blocker] Loaded ${result.rules.length} bundled rules`);
+          logger.info(`Loaded ${result.rules.length} bundled rules`, { source: "bundled" });
         }
       } catch (e) {
-        console.warn("[Content Blocker] Failed to load bundled rules:", e);
+        logger.warn("Failed to load bundled rules", { error: String(e) });
       }
     }
 
@@ -208,9 +211,9 @@ async function doInitialize(): Promise<void> {
     // 7. Schedule background filter list update (non-blocking)
     scheduleFilterUpdate();
 
-    console.log("[Content Blocker] Initialized");
+    logger.info("Initialized");
   } catch (e) {
-    console.error("[Content Blocker] Init error:", e);
+    logger.error("Initialization failed", { error: String(e) });
   }
 }
 
@@ -228,7 +231,7 @@ function scheduleFilterUpdate(): void {
 
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === "filter-update") {
-    updateFiltersInBackground().catch(console.warn);
+    updateFiltersInBackground().catch((e) => logger.warn("Filter update failed", { error: String(e) }));
   }
 });
 
@@ -277,7 +280,10 @@ async function updateFiltersInBackground(): Promise<void> {
     // Clear cosmetic cache
     cosmeticRulesCache.clear();
 
-    console.log(`[Content Blocker] Updated: ${result.rules.length} rules from ${allRulesText.length} lists`);
+    logger.info("Filter lists updated", {
+  rules: result.rules.length,
+  lists: allRulesText.length,
+});
   }
 }
 
@@ -438,12 +444,19 @@ async function updateDNRRules(rules: Rule[]): Promise<void> {
     });
 
     if (dnrRules.length > 30000) {
-      console.warn(`[Content Blocker] ${dnrRules.length} rules exceed 30K limit. ${dnrRules.length - 30000} dropped.`);
+      logger.warn("DNR rules exceed 30K limit", { total: dnrRules.length, dropped: dnrRules.length - 30000 });
     }
 
-    console.log(`[Content Blocker] DNR: ${finalRules.length} rules (${blockRules.length} block, ${allowRules.length} allow, ${redirectRules.length} redirect, ${removeParamRules.length} removeparam, ${cspRules.length} csp)`);
+    logger.info("DNR rules updated", {
+  total: finalRules.length,
+  block: blockRules.length,
+  allow: allowRules.length,
+  redirect: redirectRules.length,
+  removeparam: removeParamRules.length,
+  csp: cspRules.length,
+});
   } catch (e) {
-    console.warn("[Content Blocker] DNR update failed:", e);
+    logger.warn("DNR update failed", { error: String(e) });
   }
 }
 
@@ -620,13 +633,13 @@ if (chrome.webRequest?.onCompleted) {
                   },
                 }],
                 removeRuleIds: [],
-              }).catch(() => {});
-            }).catch(() => {});
+              }).catch((e) => logger.warn("DNR auto-learn rule add failed", { error: String(e) }));
+            }).catch((e) => logger.warn("DNR getDynamicRules failed for auto-learn", { error: String(e) }));
 
             // Persist auto-learned rules
             chrome.storage.local.set({ autoLearnedRules: autoRules.getConfirmedRules() });
 
-            console.log(`[Veil Auto-Learn] New rule confirmed and applied: ${confirmed.suggestedRule}`);
+            logger.info("Auto-learned rule applied", { rule: confirmed.suggestedRule });
           }
         }
       } catch {
@@ -642,8 +655,8 @@ function updateBadge(tabId: number): void {
   const count = tabStats.blocked;
   const text = count === 0 ? "" : count > 999 ? "999+" : String(count);
 
-  chrome.action.setBadgeText({ tabId, text }).catch(() => {});
-  chrome.action.setBadgeBackgroundColor({ tabId, color: "#4A90D9" }).catch(() => {});
+  chrome.action.setBadgeText({ tabId, text }).catch((e) => logger.debug("Badge text failed", { error: String(e), tabId }));
+  chrome.action.setBadgeBackgroundColor({ tabId, color: "#4A90D9" }).catch((e) => logger.debug("Badge color failed", { error: String(e), tabId }));
 }
 
 // ─── Message Handling ─────────────────────────────────────────────────────────
@@ -953,7 +966,7 @@ async function handleMessage(
           world: "MAIN",
           func: executeInPage,
           args: [code],
-        }).catch(() => {});
+        }).catch((e) => logger.debug("Privacy monitor injection failed", { error: String(e), tabId: sender.tab?.id }));
       }
       return { success: true };
     }
