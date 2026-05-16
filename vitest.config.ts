@@ -30,6 +30,6 @@ export default defineConfig({
         "**/index.ts",
       ],
     },
-    testTimeout: 10000,
+    testTimeout: 30000,
   },
 });

@@ -19,6 +19,8 @@ zip -r "../../$DIST_DIR/content-blocker-chrome.zip" \
   manifest.json \
   popup.html \
   options.html \
+  filter-lists/ \
+  bundled-rules/ \
   -x "*.test.*" "*.map"
 cd ../..
 echo "  ✓ $DIST_DIR/content-blocker-chrome.zip"
@@ -33,6 +35,8 @@ zip -r "../../$DIST_DIR/content-blocker-firefox.xpi" \
   manifest.json \
   popup.html \
   options.html \
+  filter-lists/ \
+  bundled-rules/ \
   -x "*.test.*" "*.map"
 cd ../..
 echo "  ✓ $DIST_DIR/content-blocker-firefox.xpi"
