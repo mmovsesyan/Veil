@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "lists": [
+    {
+      "id": "easylist",
+      "name": "EasyList",
+      "category": "ads",
+      "url": "https://easylist.to/easylist/easylist.txt",
+      "enabled": true,
+      "description": "Primary filter list for blocking ads"
+    },
+    {
+      "id": "easyprivacy",
+      "name": "EasyPrivacy",
+      "category": "trackers",
+      "url": "https://easylist.to/easylist/easyprivacy.txt",
+      "enabled": true,
+      "description": "Supplementary filter list for tracking protection"
+    },
+    {
+      "id": "fanboy-social",
+      "name": "Fanboy's Social Blocking List",
+      "category": "social",
+      "url": "https://easylist.to/easylist/fanboy-social.txt",
+      "enabled": true,
+      "description": "Blocks social media widgets and buttons"
+    },
+    {
+      "id": "fanboy-annoyance",
+      "name": "Fanboy's Annoyance List",
+      "category": "annoyances",
+      "url": "https://easylist.to/easylist/fanboy-annoyance.txt",
+      "enabled": true,
+      "description": "Blocks cookie notices, popups, and other annoyances"
+    },
+    {
+      "id": "ruadlist",
+      "name": "RU AdList",
+      "category": "regional",
+      "url": "https://easylist-downloads.adblockplus.org/advblock+cssfixes.txt",
+      "enabled": true,
+      "description": "Regional filter list for Russian websites"
+    },
+    {
+      "id": "peter-lowe",
+      "name": "Peter Lowe's Ad and tracking server list",
+      "category": "ads",
+      "url": "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=adblockplus&showintro=0",
+      "enabled": true,
+      "description": "Curated list of ad and tracking servers"
+    },
+    {
+      "id": "ublock-filters",
+      "name": "uBlock filters",
+      "category": "ads",
+      "url": "https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/filters.txt",
+      "enabled": true,
+      "description": "Additional filters from uBlock Origin"
+    },
+    {
+      "id": "ublock-privacy",
+      "name": "uBlock filters – Privacy",
+      "category": "trackers",
+      "url": "https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/privacy.txt",
+      "enabled": true,
+      "description": "Privacy-focused filters from uBlock Origin"
+    },
+    {
+      "id": "veil-rutube",
+      "name": "Veil — Rutube",
+      "category": "regional",
+      "url": "https://raw.githubusercontent.com/mmovsesyan/Veil/main/filter-lists/custom/rutube.txt",
+      "enabled": true,
+      "description": "Blocks video ads on Rutube"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+! Title: Veil — Rutube Ad Blocker
+! Description: Blocks video ads and banners on rutube.ru
+! Last modified: 2026-05-10
+! Homepage: https://github.com/mmovsesyan/Veil
+
+! ─── Network rules ───
+||rutube.ru/api/advert/*
+||rutube.ru/api/video/*/advert*
+||rutube.ru/api/play/options/*/ad*
+||rutube.ru/static-video/ad*
+||rutube.ru/api/ad/*
+||rutube.ru/api/yandex/*
+||rutube.ru/api/vast/*
+||rutube.ru/metrika/*
+||rutube.ru/api/promo/*
+||strm.yandex.net/int/*$domain=rutube.ru
+||yandex.ru/ads/*$domain=rutube.ru
+||mc.yandex.ru/*$domain=rutube.ru
+||an.yandex.ru/*$domain=rutube.ru
+||ads.adfox.ru/*$domain=rutube.ru
+||banners.adfox.ru/*$domain=rutube.ru
+||adfox.yandex.ru/*$domain=rutube.ru
+||ad.mail.ru/*$domain=rutube.ru
+
+! ─── Cosmetic rules (only precise ad elements) ───
+rutube.ru##[class*="yandex_rtb"]
+rutube.ru##[id*="yandex_rtb"]
+rutube.ru##div[class*="adfox"]
+rutube.ru##div[id*="adfox"]
+
+! ─── Scriptlet rules (bypass ad player) ───
+rutube.ru#%#//scriptlet("set-constant", "Object.prototype.adConfig", "undefined")
+rutube.ru#%#//scriptlet("set-constant", "Object.prototype.adEnabled", "false")
+rutube.ru#%#//scriptlet("set-constant", "Object.prototype.showAd", "falseFunc")
+rutube.ru#%#//scriptlet("abort-on-property-read", "Object.prototype.adConfig")
+rutube.ru#%#//scriptlet("prevent-fetch", "/advert/")
+rutube.ru#%#//scriptlet("prevent-fetch", "/vast/")
+rutube.ru#%#//scriptlet("prevent-fetch", "adfox")
+rutube.ru#%#//scriptlet("prevent-xhr", "/advert/")
+rutube.ru#%#//scriptlet("prevent-xhr", "adfox")
+rutube.ru#%#//scriptlet("no-setTimeout-if", "advert")
+rutube.ru#%#//scriptlet("no-setTimeout-if", "preroll")
+rutube.ru#%#//scriptlet("json-prune", "adConfig")
+rutube.ru#%#//scriptlet("json-prune", "ad_config")
