@@ -30,6 +30,7 @@
 		8742C5CA2FB0911F00FD5DE3 /* options.html in Resources */ = {isa = PBXBuildFile; fileRef = 8742C5BC2FB0911F00FD5DE3 /* options.html */; };
 		8742C5CB2FB0911F00FD5DE3 /* filter-lists in Resources */ = {isa = PBXBuildFile; fileRef = 8742C5BE2FB0911F00FD5DE3 /* filter-lists */; };
 		8742C5CC2FB0911F00FD5DE3 /* src in Resources */ = {isa = PBXBuildFile; fileRef = 8742C5BF2FB0911F00FD5DE3 /* src */; };
+		F0B683A340FAFFC20D848924 /* bundled-rules in Resources */ = {isa = PBXBuildFile; fileRef = D1EA6BF29AECFAA28445215C /* bundled-rules */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +85,7 @@
 		8742C5BD2FB0911F00FD5DE3 /* vite.config.ts */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.typescript; name = vite.config.ts; path = ../../../../packages/chrome/vite.config.ts; sourceTree = "<group>"; };
 		8742C5BE2FB0911F00FD5DE3 /* filter-lists */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "filter-lists"; path = "../../../../packages/chrome/filter-lists"; sourceTree = "<group>"; };
 		8742C5BF2FB0911F00FD5DE3 /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; name = src; path = ../../../../packages/chrome/src; sourceTree = "<group>"; };
+		D1EA6BF29AECFAA28445215C /* bundled-rules */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder; name = "bundled-rules"; path = "bundled-rules"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -152,6 +154,7 @@
 				8742C5B12FB0911F00FD5DE3 /* Resources */,
 				8742C5A52FB0911F00FD5DE3 /* SafariWebExtensionHandler.swift */,
 				8742C5A72FB0911F00FD5DE3 /* Info.plist */,
+				D1EA6BF29AECFAA28445215C /* bundled-rules */,
 			);
 			path = "Veil Extension";
 			sourceTree = "<group>";
@@ -196,8 +199,6 @@
 				8742C5A32FB0911F00FD5DE3 /* PBXTargetDependency */,
 			);
 			name = Veil;
-			packageProductDependencies = (
-			);
 			productName = Veil;
 			productReference = 8742C5852FB0911E00FD5DE3 /* Veil.app */;
 			productType = "com.apple.product-type.application";
@@ -215,8 +216,6 @@
 			dependencies = (
 			);
 			name = "Veil Extension";
-			packageProductDependencies = (
-			);
 			productName = "Veil Extension";
 			productReference = 8742C5A02FB0911F00FD5DE3 /* Veil Extension.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -290,6 +289,7 @@
 				8742C5C42FB0911F00FD5DE3 /* _metadata in Resources */,
 				8742C5C62FB0911F00FD5DE3 /* icons in Resources */,
 				8742C5C12FB0911F00FD5DE3 /* popup.html in Resources */,
+				F0B683A340FAFFC20D848924 /* bundled-rules in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
