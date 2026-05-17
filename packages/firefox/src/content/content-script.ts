@@ -3,8 +3,9 @@
  * social widget placeholders, and ML-based zero-day ad detection.
  */
 
-import { extractFeatures, classifyHeuristic, shouldBlock } from "@veil/core";
-import { generatePrivacyMonitorScript } from "@veil/core";
+import { extractFeatures } from "../../../core/src/ml/dom-features";
+import { classifyHeuristic, shouldBlock } from "../../../core/src/ml/heuristic";
+import { generatePrivacyMonitorScript } from "../../../core/src/privacy-budget/tracker";
 
 const SOCIAL_DOMAINS: Record<string, string> = {
   "facebook.com": "facebook",
@@ -46,9 +47,7 @@ function applyCosmeticRules(selectors: string[]): void {
 
   const style = document.createElement("style");
   style.id = "content-blocker-cosmetic";
-  style.textContent = selectors
-    .map((s) => `${s} { display: none !important; }`)
-    .join("\n");
+  style.textContent = selectors.map((s) => `${s} { display: none !important; }`).join("\n");
 
   (document.head ?? document.documentElement).appendChild(style);
 }
@@ -70,15 +69,17 @@ function injectPrivacyMonitor(): void {
     if (event.data?.type !== "veil-privacy-event") return;
 
     try {
-      browser.runtime.sendMessage({
-        type: "PRIVACY_EVENT",
-        payload: {
-          method: event.data.method as string,
-          timestamp: event.data.timestamp as number,
-          url: event.data.url as string,
-          domain: window.location.hostname,
-        },
-      }).catch(() => {});
+      browser.runtime
+        .sendMessage({
+          type: "PRIVACY_EVENT",
+          payload: {
+            method: event.data.method as string,
+            timestamp: event.data.timestamp as number,
+            url: event.data.url as string,
+            domain: window.location.hostname,
+          },
+        })
+        .catch(() => {});
     } catch {
       // Background dead
     }
@@ -117,7 +118,13 @@ function startObserver(): void {
         // Collect ML candidates
         if (mlEnabled && node.isConnected && node.style.display !== "none") {
           const tag = node.tagName;
-          if (tag === "IFRAME" || tag === "IMG" || tag === "DIV" || tag === "SECTION" || tag === "ASIDE") {
+          if (
+            tag === "IFRAME" ||
+            tag === "IMG" ||
+            tag === "DIV" ||
+            tag === "SECTION" ||
+            tag === "ASIDE"
+          ) {
             mlCandidates.push(node);
           }
           const children = node.querySelectorAll("iframe, img, div, section, aside");
@@ -160,14 +167,16 @@ function handleSocialIframe(iframe: HTMLIFrameElement): void {
       if (hostname === domain || hostname.endsWith(`.${domain}`)) {
         const placeholder = document.createElement("div");
         const wrapper = document.createElement("div");
-        wrapper.style.cssText = "border:1px solid #e5e7eb;border-radius:8px;padding:16px;text-align:center;background:#f9fafb;";
+        wrapper.style.cssText =
+          "border:1px solid #e5e7eb;border-radius:8px;padding:16px;text-align:center;background:#f9fafb;";
 
         const text = document.createElement("p");
         text.style.cssText = "margin:0 0 8px;font-size:14px;color:#6b7280;";
         text.textContent = `Виджет ${network} заблокирован`;
 
         const button = document.createElement("button");
-        button.style.cssText = "padding:6px 16px;border:1px solid #d1d5db;border-radius:6px;background:white;cursor:pointer;";
+        button.style.cssText =
+          "padding:6px 16px;border:1px solid #d1d5db;border-radius:6px;background:white;cursor:pointer;";
         button.textContent = "Загрузить";
 
         wrapper.appendChild(text);

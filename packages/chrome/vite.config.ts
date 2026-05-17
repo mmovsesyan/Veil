@@ -13,7 +13,6 @@ export default defineConfig({
     rollupOptions: {
       input: {
         "background/service-worker": resolve(__dirname, "src/background/service-worker.ts"),
-        "content/content-script": resolve(__dirname, "src/content/content-script.ts"),
         "popup/popup": resolve(__dirname, "src/popup/index.tsx"),
         "options/options": resolve(__dirname, "src/options/index.tsx"),
       },
@@ -22,17 +21,6 @@ export default defineConfig({
         chunkFileNames: "chunks/[name]-[hash].js",
         assetFileNames: "assets/[name]-[hash][extname]",
         format: "es",
-        manualChunks(id) {
-          if (id.includes("node_modules/react") || id.includes("node_modules/react-dom")) {
-            return "vendor-react";
-          }
-          if (id.includes("node_modules/@tensorflow")) {
-            return "vendor-tfjs";
-          }
-          if (id.includes("packages/core/src")) {
-            return "core-engine";
-          }
-        },
       },
     },
   },

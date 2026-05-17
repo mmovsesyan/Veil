@@ -12,8 +12,8 @@
     }
   },
   "scripts": {
-    "build": "vite build",
-    "dev": "vite build --watch",
+    "build": "vite build && vite build --config vite.content.config.ts",
+    "dev": "vite build --watch & vite build --config vite.content.config.ts --watch",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -27,5 +27,7 @@
   "devDependencies": {
     "@types/chrome": "0.0.287"
   },
-  "files": ["dist"]
+  "files": [
+    "dist"
+  ]
 }

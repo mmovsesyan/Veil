@@ -12,7 +12,8 @@
  * 7. ML heuristic classifier catches ads not covered by filter lists
  */
 
-import { extractFeatures, classifyHeuristic, shouldBlock } from "@veil/core";
+import { extractFeatures } from "../../../core/src/ml/dom-features";
+import { classifyHeuristic, shouldBlock } from "../../../core/src/ml/heuristic";
 
 const SOCIAL_DOMAINS: Record<string, string> = {
   "facebook.com": "Facebook",
@@ -121,15 +122,17 @@ function injectPrivacyMonitor(): void {
 
     // Relay to background script
     try {
-      chrome.runtime.sendMessage({
-        type: "PRIVACY_EVENT",
-        payload: {
-          method: event.data.method as string,
-          timestamp: event.data.timestamp as number,
-          url: event.data.url as string,
-          domain: window.location.hostname,
-        },
-      }).catch(() => {});
+      chrome.runtime
+        .sendMessage({
+          type: "PRIVACY_EVENT",
+          payload: {
+            method: event.data.method as string,
+            timestamp: event.data.timestamp as number,
+            url: event.data.url as string,
+            domain: window.location.hostname,
+          },
+        })
+        .catch(() => {});
     } catch {
       // Service worker dead
     }
@@ -164,10 +167,12 @@ function injectScriptlets(): void {
 
   // Use chrome.scripting.executeScript via service worker (bypasses page CSP)
   try {
-    chrome.runtime.sendMessage({
-      type: "INJECT_SCRIPTLETS",
-      payload: scriptlets,
-    }).catch(() => {});
+    chrome.runtime
+      .sendMessage({
+        type: "INJECT_SCRIPTLETS",
+        payload: scriptlets,
+      })
+      .catch(() => {});
   } catch {
     // Extension context invalidated
   }
@@ -217,7 +222,13 @@ function startObserver(): void {
         // Collect ML candidates (elements not hidden by cosmetic rules)
         if (mlEnabled && node.isConnected && (node as HTMLElement).style.display !== "none") {
           const tag = node.tagName;
-          if (tag === "IFRAME" || tag === "IMG" || tag === "DIV" || tag === "SECTION" || tag === "ASIDE") {
+          if (
+            tag === "IFRAME" ||
+            tag === "IMG" ||
+            tag === "DIV" ||
+            tag === "SECTION" ||
+            tag === "ASIDE"
+          ) {
             mlCandidates.push(node as HTMLElement);
           }
           // Also check children
@@ -285,7 +296,11 @@ function handleSocialWidget(iframe: HTMLIFrameElement): void {
   }
 }
 
-function replaceSocialWidget(iframe: HTMLIFrameElement, networkName: string, originalSrc: string): void {
+function replaceSocialWidget(
+  iframe: HTMLIFrameElement,
+  networkName: string,
+  originalSrc: string,
+): void {
   const placeholder = document.createElement("div");
   placeholder.className = "cb-social-placeholder";
   placeholder.style.cssText = `

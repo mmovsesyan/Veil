@@ -27,15 +27,6 @@ export interface ClassificationResult {
 
 const LABELS: ClassificationLabel[] = ["content", "ad", "tracker", "social", "annoyance"];
 
-// Thresholds: block only if confidence >= threshold
-const CONFIDENCE_THRESHOLDS: Record<ClassificationLabel, number> = {
-  content: 0.0, // never block content
-  ad: 0.85,
-  tracker: 0.80,
-  social: 0.85,
-  annoyance: 0.90,
-};
-
 /**
  * Lightweight on-device classifier.
  *
@@ -243,21 +234,5 @@ export class SmartDOMClassifier {
   }
 }
 
-/**
- * Check whether a classification result should trigger blocking.
- * Content is never blocked regardless of confidence.
- */
-export function shouldBlock(result: ClassificationResult): boolean {
-  if (result.label === "content") return false;
-  return result.confidence >= CONFIDENCE_THRESHOLDS[result.label];
-}
-
-/**
- * Heuristic-only classification without TensorFlow.js.
- * Suitable for content scripts where TF.js may be unavailable or too heavy.
- */
-export function classifyHeuristic(features: DOMFeatures): ClassificationResult {
-  const classifier = new SmartDOMClassifier();
-  classifier["fallbackMode"] = true;
-  return classifier.classify(features);
-}
+// Re-export heuristic utilities from standalone module (no TF.js dependency)
+export { shouldBlock, classifyHeuristic } from "./heuristic.js";

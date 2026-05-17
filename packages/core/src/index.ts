@@ -19,11 +19,7 @@ export type {
   ConflictCallback,
 } from "./types/index.js";
 
-export {
-  RuleType,
-  RuleAction,
-  FilterCategory,
-} from "./types/index.js";
+export { RuleType, RuleAction, FilterCategory } from "./types/index.js";
 
 export type { ResourceType } from "./types/index.js";
 
@@ -42,11 +38,21 @@ export { BlockingEngine } from "./engine/index.js";
 export { PatternTrie } from "./engine/index.js";
 export { getRedirectResource, getDefaultRedirect, getAvailableResources } from "./engine/index.js";
 export { generateScriptlet, parseScriptletRule, getAvailableScriptlets } from "./engine/index.js";
-export { removeParams, removeTrackingParams, parseRemoveParam, DEFAULT_TRACKING_PARAMS } from "./engine/index.js";
+export {
+  removeParams,
+  removeTrackingParams,
+  parseRemoveParam,
+  DEFAULT_TRACKING_PARAMS,
+} from "./engine/index.js";
 export type { RemoveParamRule } from "./engine/index.js";
 export { checkKnownCNAMECloak, resolveCNAME, isTrackerCNAMETarget } from "./engine/index.js";
 export { parseHTMLFilterRule, applyHTMLFilters } from "./engine/index.js";
-export { serializeToString, deserializeFromString, serializeRules, deserializeRules } from "./engine/index.js";
+export {
+  serializeToString,
+  deserializeFromString,
+  serializeRules,
+  deserializeRules,
+} from "./engine/index.js";
 export { AutoRulesEngine, analyzeRequest } from "./engine/index.js";
 export { RuleParser } from "./rules/index.js";
 export { RuleManager } from "./rules/rule-manager.js";
@@ -65,7 +71,8 @@ export { PrivacyBudgetTracker, generatePrivacyMonitorScript } from "./privacy-bu
 export type { FingerprintingEvent, DomainPrivacyScore } from "./privacy-budget/tracker.js";
 
 // ML Smart DOM Classifier
-export { SmartDOMClassifier, shouldBlock, classifyHeuristic } from "./ml/classifier.js";
+export { SmartDOMClassifier } from "./ml/classifier.js";
+export { shouldBlock, classifyHeuristic } from "./ml/heuristic.js";
 export { extractFeatures } from "./ml/dom-features.js";
-export type { ClassificationResult, ClassificationLabel } from "./ml/classifier.js";
+export type { ClassificationResult, ClassificationLabel } from "./ml/heuristic.js";
 export type { DOMFeatures } from "./ml/dom-features.js";
